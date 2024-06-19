@@ -4,10 +4,11 @@
 #  and WITHOUT ANY WARRANTY. See the LICENSE file for details.
 
 
-from typing import Tuple, List
+from typing import Tuple, List, Union
 
 import numpy as np
 from pyscf.gto.mole import Mole
+from pyscf.scf import RHF
 
 from tencirchem.static.ucc import UCC
 from tencirchem.constants import DISCARD_EPS
@@ -31,7 +32,7 @@ class UCCSD(UCC):
 
     def __init__(
         self,
-        mol: Mole,
+        mol: Union[Mole, RHF],
         init_method: str = "mp2",
         active_space: Tuple[int, int] = None,
         mo_coeff: np.ndarray = None,
@@ -49,8 +50,8 @@ class UCCSD(UCC):
 
         Parameters
         ----------
-        mol: Mole
-            The molecule as PySCF ``Mole`` object.
+        mol: Mole or RHF
+            The molecule as PySCF ``Mole`` object or the PySCF ``RHF`` object
         init_method: str, optional
             How to determine the initial amplitude guess. Accepts ``"mp2"`` (default), ``"ccsd"``,``"fe"``
             and ``"zeros"``.

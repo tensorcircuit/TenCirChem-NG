@@ -6,10 +6,11 @@
 
 from time import time
 import logging
-from typing import Tuple, List
+from typing import Tuple, List, Union
 
 import numpy as np
 from pyscf.gto.mole import Mole
+from pyscf.scf import RHF
 
 from tencirchem.static.ucc import UCC
 
@@ -24,7 +25,7 @@ class KUPCCGSD(UCC):
 
     def __init__(
         self,
-        mol: Mole,
+        mol: Union[Mole, RHF],
         active_space: Tuple[int, int] = None,
         mo_coeff: np.ndarray = None,
         k: int = 3,
@@ -40,8 +41,8 @@ class KUPCCGSD(UCC):
 
         Parameters
         ----------
-        mol: Mole
-            The molecule as PySCF ``Mole`` object.
+        mol: Mole or RHF
+            The molecule as PySCF ``Mole`` object or the PySCF ``RHF`` object
         active_space: Tuple[int, int], optional
             Active space approximation. The first integer is the number of electrons and the second integer is
             the number or spatial-orbitals. Defaults to None.

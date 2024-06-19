@@ -210,6 +210,7 @@ class HEA:
         kwargs:
             Other arguments to be passed to the :func:`__init__` function such as ``engine``.
 
+
         Returns
         -------
         hea: :class:`HEA`

@@ -6,7 +6,7 @@ import pytest
 
 from tencirchem import UCCSD, KUPCCGSD
 from tencirchem.static.hamiltonian import get_integral_from_hf, random_integral
-from tencirchem.molecule import _random, h4, h_chain
+from tencirchem.molecule import _random, h4, h_chain, c4h4
 from tencirchem.utils.misc import canonical_mo_coeff
 
 
@@ -117,3 +117,20 @@ def test_init_guess(init_method):
     ucc = UCCSD(h4, init_method, pick_ex2=pick_ex2, sort_ex2=sort_ex2)
     e = ucc.kernel()
     np.testing.assert_allclose(e, ucc.e_fci, atol=1e-4)
+
+
+def test_mf_input():
+    m = c4h4(1.46, 1.46, basis="ccpvdz", symmetry=False)
+    hf = RHF(m)
+    hf.kernel()
+    dm, _, stable, _ = hf.stability(return_status=True)
+    if not stable:
+        print("Instability detected in RHF")
+        hf.kernel(dm)
+        dm, _, stable, _ = hf.stability(return_status=True)
+        if not stable:
+            print("RHF is unstable")
+    ucc = UCCSD(hf, active_space=(4, 4))
+    e = ucc.kernel()
+    np.testing.assert_allclose(ucc.e_hf, -153.603405, atol=1e-4)
+    np.testing.assert_allclose(e, ucc.e_fci, atol=2e-2)

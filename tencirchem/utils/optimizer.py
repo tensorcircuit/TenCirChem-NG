@@ -8,7 +8,7 @@ import numpy as np
 from scipy.optimize import OptimizeResult
 
 
-def soap(fun, x0, args=(), maxfev=2000, callback=None, **kwargs):
+def soap(fun, x0, args=(), u=0.1, maxfev=2000, callback=None, ret_traj=False, **kwargs):
     """
     Scipy Optimizer interface for sequantial optimization with
     approximate parabola (SOAP)
@@ -22,11 +22,15 @@ def soap(fun, x0, args=(), maxfev=2000, callback=None, **kwargs):
         where 'n' is the number of independent variables.
     args : tuple, optional
         Extra arguments passed to the objective function.
+    u : float, optional
+        Step size for approximating the parabola. Defaults to 0.1.
     maxfev : int
         Maximum number of function evaluations to perform.
         Default: 2000.
     callback : callable, optional
         Called after each iteration.
+    ret_traj: bool, optional
+        Whether return trajectory for x or not.
 
     Returns
     -------
@@ -54,10 +58,11 @@ def soap(fun, x0, args=(), maxfev=2000, callback=None, **kwargs):
     vec_list_copy = vec_list.copy()
 
     e_list = [_fun(trajectory[-1])]
+    nfev_list = [nfev]
     offset_list = []
     diff_list = []
 
-    scale = 0.1
+    scale = u
 
     while nfev < maxfev:
         if len(vec_list) != 0:
@@ -120,10 +125,14 @@ def soap(fun, x0, args=(), maxfev=2000, callback=None, **kwargs):
         else:
             e_list.append(_fun(trajectory[-1]))
         diff_list.append(e_list[-1] - e_list[-2])
+        nfev_list.append(nfev)
 
         if callback is not None:
             callback(np.copy(x0))
 
         nit += 1
 
-    return OptimizeResult(fun=e_list[-1], x=trajectory[-1], nit=nit, nfev=nfev, success=True)
+    res = OptimizeResult(fun=e_list[-1], x=trajectory[-1], nit=nit, nfev=nfev, fun_list=np.array(e_list), nfev_list=np.array(nfev_list), success=True)
+    if ret_traj:
+        res["trajectory"] = np.array(trajectory)
+    return res

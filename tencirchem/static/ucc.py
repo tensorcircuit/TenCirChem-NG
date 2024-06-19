@@ -157,7 +157,7 @@ class UCC:
 
     def __init__(
         self,
-        mol: Mole,
+        mol: Union[Mole, RHF],
         init_method="mp2",
         active_space=None,
         mo_coeff=None,
@@ -173,8 +173,8 @@ class UCC:
 
         Parameters
         ----------
-        mol: Mole
-            The molecule as PySCF ``Mole`` object.
+        mol: Mole or RHF
+            The molecule as PySCF ``Mole`` object or the PySCF ``RHF`` object
         init_method: str, optional
             How to determine the initial amplitude guess. Accepts ``"mp2"`` (default), ``"ccsd"``, ``"fe"``
             and ``"zeros"``.
@@ -191,6 +191,7 @@ class UCC:
             The engine to run the calculation. See :ref:`advanced:Engines` for details.
         run_hf: bool, optional
             Whether run HF for molecule orbitals. Defaults to ``True``.
+            The argument has no effect if ``mol`` is a ``RHF`` object.
         run_mp2: bool, optional
             Whether run MP2 for initial guess and energy reference. Defaults to ``True``.
         run_ccsd: bool, optional
@@ -207,10 +208,21 @@ class UCC:
         # process mol
         if isinstance(mol, _Molecule):
             self.mol = mol
-        else:
+            self.mol.verbose = 0
+            self.hf = None
+        elif isinstance(mol, Mole):
             # to set verbose = 0
             self.mol = mol.copy()
             # be cautious when modifying mol. Custom mols are common in practice
+            self.mol.verbose = 0
+            self.hf = None
+        elif isinstance(mol, RHF):
+            self.hf = mol
+            self.mol = self.hf.mol
+            mol = self.mol
+        else:
+            raise TypeError(f"Unknown input time {type(mol)}")
+
         if active_space is None:
             active_space = (mol.nelectron, int(mol.nao))
 
@@ -240,11 +252,13 @@ class UCC:
 
         # classical quantum chemistry
         # hf
-        self.mol.verbose = 0
-        self.hf = RHF(self.mol)
-        # avoid serialization warnings for `_Molecule`
-        self.hf.chkfile = None
-        if run_hf:
+        if self.hf is not None:
+            self.e_hf = self.hf.e_tot
+            self.hf.mo_coeff = canonical_mo_coeff(self.hf.mo_coeff)
+        elif run_hf:
+            self.hf = RHF(self.mol)
+            # avoid serialization warnings for `_Molecule`
+            self.hf.chkfile = None
             # run this even when ``mo_coeff is not None`` because MP2 and CCSD
             # reference energy might be desired
             self.e_hf = self.hf.kernel(dump_chk=False)
@@ -252,6 +266,7 @@ class UCC:
         else:
             self.e_hf = None
             # otherwise, can't run casci.get_h2eff() based on HF
+            self.hf = RHF(self.mol)
             self.hf._eri = mol.intor("int2e", aosym="s8")
             if mo_coeff is None:
                 raise ValueError("Must provide MO coefficient if HF is skipped")
@@ -507,6 +522,9 @@ class UCC:
         array([0, 0, 1, 0], dtype=uint64)
         """
         return get_ci_strings(self.n_qubits, self.n_elec, self.hcb, strs2addr=strs2addr)
+
+    # since there's ci_vector method
+    ci_strings = get_ci_strings
 
     def get_addr(self, bitstring: str) -> int:
         """
