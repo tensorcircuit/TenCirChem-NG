@@ -21,12 +21,12 @@ from tencirchem.static.ci_utils import get_ci_strings, get_addr, get_init_civect
 logger = logging.getLogger(__name__)
 
 
-def get_fket_permutation(f_idx, n_qubits, n_elec, ci_strings, strs2addr, hcb):
+def get_fket_permutation(f_idx, n_qubits, n_elec_s, ci_strings, strs2addr, hcb):
     mask = 0
     for i in f_idx:
         mask += 1 << i
     excitation = ci_strings ^ mask
-    return get_addr(excitation, n_qubits, n_elec, strs2addr, hcb)
+    return get_addr(excitation, n_qubits, n_elec_s, strs2addr, hcb)
 
 
 def get_fket_phase(f_idx, ci_strings):
@@ -88,11 +88,11 @@ def get_fermion_phase(f_idx, n_qubits, ci_strings):
     return sign * np.sign(parity - 0.5).astype(np.int8)
 
 
-def get_operators(n_qubits, n_elec, strs2addr, f_idx, ci_strings, hcb):
+def get_operators(n_qubits, n_elec_s, strs2addr, f_idx, ci_strings, hcb):
     if len(set(f_idx)) != len(f_idx):
         raise ValueError(f"Excitation {f_idx} not supported")
     xp = get_xp(tc.backend)
-    fket_permutation = get_fket_permutation(f_idx, n_qubits, n_elec, ci_strings, strs2addr, hcb)
+    fket_permutation = get_fket_permutation(f_idx, n_qubits, n_elec_s, ci_strings, strs2addr, hcb)
     fket_phase = xp.zeros(len(ci_strings))
     positive, negative = get_fket_phase(f_idx, ci_strings)
     fket_phase -= positive
@@ -111,14 +111,14 @@ CI_OPERATOR_CACHE = {}
 
 
 @partial(jit, static_argnums=[0, 1, 2, 3])
-def get_operator_tensors(n_qubits, n_elec, ex_ops, hcb=False):
+def get_operator_tensors(n_qubits, n_elec_s, ex_ops, hcb=False):
     xp = get_xp(tc.backend)
-    batch_key = (xp, tc.rdtypestr, n_qubits, n_elec, ex_ops, hcb)
+    batch_key = (xp, tc.rdtypestr, n_qubits, n_elec_s, ex_ops, hcb)
     is_jax_backend = tc.backend.name == "jax"
     if not is_jax_backend and batch_key in CI_OPERATOR_BATCH_CACHE:
         return CI_OPERATOR_BATCH_CACHE[batch_key]
 
-    ci_strings, strs2addr = get_ci_strings(n_qubits, n_elec, hcb, strs2addr=True)
+    ci_strings, strs2addr = get_ci_strings(n_qubits, n_elec_s, hcb, strs2addr=True)
 
     xp = get_xp(tc.backend)
     fket_permutation_tensor = xp.zeros((len(ex_ops), len(ci_strings)), dtype=get_uint_type())
@@ -127,12 +127,12 @@ def get_operator_tensors(n_qubits, n_elec, ex_ops, hcb=False):
     for i, f_idx in enumerate(ex_ops):
         if 64 < len(ex_ops):
             logger.info((i, f_idx))
-        op_key = (xp, tc.rdtypestr, n_qubits, n_elec, f_idx, hcb)
+        op_key = (xp, tc.rdtypestr, n_qubits, n_elec_s, f_idx, hcb)
         if not is_jax_backend and op_key in CI_OPERATOR_CACHE:
             fket_permutation, fket_phase, f2ket_phase = CI_OPERATOR_CACHE[op_key]
         else:
             fket_permutation, fket_phase, f2ket_phase = get_operators(
-                n_qubits, n_elec, strs2addr, f_idx, ci_strings, hcb
+                n_qubits, n_elec_s, strs2addr, f_idx, ci_strings, hcb
             )
             if not is_jax_backend:
                 CI_OPERATOR_CACHE[op_key] = fket_permutation, fket_phase, f2ket_phase
@@ -178,12 +178,12 @@ def evolve_civector_by_tensor(
 
 
 @partial(jit, static_argnums=[1, 2, 3, 4, 5])
-def get_civector(params, n_qubits, n_elec, ex_ops, param_ids, hcb=False, init_state=None):
+def get_civector(params, n_qubits, n_elec_s, ex_ops, param_ids, hcb=False, init_state=None):
     if tc.backend.name == "jax":
         logger.info(f"Entering `get_civector`. n_qubit: {n_qubits}")
 
     ci_strings, fket_permutation_tensor, fket_phase_tensor, f2ket_phase_tensor = get_operator_tensors(
-        n_qubits, n_elec, ex_ops, hcb
+        n_qubits, n_elec_s, ex_ops, hcb
     )
     theta_sin, theta_1mcos = get_theta_tensors(params, param_ids)
 
@@ -199,13 +199,13 @@ def get_civector(params, n_qubits, n_elec, ex_ops, param_ids, hcb=False, init_st
 
 
 def get_energy_and_grad_civector(
-    params, hamiltonian, n_qubits, n_elec, ex_ops: Tuple, param_ids: Tuple, hcb: bool = False, init_state=None
+    params, hamiltonian, n_qubits, n_elec_s, ex_ops: Tuple, param_ids: Tuple, hcb: bool = False, init_state=None
 ):
-    ket = get_civector(params, n_qubits, n_elec, ex_ops, param_ids, hcb, init_state)
+    ket = get_civector(params, n_qubits, n_elec_s, ex_ops, param_ids, hcb, init_state)
     bra = apply_op(hamiltonian, ket)
     energy = bra @ ket
     # already cached
-    op_tensors = get_operator_tensors(n_qubits, n_elec, ex_ops, hcb=hcb)
+    op_tensors = get_operator_tensors(n_qubits, n_elec_s, ex_ops, hcb=hcb)
     theta_tensors = get_theta_tensors(params, param_ids)
     op_tensors = list(op_tensors) + list(theta_tensors)
     gradients_beforesum = _get_gradients_civector(bra, ket, *op_tensors[1:])
@@ -251,12 +251,12 @@ def evolve_excitation_nocache(civector, fket_permutation, fket_phase, f2ket_phas
 
 
 @partial(jit, static_argnums=[1, 2, 3, 4, 5])
-def get_civector_nocache(params, n_qubits, n_elec, ex_ops, param_ids, hcb=False, init_state=None):
+def get_civector_nocache(params, n_qubits, n_elec_s, ex_ops, param_ids, hcb=False, init_state=None):
     if tc.backend.name == "jax":
         logger.info(f"Entering `get_civector_nocache`. n_qubit: {n_qubits}")
 
     theta_sin_tensor, theta_1mcos_tensor = get_theta_tensors(params, param_ids)
-    ci_strings, strs2addr = get_ci_strings(n_qubits, n_elec, hcb, strs2addr=True)
+    ci_strings, strs2addr = get_ci_strings(n_qubits, n_elec_s, hcb, strs2addr=True)
 
     if init_state is None:
         civector = get_init_civector(len(ci_strings))
@@ -264,7 +264,7 @@ def get_civector_nocache(params, n_qubits, n_elec, ex_ops, param_ids, hcb=False,
         civector = tc.backend.convert_to_tensor(init_state)
 
     for theta_sin, theta_1mcos, f_idx in zip(theta_sin_tensor, theta_1mcos_tensor, ex_ops):
-        fket_permutation, fket_phase, f2ket_phase = get_operators(n_qubits, n_elec, strs2addr, f_idx, ci_strings, hcb)
+        fket_permutation, fket_phase, f2ket_phase = get_operators(n_qubits, n_elec_s, strs2addr, f_idx, ci_strings, hcb)
         civector = evolve_excitation_nocache(
             civector, fket_permutation, fket_phase, f2ket_phase, theta_1mcos, theta_sin
         )
@@ -273,13 +273,13 @@ def get_civector_nocache(params, n_qubits, n_elec, ex_ops, param_ids, hcb=False,
 
 
 def get_energy_and_grad_civector_nocache(
-    params, hamiltonian, n_qubits, n_elec, ex_ops: Tuple, param_ids: Tuple, hcb: bool = False, init_state=None
+    params, hamiltonian, n_qubits, n_elec_s, ex_ops: Tuple, param_ids: Tuple, hcb: bool = False, init_state=None
 ):
-    ket = get_civector_nocache(params, n_qubits, n_elec, ex_ops, param_ids, hcb, init_state)
+    ket = get_civector_nocache(params, n_qubits, n_elec_s, ex_ops, param_ids, hcb, init_state)
     bra = apply_op(hamiltonian, ket)
     energy = bra @ ket
 
-    gradients_beforesum = _get_gradients_civector_nocache(bra, ket, params, n_qubits, n_elec, ex_ops, param_ids, hcb)
+    gradients_beforesum = _get_gradients_civector_nocache(bra, ket, params, n_qubits, n_elec_s, ex_ops, param_ids, hcb)
     gradients_beforesum = tc.backend.numpy(gradients_beforesum)
 
     gradients = np.zeros(params.shape)
@@ -290,13 +290,13 @@ def get_energy_and_grad_civector_nocache(
 
 
 @partial(jit, static_argnums=[3, 4, 5, 6, 7])
-def _get_gradients_civector_nocache(bra, ket, params, n_qubits, n_elec, ex_ops, param_ids, hcb):
-    ci_strings, strs2addr = get_ci_strings(n_qubits, n_elec, hcb, True)
+def _get_gradients_civector_nocache(bra, ket, params, n_qubits, n_elec_s, ex_ops, param_ids, hcb):
+    ci_strings, strs2addr = get_ci_strings(n_qubits, n_elec_s, hcb, True)
     theta_sin_tensor, theta_1mcos_tensor = get_theta_tensors(params, param_ids)
 
     gradients_beforesum = []
     for theta_sin, theta_1mcos, f_idx in reversed(list(zip(theta_sin_tensor, theta_1mcos_tensor, ex_ops))):
-        fket_permutation, fket_phase, f2ket_phase = get_operators(n_qubits, n_elec, strs2addr, f_idx, ci_strings, hcb)
+        fket_permutation, fket_phase, f2ket_phase = get_operators(n_qubits, n_elec_s, strs2addr, f_idx, ci_strings, hcb)
         bra = evolve_excitation_nocache(bra, fket_permutation, fket_phase, f2ket_phase, theta_1mcos, -theta_sin)
         ket = evolve_excitation_nocache(ket, fket_permutation, fket_phase, f2ket_phase, theta_1mcos, -theta_sin)
         fket = ket[fket_permutation] * fket_phase
@@ -308,12 +308,12 @@ def _get_gradients_civector_nocache(bra, ket, params, n_qubits, n_elec, ex_ops, 
     return gradients_beforesum
 
 
-def apply_excitation_civector(civector, n_qubits, n_elec, f_idx, hcb):
-    _, fket_permutation, fket_phase, _ = get_operator_tensors(n_qubits, n_elec, ex_ops=(f_idx,), hcb=hcb)
+def apply_excitation_civector(civector, n_qubits, n_elec_s, f_idx, hcb):
+    _, fket_permutation, fket_phase, _ = get_operator_tensors(n_qubits, n_elec_s, ex_ops=(f_idx,), hcb=hcb)
     return civector[fket_permutation[0]] * fket_phase[0]
 
 
-def apply_excitation_civector_nocache(civector, n_qubits, n_elec, f_idx, hcb):
-    ci_strings, strs2addr = get_ci_strings(n_qubits, n_elec, hcb, strs2addr=True)
-    fket_permutation, fket_phase, _ = get_operators(n_qubits, n_elec, strs2addr, f_idx, ci_strings, hcb)
+def apply_excitation_civector_nocache(civector, n_qubits, n_elec_s, f_idx, hcb):
+    ci_strings, strs2addr = get_ci_strings(n_qubits, n_elec_s, hcb, strs2addr=True)
+    fket_permutation, fket_phase, _ = get_operators(n_qubits, n_elec_s, strs2addr, f_idx, ci_strings, hcb)
     return civector[fket_permutation] * fket_phase

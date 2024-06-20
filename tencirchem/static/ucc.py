@@ -18,6 +18,8 @@ import pandas as pd
 from openfermion import jordan_wigner, FermionOperator, QubitOperator
 from pyscf.gto.mole import Mole
 from pyscf.scf import RHF
+from pyscf.scf.hf import RHF
+from pyscf.scf.rohf import ROHF
 from pyscf.cc.addons import spatial2spin
 from pyscf.mcscf import CASCI
 from pyscf import fci
@@ -58,7 +60,7 @@ class UCC:
 
     @classmethod
     def from_integral(
-        cls, int1e: np.ndarray, int2e: np.ndarray, n_elec: int, e_core: float = 0, ovlp: np.ndarray = None, **kwargs
+        cls, int1e: np.ndarray, int2e: np.ndarray, n_elec: Union[int, Tuple[int, int]], e_core: float = 0, ovlp: np.ndarray = None, **kwargs
     ):
         """
         Construct UCC classes from electron integrals.
@@ -69,8 +71,8 @@ class UCC:
             One-body integral in spatial orbital.
         int2e: np.ndarray
             Two-body integral, in spatial orbital, chemists' notation, and without considering symmetry.
-        n_elec: int
-            The number of electrons
+        n_elec: int or tuple
+            The number of electrons, or numbers of alpha/beta electrons
         e_core: float, optional
             The nuclear energy or core energy if active space approximation is involved.
             Defaults to 0.
@@ -209,15 +211,15 @@ class UCC:
         if isinstance(mol, _Molecule):
             self.mol = mol
             self.mol.verbose = 0
-            self.hf = None
+            self.hf: RHF = None
         elif isinstance(mol, Mole):
             # to set verbose = 0
             self.mol = mol.copy()
             # be cautious when modifying mol. Custom mols are common in practice
             self.mol.verbose = 0
-            self.hf = None
+            self.hf: RHF = None
         elif isinstance(mol, RHF):
-            self.hf = mol
+            self.hf: RHF = mol
             self.mol = self.hf.mol
             mol = self.mol
         else:
@@ -227,6 +229,9 @@ class UCC:
             active_space = (mol.nelectron, int(mol.nao))
 
         self.hcb = hcb
+        self.spin = self.mol.spin
+        if hcb:
+            assert self.spin == 0
         self.n_qubits = 2 * active_space[1]
         if hcb:
             self.n_qubits //= 2
@@ -235,7 +240,8 @@ class UCC:
         self.active_space = active_space
         self.n_elec = active_space[0]
         self.active = active_space[1]
-        self.inactive_occ = mol.nelectron // 2 - active_space[0] // 2
+        self.inactive_occ = (mol.nelectron - active_space[0]) // 2
+        assert (mol.nelectron - active_space[0]) % 2 == 0
         self.inactive_vir = mol.nao - active_space[1] - self.inactive_occ
         frozen_idx = list(range(self.inactive_occ)) + list(range(mol.nao - self.inactive_vir, mol.nao))
 
@@ -256,7 +262,10 @@ class UCC:
             self.e_hf = self.hf.e_tot
             self.hf.mo_coeff = canonical_mo_coeff(self.hf.mo_coeff)
         elif run_hf:
-            self.hf = RHF(self.mol)
+            if self.spin == 0:
+                self.hf = RHF(self.mol)
+            else:
+                self.hf = ROHF(self.mol)
             # avoid serialization warnings for `_Molecule`
             self.hf.chkfile = None
             # run this even when ``mo_coeff is not None`` because MP2 and CCSD
@@ -272,7 +281,7 @@ class UCC:
                 raise ValueError("Must provide MO coefficient if HF is skipped")
 
         # mp2
-        if run_mp2:
+        if run_mp2 and not isinstance(self.hf, ROHF):
             mp2 = self.hf.MP2()
             if frozen_idx:
                 mp2.frozen = frozen_idx
@@ -282,10 +291,10 @@ class UCC:
             self.e_mp2 = None
             mp2_t2 = None
             if init_method is not None and init_method.lower() == "mp2":
-                raise ValueError("Must run MP2 to use MP2 as the initial guess method")
+                raise ValueError("Must run RHF and MP2 to use MP2 as the initial guess method")
 
         # ccsd
-        if run_ccsd:
+        if run_ccsd and not isinstance(self.hf, ROHF):
             ccsd = self.hf.CCSD()
             if frozen_idx:
                 ccsd.frozen = frozen_idx
@@ -325,6 +334,7 @@ class UCC:
         # initial guess
         self.t1 = np.zeros([self.no, self.nv])
         self.t2 = np.zeros([self.no, self.no, self.nv, self.nv])
+        self.init_method = init_method
         if init_method is None or init_method in ["zeros", "zero"]:
             pass
         elif init_method.lower() == "ccsd":
@@ -489,7 +499,7 @@ class UCC:
         if engine is None:
             engine = self.engine
         civector = get_civector(
-            params, self.n_qubits, self.n_elec, self.ex_ops, self.param_ids, self.hcb, self.init_state, engine
+            params, self.n_qubits, self.n_elec_s, self.ex_ops, self.param_ids, self.hcb, self.init_state, engine
         )
         return civector
 
@@ -617,7 +627,7 @@ class UCC:
                     self.int1e, self.int2e, e_core = get_integral_from_hf(self.hf, self.active_space)
                 else:
                     e_core = self.e_core
-                hamiltonian = get_h_from_integral(self.int1e, self.int2e, self.n_elec, self.hcb, htype)
+                hamiltonian = get_h_from_integral(self.int1e, self.int2e, self.n_elec_s, self.hcb, htype)
                 self.hamiltonian_lib[htype] = hamiltonian
             else:
                 e_core = self.e_core
@@ -663,7 +673,7 @@ class UCC:
             params,
             hamiltonian,
             self.n_qubits,
-            self.n_elec,
+            self.n_elec_s,
             self.ex_ops,
             self.param_ids,
             self.hcb,
@@ -715,7 +725,7 @@ class UCC:
             params,
             hamiltonian,
             self.n_qubits,
-            self.n_elec,
+            self.n_elec_s,
             self.ex_ops,
             self.param_ids,
             self.hcb,
@@ -802,7 +812,7 @@ class UCC:
         assert not self.hcb
         civector = self._statevector_to_civector(statevector).astype(np.float64)
 
-        rdm1_cas = fci.direct_spin1.make_rdm1(civector, self.n_qubits // 2, self.n_elec)
+        rdm1_cas = fci.direct_spin1.make_rdm1(civector, self.n_qubits // 2, self.n_elec_s)
 
         rdm1 = self.embed_rdm_cas(rdm1_cas)
 
@@ -860,7 +870,7 @@ class UCC:
         assert not self.hcb
         civector = self._statevector_to_civector(statevector).astype(np.float64)
 
-        rdm2_cas = fci.direct_spin1.make_rdm12(civector.astype(np.float64), self.n_qubits // 2, self.n_elec)[1]
+        rdm2_cas = fci.direct_spin1.make_rdm12(civector.astype(np.float64), self.n_qubits // 2, self.n_elec_s)[1]
 
         rdm2 = self.embed_rdm_cas(rdm2_cas)
 
@@ -1187,7 +1197,7 @@ class UCC:
         data_list = []
 
         for i, ex_op in zip(param_ids, self.ex_ops):
-            bitstring = get_ex_bitstring(self.n_qubits, self.n_elec, ex_op, self.hcb)
+            bitstring = get_ex_bitstring(self.n_qubits, self.n_elec_s, ex_op, self.hcb)
             data_list.append((ex_op, bitstring, params[i], self.init_guess[i]))
         return pd.DataFrame(data_list, columns=columns)
 
@@ -1255,6 +1265,11 @@ class UCC:
             print(self.opt_res)
 
     @property
+    def n_elec_s(self):
+        """The number of electrons for alpha and beta spin"""
+        return (self.n_elec + self.spin) // 2, (self.n_elec - self.spin) // 2
+
+    @property
     def no(self) -> int:
         """The number of occupied orbitals."""
         return self.n_elec // 2
@@ -1303,7 +1318,8 @@ class UCC:
         The size of the CI vector.
         """
         if not self.hcb:
-            return round(comb(self.n_qubits // 2, self.n_elec // 2)) ** 2
+            na, nb = self.n_elec
+            return round(comb(self.n_qubits // 2, na)) * round(comb(self.n_qubits // 2, nb))
         else:
             return round(comb(self.n_qubits, self.n_elec // 2))
 

@@ -9,6 +9,7 @@ from typing import Tuple, List, Union
 import numpy as np
 from pyscf.gto.mole import Mole
 from pyscf.scf import RHF
+from pyscf.scf import ROHF
 
 from tencirchem.static.ucc import UCC
 from tencirchem.constants import DISCARD_EPS
@@ -65,12 +66,14 @@ class UCCSD(UCC):
         pick_ex2: bool, optional
             Whether screen out two body excitations based on the inital guess amplitude.
             Defaults to True, which means excitations with amplitude less than ``epsilon`` (see below) are discarded.
+            The argument will be set to ``False`` if initial guesses are set to zero.
         epsilon: float, optional
             The threshold to discard two body excitations. Defaults to 1e-12.
         sort_ex2: bool, optional
             Whether sort two-body excitations in the ansatz based on the initial guess amplitude.
             Large excitations come first. Defaults to True.
             Note this could lead to different ansatz for the same molecule at different geometry.
+            The argument will be set to ``False`` if initial guesses are set to zero.
         engine: str, optional
             The engine to run the calculation. See :ref:`advanced:Engines` for details.
         run_hf: bool, optional
@@ -99,8 +102,11 @@ class UCCSD(UCC):
             run_ccsd=run_ccsd,
             run_fci=run_fci,
         )
-        self.pick_ex2 = pick_ex2
-        self.sort_ex2 = sort_ex2
+        if self.init_method == "zeros":
+            self.pick_ex2 = self.sort_ex2 = False
+        else:
+            self.pick_ex2 = pick_ex2
+            self.sort_ex2 = sort_ex2
         # screen out excitation operators based on t2 amplitude
         self.t2_discard_eps = epsilon
         self.ex_ops, self.param_ids, self.init_guess = self.get_ex_ops(self.t1, self.t2)
@@ -172,6 +178,7 @@ class UCCSD(UCC):
                 continue
             ret_ex_ops.append(ex_op)
             ret_param_ids.append(param_id)
+        assert len(ret_ex_ops) != 0
         unique_ids = np.unique(ret_param_ids)
         ret_init_guess = np.array(init_guess)[unique_ids]
         id_mapping = {old: new for new, old in enumerate(unique_ids)}
@@ -184,3 +191,83 @@ class UCCSD(UCC):
         Returns UCCSD energy
         """
         return self.energy()
+
+
+class ROUCCSD(UCC):
+    def __init__(
+        self,
+        mol: Union[Mole, ROHF],
+        active_space: Tuple[int, int] = None,
+        mo_coeff: np.ndarray = None,
+        engine: str = "civector",
+        run_hf: bool = True,
+        run_fci: bool = True,
+    ):
+        init_method: str = "zeros"
+        # ROHF does not support mp2 and ccsd
+        run_mp2: bool = False
+        run_ccsd: bool = False
+        if not engine.startswith("civector"):
+            raise ValueError(f"Only support civector engine for now, get {engine}")
+        super().__init__(mol, init_method, active_space, mo_coeff, engine=engine, run_hf=run_hf, run_mp2=run_mp2, run_ccsd=run_ccsd, run_fci=run_fci)
+        no = np.sum(self.hf.mo_occ == 2) - self.inactive_occ
+        ns = np.sum(self.hf.mo_occ == 1)
+        nv = np.sum(self.hf.mo_occ == 0) - self.inactive_vir
+        assert no + ns + nv == self.active_space[1]
+        # assuming single electrons in alpha
+        noa = no + ns
+        nva = nv
+        nob = no
+        nvb = ns + nv
+
+        def alpha_o(_i):
+            return self.active_space[1] + _i
+
+        def alpha_v(_i):
+            return self.active_space[1] + noa + _i
+
+        def beta_o(_i):
+            return _i
+
+        def beta_v(_i):
+            return nob + _i
+
+        # single excitations
+        self.ex_ops = []
+        for i in range(noa):
+            for a in range(nva):
+                # alpha to alpha
+                ex_op_a = (alpha_v(a), alpha_o(i))
+                self.ex_ops.append(ex_op_a)
+        for i in range(nob):
+            for a in range(nvb):
+                # beta to beta
+                ex_op_b = (beta_v(a), beta_o(i))
+                self.ex_ops.append(ex_op_b)
+
+        # double excitations
+        # 2 alphas
+        for i in range(noa):
+            for j in range(i):
+                for a in range(nva):
+                    for b in range(a):
+                        ex_op_aa = (alpha_v(b), alpha_v(a), alpha_o(i), alpha_o(j))
+                        self.ex_ops.append(ex_op_aa)
+        # 2 betas
+        for i in range(nob):
+            for j in range(i):
+                for a in range(nvb):
+                    for b in range(a):
+                        ex_op_bb = (beta_v(b), beta_v(a), beta_o(i), beta_o(j))
+                        self.ex_ops.append(ex_op_bb)
+
+        # 1 alpha + 1 beta
+        for i in range(noa):
+            for j in range(nob):
+                for a in range(nva):
+                    for b in range(nvb):
+                        ex_op_ab = (beta_v(b), alpha_v(a), alpha_o(i), beta_o(j))
+                        self.ex_ops.append(ex_op_ab)
+
+        self.param_ids = list(range(len(self.ex_ops)))
+        self.init_guess = np.zeros_like(self.param_ids)

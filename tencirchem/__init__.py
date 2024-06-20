@@ -38,7 +38,7 @@ set_dtype("complex128")
 from pyscf import M
 
 from tencirchem.static.ucc import UCC
-from tencirchem.static.uccsd import UCCSD
+from tencirchem.static.uccsd import UCCSD, ROUCCSD
 from tencirchem.static.kupccgsd import KUPCCGSD
 from tencirchem.static.puccd import PUCCD
 from tencirchem.static.hea import HEA, parity, binary, get_noise_conf

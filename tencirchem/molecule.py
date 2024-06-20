@@ -3,6 +3,7 @@
 #  This file is distributed under ACADEMIC PUBLIC LICENSE
 #  and WITHOUT ANY WARRANTY. See the LICENSE file for details.
 
+from typing import Union, Tuple
 from itertools import product, repeat
 
 import numpy as np
@@ -19,7 +20,7 @@ class _Molecule(Mole):
         int1e, int2e = random_integral(nao, seed)
         return cls(int1e, int2e, n_elec)
 
-    def __init__(self, int1e, int2e, n_elec: int, e_nuc: float = 0, ovlp: np.ndarray = None):
+    def __init__(self, int1e, int2e, n_elec: Union[int, Tuple[int, int]], e_nuc: float = 0, ovlp: np.ndarray = None):
         super().__init__()
 
         self.nao = len(int1e)

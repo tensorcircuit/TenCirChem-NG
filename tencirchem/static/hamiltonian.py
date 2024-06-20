@@ -183,14 +183,15 @@ def get_h_fcifunc_hcb_from_integral(int1e, int2e, n_elec):
     return fci_func
 
 
-def get_h_from_integral(int1e, int2e, n_elec, hcb: bool, htype: str):
+def get_h_from_integral(int1e, int2e, n_elec_s, hcb: bool, htype: str):
     if htype == "sparse":
         hamiltonian = get_h_sparse_from_integral(int1e, int2e, hcb=hcb, do_log=True)
     else:
         assert htype.lower() == "fcifunc"
         if not hcb:
-            hamiltonian = get_h_fcifunc_from_integral(int1e, int2e, n_elec)
+            hamiltonian = get_h_fcifunc_from_integral(int1e, int2e, n_elec_s)
         else:
+            n_elec = sum(n_elec_s)
             hamiltonian = get_h_fcifunc_hcb_from_integral(int1e, int2e, n_elec)
     return hamiltonian
 
@@ -206,8 +207,10 @@ def get_h_from_hf(hf: RHF, active_space: Tuple = None, hcb: bool = False, htype=
         n_elec = hf.mol.nelectron
     else:
         n_elec = active_space[0]
+    assert n_elec % 2 == 0
+    n_elec_s = [n_elec // 2, n_elec // 2]
 
-    hamiltonian = get_h_from_integral(int1e, int2e, n_elec, hcb, htype)
+    hamiltonian = get_h_from_integral(int1e, int2e, n_elec_s, hcb, htype)
 
     if active_space is None:
         return hamiltonian
