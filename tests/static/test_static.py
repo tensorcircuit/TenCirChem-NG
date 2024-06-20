@@ -1,10 +1,10 @@
 import numpy as np
-from pyscf import fci, M
+from pyscf import fci
 from pyscf.scf import RHF
 from pyscf.mcscf import CASCI
 import pytest
 
-from tencirchem import UCCSD, KUPCCGSD, ROUCCSD
+from tencirchem import UCCSD, KUPCCGSD
 from tencirchem.static.hamiltonian import get_integral_from_hf, random_integral
 from tencirchem.molecule import _random, h4, h_chain, c4h4
 from tencirchem.utils.misc import canonical_mo_coeff
@@ -134,13 +134,3 @@ def test_mf_input():
     e = ucc.kernel()
     np.testing.assert_allclose(ucc.e_hf, -153.603405, atol=1e-4)
     np.testing.assert_allclose(e, ucc.e_fci, atol=2e-2)
-
-
-@pytest.mark.parametrize("engine", ["civector", "civector-large"])
-def test_open_shell(engine):
-    m = M(atom=[["O", 0, 0, 0], ["O", 0, 0, 1]], spin=2)
-    active_space = (8, 6)
-
-    uccsd = ROUCCSD(m, active_space=active_space, engine=engine)
-    uccsd.kernel()
-    np.testing.assert_allclose(uccsd.e_ucc, uccsd.e_fci, atol=1e-3)

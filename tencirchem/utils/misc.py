@@ -131,3 +131,13 @@ def ex_op_to_fop(ex_op, with_conjugation=False):
 
 def get_dense_operator(basis: List[BasisSet], terms: List[Op]):
     return Mpo(Model(basis, []), terms).todense()
+
+
+def unpack_nelec(n_elec_s):
+    if isinstance(n_elec_s, tuple):
+        na, nb = n_elec_s
+    elif isinstance(n_elec_s, int):
+        na, nb = n_elec_s // 2, n_elec_s // 2
+    else:
+        raise TypeError(f"Unknown electron number specification: {n_elec_s}")
+    return na, nb

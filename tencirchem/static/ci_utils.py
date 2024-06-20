@@ -11,6 +11,7 @@ from pyscf.fci import cistring
 import tensorcircuit as tc
 
 from tencirchem.utils.backend import jit, tensor_set_elem, get_xp, get_uint_type
+from tencirchem.utils.misc import unpack_nelec
 
 
 def get_ci_strings(n_qubits, n_elec_s, hcb, strs2addr=False):
@@ -18,7 +19,7 @@ def get_ci_strings(n_qubits, n_elec_s, hcb, strs2addr=False):
     uint_type = get_uint_type()
     if 2**n_qubits > np.iinfo(uint_type).max:
         raise ValueError(f"Too many qubits: {n_qubits}, try using complex128 datatype")
-    na, nb = n_elec_s
+    na, nb = unpack_nelec(n_elec_s)
     if not hcb:
         beta = cistring.make_strings(range(n_qubits // 2), nb)
         beta = xp.array(beta, dtype=uint_type)

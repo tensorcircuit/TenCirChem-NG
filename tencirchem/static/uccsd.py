@@ -207,12 +207,21 @@ class ROUCCSD(UCC):
         # ROHF does not support mp2 and ccsd
         run_mp2: bool = False
         run_ccsd: bool = False
-        if not engine.startswith("civector"):
-            raise ValueError(f"Only support civector engine for now, get {engine}")
-        super().__init__(mol, init_method, active_space, mo_coeff, engine=engine, run_hf=run_hf, run_mp2=run_mp2, run_ccsd=run_ccsd, run_fci=run_fci)
-        no = np.sum(self.hf.mo_occ == 2) - self.inactive_occ
-        ns = np.sum(self.hf.mo_occ == 1)
-        nv = np.sum(self.hf.mo_occ == 0) - self.inactive_vir
+
+        super().__init__(
+            mol,
+            init_method,
+            active_space,
+            mo_coeff,
+            engine=engine,
+            run_hf=run_hf,
+            run_mp2=run_mp2,
+            run_ccsd=run_ccsd,
+            run_fci=run_fci,
+        )
+        no = int(np.sum(self.hf.mo_occ == 2)) - self.inactive_occ
+        ns = int(np.sum(self.hf.mo_occ == 1))
+        nv = int(np.sum(self.hf.mo_occ == 0)) - self.inactive_vir
         assert no + ns + nv == self.active_space[1]
         # assuming single electrons in alpha
         noa = no + ns

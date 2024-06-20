@@ -11,6 +11,7 @@ import logging
 import tensorcircuit as tc
 
 from tencirchem.utils.backend import jit, value_and_grad
+from tencirchem.utils.misc import unpack_nelec
 from tencirchem.static.hamiltonian import apply_op
 from tencirchem.static.ci_utils import get_ci_strings, civector_to_statevector, statevector_to_civector
 from tencirchem.static.evolve_civector import (
@@ -39,7 +40,7 @@ GETVECTOR_MAP = {
 }
 
 
-def get_ket(params, n_qubits, n_elec, ex_ops, param_ids, hcb, init_state, ci_strings, engine):
+def get_ket(params, n_qubits, n_elec_s, ex_ops, param_ids, hcb, init_state, ci_strings, engine):
     if param_ids is None:
         param_ids = range(len(ex_ops))
     func = GETVECTOR_MAP[engine]
@@ -47,7 +48,7 @@ def get_ket(params, n_qubits, n_elec, ex_ops, param_ids, hcb, init_state, ci_str
     ket = func(
         params,
         n_qubits,
-        n_elec,
+        n_elec_s,
         ex_ops=tuple(ex_ops),
         param_ids=tuple(param_ids),
         hcb=hcb,
@@ -66,9 +67,9 @@ def get_civector(params, n_qubits, n_elec_s, ex_ops, param_ids, hcb, init_state,
     return civector
 
 
-def get_statevector(params, n_qubits, n_elec, ex_ops, param_ids, hcb, init_state, engine):
-    ci_strings = get_ci_strings(n_qubits, n_elec, hcb)
-    ket = get_ket(params, n_qubits, n_elec, ex_ops, param_ids, hcb, init_state, ci_strings, engine)
+def get_statevector(params, n_qubits, n_elec_s, ex_ops, param_ids, hcb, init_state, engine):
+    ci_strings = get_ci_strings(n_qubits, n_elec_s, hcb)
+    ket = get_ket(params, n_qubits, n_elec_s, ex_ops, param_ids, hcb, init_state, ci_strings, engine)
     if engine.startswith("civector") or engine == "pyscf":
         statevector = civector_to_statevector(ket, n_qubits, ci_strings)
     else:
@@ -80,9 +81,6 @@ def get_energy(params, hamiltonian, n_qubits, n_elec_s, ex_ops: Tuple, param_ids
     if param_ids is None:
         param_ids = range(len(ex_ops))
     logger.info(f"Entering `get_energy`")
-    if not engine.startswith("civector"):
-        # temporary. Should remove this after implement open shell for other engines
-        n_elec_s = sum(n_elec_s)
     ci_strings = get_ci_strings(n_qubits, n_elec_s, hcb)
     init_state = translate_init_state(init_state, n_qubits, ci_strings)
     ket = GETVECTOR_MAP[engine](
@@ -124,9 +122,6 @@ def get_energy_and_grad(params, hamiltonian, n_qubits, n_elec_s, ex_ops, param_i
         raise ValueError(f"Engine '{engine}' not supported")
 
     func = ENERGY_AND_GRAD_MAP[engine]
-    if not engine.startswith("civector"):
-        # temporary. Should remove this after implement open shell for other engines
-        n_elec_s = sum(n_elec_s)
     ci_strings = get_ci_strings(n_qubits, n_elec_s, hcb)
     init_state = translate_init_state(init_state, n_qubits, ci_strings)
     return func(params, hamiltonian, n_qubits, n_elec_s, tuple(ex_ops), tuple(param_ids), hcb, init_state)
@@ -142,7 +137,7 @@ APPLY_EXCITATION_MAP = {
 }
 
 
-def apply_excitation(state, n_qubits, n_elec, ex_op, hcb, engine):
+def apply_excitation(state, n_qubits, n_elec_s, ex_op, hcb, engine):
     if engine not in APPLY_EXCITATION_MAP:
         raise ValueError(f"Engine '{engine}' not supported")
 
@@ -151,14 +146,16 @@ def apply_excitation(state, n_qubits, n_elec, ex_op, hcb, engine):
     is_statevector_input = len(state) == (1 << n_qubits)
     is_statevector_engine = engine in ["tensornetwork", "statevector"]
 
+    n_elec_s = unpack_nelec(n_elec_s)
+
     if is_statevector_input and not is_statevector_engine:
-        ci_strings = get_ci_strings(n_qubits, n_elec, hcb)
+        ci_strings = get_ci_strings(n_qubits, n_elec_s, hcb)
         state = statevector_to_civector(state, ci_strings)
     if not is_statevector_input and is_statevector_engine:
-        ci_strings = get_ci_strings(n_qubits, n_elec, hcb)
+        ci_strings = get_ci_strings(n_qubits, n_elec_s, hcb)
         state = civector_to_statevector(state, n_qubits, ci_strings)
     func = APPLY_EXCITATION_MAP[engine]
-    res_state = func(state, n_qubits, n_elec, ex_op, hcb)
+    res_state = func(state, n_qubits, n_elec_s, ex_op, hcb)
     if is_statevector_input and not is_statevector_engine:
         return civector_to_statevector(res_state, n_qubits, ci_strings)
     if not is_statevector_input and is_statevector_engine:

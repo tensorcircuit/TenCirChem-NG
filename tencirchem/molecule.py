@@ -226,17 +226,16 @@ H2CO = formaldehyde = h2co
 def c4h4(cc1, cc2, ch=1.079, basis="sto3g", symmetry=True):
     h_offset = ch / np.sqrt(2)
     atom = [
-        ["C", cc1/2, cc2/2, 0],
-        ["H", cc1/2+h_offset, cc2/2+h_offset, 0],
-        ["C", -cc1/2, cc2/2, 0],
-        ["H", -cc1/2-h_offset, cc2/2+h_offset, 0],
-        ["C", cc1/2, -cc2/2, 0],
-        ["H", cc1/2+h_offset, -cc2/2-h_offset, 0],
-        ["C", -cc1/2, -cc2/2, 0],
-        ["H", -cc1/2-h_offset, -cc2/2-h_offset, 0],
+        ["C", cc1 / 2, cc2 / 2, 0],
+        ["H", cc1 / 2 + h_offset, cc2 / 2 + h_offset, 0],
+        ["C", -cc1 / 2, cc2 / 2, 0],
+        ["H", -cc1 / 2 - h_offset, cc2 / 2 + h_offset, 0],
+        ["C", cc1 / 2, -cc2 / 2, 0],
+        ["H", cc1 / 2 + h_offset, -cc2 / 2 - h_offset, 0],
+        ["C", -cc1 / 2, -cc2 / 2, 0],
+        ["H", -cc1 / 2 - h_offset, -cc2 / 2 - h_offset, 0],
     ]
     return M(atom=atom, basis=basis, symmetry=symmetry)
-
 
 
 def benzene(cc_length=1.39, ch_length=1.09):
@@ -281,7 +280,7 @@ def indene(basis="sto3g"):
         ["H", -0.9706, 2.4991, 0.0001],
         ["H", -0.9208, -2.5055, 0.0001],
         ["H", -3.1012, 1.2122, -0.0002],
-        ["H", -3.0744, -1.2638, - 0.000],
+        ["H", -3.0744, -1.2638, -0.000],
     ]
     return M(atom=atom, basis=basis)
 

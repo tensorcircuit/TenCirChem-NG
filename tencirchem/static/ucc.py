@@ -18,8 +18,9 @@ import pandas as pd
 from openfermion import jordan_wigner, FermionOperator, QubitOperator
 from pyscf.gto.mole import Mole
 from pyscf.scf import RHF
-from pyscf.scf.hf import RHF
-from pyscf.scf.rohf import ROHF
+from pyscf.scf import ROHF
+from pyscf.scf.hf import RHF as RHF_TYPE
+from pyscf.scf.rohf import ROHF as ROHF_TYPE
 from pyscf.cc.addons import spatial2spin
 from pyscf.mcscf import CASCI
 from pyscf import fci
@@ -60,7 +61,13 @@ class UCC:
 
     @classmethod
     def from_integral(
-        cls, int1e: np.ndarray, int2e: np.ndarray, n_elec: Union[int, Tuple[int, int]], e_core: float = 0, ovlp: np.ndarray = None, **kwargs
+        cls,
+        int1e: np.ndarray,
+        int2e: np.ndarray,
+        n_elec: Union[int, Tuple[int, int]],
+        e_core: float = 0,
+        ovlp: np.ndarray = None,
+        **kwargs,
     ):
         """
         Construct UCC classes from electron integrals.
@@ -218,7 +225,7 @@ class UCC:
             # be cautious when modifying mol. Custom mols are common in practice
             self.mol.verbose = 0
             self.hf: RHF = None
-        elif isinstance(mol, RHF):
+        elif isinstance(mol, RHF_TYPE):
             self.hf: RHF = mol
             self.mol = self.hf.mol
             mol = self.mol
@@ -281,7 +288,7 @@ class UCC:
                 raise ValueError("Must provide MO coefficient if HF is skipped")
 
         # mp2
-        if run_mp2 and not isinstance(self.hf, ROHF):
+        if run_mp2 and not isinstance(self.hf, ROHF_TYPE):
             mp2 = self.hf.MP2()
             if frozen_idx:
                 mp2.frozen = frozen_idx
@@ -294,7 +301,7 @@ class UCC:
                 raise ValueError("Must run RHF and MP2 to use MP2 as the initial guess method")
 
         # ccsd
-        if run_ccsd and not isinstance(self.hf, ROHF):
+        if run_ccsd and not isinstance(self.hf, ROHF_TYPE):
             ccsd = self.hf.CCSD()
             if frozen_idx:
                 ccsd.frozen = frozen_idx
@@ -762,7 +769,7 @@ class UCC:
         self._check_engine(engine)
         if engine is None:
             engine = self.engine
-        return apply_excitation(state, self.n_qubits, self.n_elec, ex_op, hcb=self.hcb, engine=engine)
+        return apply_excitation(state, self.n_qubits, self.n_elec_s, ex_op, hcb=self.hcb, engine=engine)
 
     def _statevector_to_civector(self, statevector=None):
         if statevector is None:
@@ -1318,7 +1325,7 @@ class UCC:
         The size of the CI vector.
         """
         if not self.hcb:
-            na, nb = self.n_elec
+            na, nb = self.n_elec_s
             return round(comb(self.n_qubits // 2, na)) * round(comb(self.n_qubits // 2, nb))
         else:
             return round(comb(self.n_qubits, self.n_elec // 2))

@@ -8,6 +8,7 @@
 - `hea_symm.py`: VQE of H4 based on symmetry-preserving hardware-efficient ansatz.
 - `mr_uccsd.py`: Multi-reference UCCSD calculation of the bond dissociation limit of the water molecule.
 - `noisy_circuit.py`: Exemplary noisy circuit simulation based on hardware-efficient ansatz.
+- `open_shell_uccsd.py`: Open shell UCCSD based on ROHF.
 - `print_circuit.py`: Draw UCCSD circuit for H2.
 - `pyrazine_spectra.py`: Absorption spectrum of the pyrazine molecule by variational quantum dynamics (VQD).
 - `pyscf_compatibility.py`: TenCirChem CI vector/reduced density matrices follow the convention of PySCF.

@@ -14,8 +14,9 @@ import tensorcircuit as tc
 
 from tencirchem.static.ci_utils import get_ci_strings, civector_to_statevector
 from tencirchem.utils.backend import jit
-from tencirchem.utils.misc import ex_op_to_fop, reverse_qop_idx
+from tencirchem.utils.misc import ex_op_to_fop, reverse_qop_idx, unpack_nelec
 from tencirchem.utils.circuit import evolve_pauli, multicontrol_ry
+
 
 logger = logging.getLogger(__name__)
 
@@ -78,29 +79,31 @@ def evolve_excitation(circuit: tc.Circuit, f_idx: tuple, qop, theta, hcb: bool, 
     return circuit
 
 
-def get_init_circuit(n_qubits, n_elec, hcb, init_state=None, givens_swap=False):
+def get_init_circuit(n_qubits, n_elec_s, hcb, init_state=None, givens_swap=False):
+    na, nb = unpack_nelec(n_elec_s)
     if init_state is None:
         # prepare HF state
         circuit = tc.Circuit(n_qubits)
         if not hcb:
-            for i in range(n_elec // 2):
+            for i in range(nb):
                 circuit.X(n_qubits - 1 - i)
+            for i in range(na):
                 circuit.X(n_qubits // 2 - 1 - i)
         else:
             if not givens_swap:
-                for i in range(n_elec // 2):
+                for i in range(na):
                     circuit.X(n_qubits - 1 - i)
             else:
-                for i in range(n_elec // 2):
+                for i in range(na):
                     circuit.X(i)
     elif isinstance(init_state, tc.Circuit):
         return init_state
     else:
-        ci_strings = get_ci_strings(n_qubits, n_elec, hcb)
+        ci_strings = get_ci_strings(n_qubits, n_elec_s, hcb)
         statevector = civector_to_statevector(init_state, n_qubits, ci_strings)
         if givens_swap:
             statevector = statevector.reshape([2] * n_qubits)
-            new_idx = list(range(n_qubits - n_elec // 2, n_qubits)) + list(range(n_qubits - n_elec // 2))
+            new_idx = list(range(n_qubits - na, n_qubits)) + list(range(n_qubits - na))
             statevector = statevector.transpose(new_idx).ravel()
         circuit = tc.Circuit(n_qubits, inputs=statevector)
     return circuit

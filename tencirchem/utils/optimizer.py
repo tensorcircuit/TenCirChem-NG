@@ -132,7 +132,15 @@ def soap(fun, x0, args=(), u=0.1, maxfev=2000, callback=None, ret_traj=False, **
 
         nit += 1
 
-    res = OptimizeResult(fun=e_list[-1], x=trajectory[-1], nit=nit, nfev=nfev, fun_list=np.array(e_list), nfev_list=np.array(nfev_list), success=True)
+    res = OptimizeResult(
+        fun=e_list[-1],
+        x=trajectory[-1],
+        nit=nit,
+        nfev=nfev,
+        fun_list=np.array(e_list),
+        nfev_list=np.array(nfev_list),
+        success=True,
+    )
     if ret_traj:
         res["trajectory"] = np.array(trajectory)
     return res

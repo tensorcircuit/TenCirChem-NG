@@ -1,7 +1,8 @@
 import numpy as np
 import pytest
+from pyscf import M
 
-from tencirchem import UCCSD, set_backend
+from tencirchem import UCCSD, ROUCCSD, set_backend
 from tencirchem.molecule import h4
 from tencirchem.static.engine_ucc import apply_excitation
 from tencirchem.static.ci_utils import get_init_civector
@@ -50,7 +51,7 @@ def ref_state():
     set_backend("jax")
     engine = "tensornetwork"
     state = uccsd.civector(params, engine=engine)
-    state = apply_excitation(state, n_qubits=8, n_elec=4, ex_op=(4, 0, 3, 7), hcb=False, engine=engine)
+    state = apply_excitation(state, n_qubits=8, n_elec_s=4, ex_op=(4, 0, 3, 7), hcb=False, engine=engine)
     set_backend("numpy")
     return state
 
@@ -67,7 +68,7 @@ def test_excitation(ref_state, engine, reset_backend):
     else:
         set_backend("numpy")
     state = uccsd.civector(params, engine=engine)
-    state = apply_excitation(state, n_qubits=8, n_elec=4, ex_op=(4, 0, 3, 7), hcb=False, engine=engine)
+    state = apply_excitation(state, n_qubits=8, n_elec_s=4, ex_op=(4, 0, 3, 7), hcb=False, engine=engine)
     np.testing.assert_allclose(state, ref_state, atol=1e-6)
 
 
@@ -101,3 +102,18 @@ def test_gradient_opt(backend_str, engine, init_state, reset_backend):
         uccsd.init_state = get_init_circuit(uccsd.n_qubits, uccsd.n_elec, uccsd.hcb)
     e = uccsd.kernel()
     np.testing.assert_allclose(e, uccsd.e_fci, atol=1e-4)
+
+
+@pytest.mark.parametrize("engine", ["tensornetwork", "statevector", "civector", "civector-large", "pyscf"])
+def test_open_shell(engine, reset_backend):
+    if engine in ["statevector", "tensornetwork"]:
+        set_backend("jax")
+    else:
+        set_backend("numpy")
+
+    m = M(atom=[["O", 0, 0, 0], ["O", 0, 0, 1]], spin=2)
+    active_space = (6, 4)
+
+    uccsd = ROUCCSD(m, active_space=active_space, engine=engine)
+    uccsd.kernel()
+    np.testing.assert_allclose(uccsd.e_ucc, uccsd.e_fci, atol=1e-4)

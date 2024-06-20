@@ -150,7 +150,7 @@ class PUCCD(UCC):
         __doc__ = super().make_rdm1.__doc__
 
         civector = self._statevector_to_civector(statevector)
-        ci_strings = get_ci_strings(self.n_qubits, self.n_elec, self.hcb)
+        ci_strings = get_ci_strings(self.n_qubits, self.n_elec_s, self.hcb)
 
         n_active = self.n_qubits
         rdm1_cas = np.zeros([n_active] * 2)
@@ -169,7 +169,7 @@ class PUCCD(UCC):
         __doc__ = super().make_rdm2.__doc__
 
         civector = self._statevector_to_civector(statevector)
-        ci_strings = get_ci_strings(self.n_qubits, self.n_elec, self.hcb)
+        ci_strings = get_ci_strings(self.n_qubits, self.n_elec_s, self.hcb)
 
         n_active = self.n_qubits
         rdm2_cas = np.zeros([n_active] * 4)
