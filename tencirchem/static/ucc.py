@@ -538,7 +538,7 @@ class UCC:
         >>> uccsd.get_ci_strings(True)[1]  # only one spin sector
         array([0, 0, 1, 0], dtype=uint64)
         """
-        return get_ci_strings(self.n_qubits, self.n_elec, self.hcb, strs2addr=strs2addr)
+        return get_ci_strings(self.n_qubits, self.n_elec_s, self.hcb, strs2addr=strs2addr)
 
     # since there's ci_vector method
     ci_strings = get_ci_strings
@@ -573,7 +573,7 @@ class UCC:
         1
         """
         _, strs2addr = self.get_ci_strings(strs2addr=True)
-        return int(get_addr(int(bitstring, base=2), self.n_qubits, self.n_elec, strs2addr, self.hcb))
+        return int(get_addr(int(bitstring, base=2), self.n_qubits, self.n_elec_s, strs2addr, self.hcb))
 
     def statevector(self, params: Tensor = None, engine: str = None) -> Tensor:
         """
@@ -612,7 +612,7 @@ class UCC:
         if engine is None:
             engine = self.engine
         statevector = get_statevector(
-            params, self.n_qubits, self.n_elec, self.ex_ops, self.param_ids, self.hcb, self.init_state, engine
+            params, self.n_qubits, self.n_elec_s, self.ex_ops, self.param_ids, self.hcb, self.init_state, engine
         )
         return statevector
 
@@ -1113,7 +1113,7 @@ class UCC:
         return get_circuit(
             params,
             self.n_qubits,
-            self.n_elec,
+            self.n_elec_s,
             self.ex_ops,
             self.param_ids,
             self.hcb,

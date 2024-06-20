@@ -6,7 +6,7 @@ jaxlib
 pyscf
 tensorcircuit
 openfermion
-qiskit
+qiskit<1.0
 pylatexenc
 SciencePlots
 noisyopt
