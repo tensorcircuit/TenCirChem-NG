@@ -18,9 +18,10 @@ def test_molecule():
     int1e = mol.intor("int1e_kin") + mol.intor("int1e_nuc")
     int2e = mol.intor("int2e")
     n_elec = mol.nelectron
+    spin = mol.spin
     e_nuc = mol.energy_nuc()
     ovlp = mol.intor("int1e_ovlp")
-    mol = _Molecule(int1e, int2e, n_elec, e_nuc, ovlp)
+    mol = _Molecule(int1e, int2e, n_elec, mol.spin, e_nuc, ovlp)
     mf2 = RHF(mol)
 
     mf2.chkfile = None

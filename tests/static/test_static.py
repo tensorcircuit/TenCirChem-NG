@@ -4,9 +4,9 @@ from pyscf.scf import RHF
 from pyscf.mcscf import CASCI
 import pytest
 
-from tencirchem import UCCSD, KUPCCGSD
+from tencirchem import UCCSD, KUPCCGSD, ROUCCSD
 from tencirchem.static.hamiltonian import get_integral_from_hf, random_integral
-from tencirchem.molecule import _random, h4, h_chain, c4h4
+from tencirchem.molecule import _random, h4, h8, h_chain, c4h4
 from tencirchem.utils.misc import canonical_mo_coeff
 
 
@@ -134,3 +134,24 @@ def test_mf_input():
     e = ucc.kernel()
     np.testing.assert_allclose(ucc.e_hf, -153.603405, atol=1e-4)
     np.testing.assert_allclose(e, ucc.e_fci, atol=2e-2)
+
+
+@pytest.mark.parametrize("method", [UCCSD, ROUCCSD])
+def test_pyscf_solver(method):
+    if method == UCCSD:
+        m = h8
+        ncas = 4
+        nelecas = 4
+        hf = m.HF()
+    else:
+        m = h_chain(7, spin=1)
+        ncas = 4
+        nelecas = 3
+        hf = m.ROHF()
+
+    hf.kernel()
+    e_ref = ROUCCSD(hf, active_space=(nelecas, ncas)).kernel()
+    mc = CASCI(hf, ncas, nelecas)
+    mc.fcisolver = method.as_pyscf_solver()
+    mc.kernel()
+    np.testing.assert_allclose(mc.e_tot, e_ref, atol=1e-4)

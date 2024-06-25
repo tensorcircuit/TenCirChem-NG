@@ -94,10 +94,12 @@ class UCC:
              A UCC instance
         """
         if isinstance(n_elec, tuple):
-            if len(n_elec) != 2 or n_elec[0] != n_elec[1]:
-                raise ValueError(f"Incompatible n_elec: {n_elec}")
+            spin = abs(n_elec[0] - n_elec[1])
             n_elec = n_elec[0] + n_elec[1]
-        m = _Molecule(int1e, int2e, n_elec, e_core, ovlp)
+        else:
+            assert n_elec % 2 == 0
+            spin = 0
+        m = _Molecule(int1e, int2e, n_elec, spin, e_core, ovlp)
         return cls(m, **kwargs)
 
     @classmethod
@@ -230,7 +232,8 @@ class UCC:
             self.mol = self.hf.mol
             mol = self.mol
         else:
-            raise TypeError(f"Unknown input time {type(mol)}")
+            raise TypeError(f"Unknown input type {type(mol)}. If you're performing open shell calculations, "
+                            "please use ROHF instead.")
 
         if active_space is None:
             active_space = (mol.nelectron, int(mol.nao))

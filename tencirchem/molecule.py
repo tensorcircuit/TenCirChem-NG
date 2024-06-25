@@ -20,7 +20,7 @@ class _Molecule(Mole):
         int1e, int2e = random_integral(nao, seed)
         return cls(int1e, int2e, n_elec)
 
-    def __init__(self, int1e, int2e, n_elec: Union[int, Tuple[int, int]], e_nuc: float = 0, ovlp: np.ndarray = None):
+    def __init__(self, int1e, int2e, n_elec: Union[int, Tuple[int, int]], spin:int = 0, e_nuc: float = 0, ovlp: np.ndarray = None):
         super().__init__()
 
         self.nao = len(int1e)
@@ -30,6 +30,7 @@ class _Molecule(Mole):
         # in PySCF m.nelec returns a tuple and m.nelectron returns an integer
         # So here use n_elec to indicate the difference
         self.n_elec = self.nelectron = n_elec
+        self.spin = spin
         self.e_nuc = e_nuc
         if ovlp is None:
             self.ovlp = np.eye(self.nao)
@@ -71,8 +72,8 @@ class _Molecule(Mole):
 _random = _Molecule.random
 
 
-def h_chain(n_h=4, bond_distance=0.8, charge=0):
-    return M(atom=[["H", 0, 0, bond_distance * i] for i in range(n_h)], charge=charge, symmetry=True)
+def h_chain(n_h=4, bond_distance=0.8, charge=0, spin=0):
+    return M(atom=[["H", 0, 0, bond_distance * i] for i in range(n_h)], charge=charge, spin=spin, symmetry=True)
 
 
 def h_ring(n_h=4, radius=0.7):

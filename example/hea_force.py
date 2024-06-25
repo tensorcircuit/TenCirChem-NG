@@ -18,3 +18,5 @@ casci.fcisolver = HEA.as_pyscf_solver(n_layers=1)
 print(casci.kernel()[0])
 nuc_grad = casci.nuc_grad_method().kernel()
 print(nuc_grad)
+
+# should wait for PySCF to solve this for some time (half a year maybe).

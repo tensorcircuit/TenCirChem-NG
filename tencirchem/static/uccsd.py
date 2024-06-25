@@ -201,6 +201,9 @@ class ROUCCSD(UCC):
         mo_coeff: np.ndarray = None,
         engine: str = "civector",
         run_hf: bool = True,
+        # for API consistency with UCC
+        run_mp2: bool = False,
+        run_ccsd: bool = False,
         run_fci: bool = True,
     ):
         init_method: str = "zeros"
