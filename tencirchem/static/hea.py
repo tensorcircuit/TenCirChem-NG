@@ -473,7 +473,12 @@ class HEA:
 
         init_guess = np.array(init_guess)
 
-        self.h_qubit_op = h_qubit_op
+        # convert to real coefficients and prevent complex energy expectation outcome
+        self.h_qubit_op = QubitOperator()
+        for k, v in h_qubit_op.terms.items():
+            if not np.iscomplex(v):
+                v = v.real
+            self.h_qubit_op.terms[k] = v
 
         if isinstance(circuit, Callable):
             self.get_circuit = circuit

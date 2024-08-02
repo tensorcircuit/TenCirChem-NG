@@ -8,7 +8,7 @@ import numpy as np
 from scipy.optimize import OptimizeResult
 
 
-def soap(fun, x0, args=(), u=0.1, maxfev=2000, callback=None, ret_traj=False, **kwargs):
+def soap(fun, x0, args=(), u=0.1, maxfev=2000, atol=1e-3, callback=None, ret_traj=False, **kwargs):
     """
     Scipy Optimizer interface for sequantial optimization with
     approximate parabola (SOAP)
@@ -26,7 +26,10 @@ def soap(fun, x0, args=(), u=0.1, maxfev=2000, callback=None, ret_traj=False, **
         Step size for approximating the parabola. Defaults to 0.1.
     maxfev : int
         Maximum number of function evaluations to perform.
+        Empirically, ``5*len(x0)`` evaluations are sufficient for convergence.
         Default: 2000.
+    atol : float
+        The tolerance for convergence. Defaults to 0.001.
     callback : callable, optional
         Called after each iteration.
     ret_traj: bool, optional
@@ -131,6 +134,10 @@ def soap(fun, x0, args=(), u=0.1, maxfev=2000, callback=None, ret_traj=False, **
             callback(np.copy(x0))
 
         nit += 1
+        # check convergence
+        if len(e_list) > 2 * len(x0):
+            if np.mean(e_list[-2*len(x0):-len(x0)]) - np.mean(e_list[-len(x0):]) < atol:
+                break
 
     res = OptimizeResult(
         fun=e_list[-1],
