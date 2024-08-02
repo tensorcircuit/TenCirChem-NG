@@ -74,7 +74,7 @@ def get_ex_bitstring(n_qubits, n_elec_s, ex_op, hcb):
         bitstring_base = bitstring_basea + bitstring_baseb
     else:
         assert na == nb
-        bitstring_base = ["0"] * (n_qubits - na) + ["1"] * (na // 2)
+        bitstring_base = ["0"] * (n_qubits - na) + ["1"] * na
 
     bitstring = bitstring_base.copy()[::-1]
     # first annihilation then creation

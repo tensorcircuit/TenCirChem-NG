@@ -23,7 +23,7 @@ setuptools.setup(
         "tensorcircuit",
         "pyscf",
         "openfermion",
-        "qiskit",
+        "qiskit==0.39.5",
         "pylatexenc",
         "noisyopt",
         "renormalizer",

@@ -1307,7 +1307,7 @@ class UCC:
         if not self.hcb:
             return reverse_qop_idx(jordan_wigner(self.h_fermion_op), self.n_qubits)
         else:
-            return get_hop_hcb_from_integral(self.int1e, self.int2e)
+            return get_hop_hcb_from_integral(self.int1e, self.int2e) + self.e_core
 
     @property
     def n_params(self) -> int:
