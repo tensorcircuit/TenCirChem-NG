@@ -232,8 +232,10 @@ class UCC:
             self.mol = self.hf.mol
             mol = self.mol
         else:
-            raise TypeError(f"Unknown input type {type(mol)}. If you're performing open shell calculations, "
-                            "please use ROHF instead.")
+            raise TypeError(
+                f"Unknown input type {type(mol)}. If you're performing open shell calculations, "
+                "please use ROHF instead."
+            )
 
         if active_space is None:
             active_space = (mol.nelectron, int(mol.nao))

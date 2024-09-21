@@ -136,11 +136,13 @@ def soap(fun, x0, args=(), u=0.1, maxfev=2000, atol=1e-3, callback=None, ret_tra
         nit += 1
         # check convergence
         if len(e_list) > 2 * len(x0):
-            if np.mean(e_list[-2*len(x0):-len(x0)]) - np.mean(e_list[-len(x0):]) < atol:
+            if np.mean(e_list[-2 * len(x0) : -len(x0)]) - np.mean(e_list[-len(x0) :]) < atol:
                 break
 
+    # the last measurement is probably from fitting
+    y = _fun(trajectory[-1])
     res = OptimizeResult(
-        fun=e_list[-1],
+        fun=y,
         x=trajectory[-1],
         nit=nit,
         nfev=nfev,
