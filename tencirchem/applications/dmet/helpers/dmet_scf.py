@@ -19,10 +19,10 @@ is done here.
 
 """
 
-from pyscf import gto, scf, ao2mo
 from functools import reduce
+
 import numpy as np
-import scipy
+from pyscf import scf, ao2mo
 
 from tencirchem.molecule import _Molecule
 
@@ -69,12 +69,12 @@ def dmet_fragment_scf(t_list, two_ele, fock, number_electrons, number_orbitals, 
     dm_frag = reduce(np.dot, (mf_frag.mo_coeff, np.diag(mf_frag.mo_occ), mf_frag.mo_coeff.T))
 
     # Use newton-raphson algorithm if the above SCF calculation is not converged
-    if mf_frag.converged == False:
+    if mf_frag.converged is False:
         mf_frag.get_hcore = lambda *args: fock_frag_copy
         mf_frag.get_ovlp = lambda *args: np.eye(number_orbitals)
         mf_frag._eri = ao2mo.restore(8, two_ele, number_orbitals)
         mf_frag = scf.RHF(mol_frag).newton()
-        energy = mf_frag.kernel(dm0=dm_frag)
+        mf_frag.kernel(dm0=dm_frag)
         dm_frag = reduce(np.dot, (mf_frag.mo_coeff, np.diag(mf_frag.mo_occ), mf_frag.mo_coeff.T))
 
     return mf_frag, fock_frag_copy, mol_frag

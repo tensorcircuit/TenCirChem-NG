@@ -13,11 +13,11 @@
 #   limitations under the License.
 
 import warnings
+from functools import reduce
 
+import numpy as np
 import scipy
 from pyscf import scf
-from functools import reduce
-import numpy as np
 
 from tencirchem.applications.dmet.electron_localization import iao_localization
 from tencirchem.applications.dmet import helpers
@@ -41,6 +41,7 @@ class DMET:
 
     def __init__(self):
         self.verbose = False
+        self.init_guess_reuse = False
         self.electronic_structure_solver = None
         self.electron_localization_method = iao_localization
         self.params_lib = {}
@@ -92,7 +93,7 @@ class DMET:
         orbitals = helpers._orbitals(molecule, mean_field, range(molecule.nao_nr()), self.electron_localization_method)
 
         # TODO: remove last argument, combining fragments not supported
-        orb_list, orb_list2, atom_list2 = helpers._fragment_constructor(molecule, fragment_atoms, 0)
+        orb_list, orb_list2, _ = helpers._fragment_constructor(molecule, fragment_atoms, 0)
 
         # Initialize the energy list and SCF procedure employing newton-raphson algorithm
         energy = []
@@ -144,6 +145,7 @@ class DMET:
 
         if self.verbose:
             print(" \tIteration = ", niter)
+            print(" \tChemical potential=", chemical_potential)
             print(" \t----------------")
             print(" ")
 
@@ -189,17 +191,17 @@ class DMET:
             )
 
             # Solve the electronic structure and calculate the RDMs
-            energy = None
-            cc_onerdm = None
-            cc_twordm = None
             assert solvers is None
 
-            init_guess = self.params_lib.get(frag_id)
-            energy = self.electronic_structure_solver.simulate(mol_frag, mf_fragment, init_guess)
+            if self.init_guess_reuse:
+                init_guess = self.params_lib.get(frag_id)
+            else:
+                init_guess = None
+            self.electronic_structure_solver.simulate(mol_frag, mf_fragment, init_guess)
             cc_onerdm, cc_twordm = self.electronic_structure_solver.get_rdm()
 
             # Compute the fragment energy
-            fragment_energy, total_energy_rdm, one_rdm = self._compute_energy(
+            fragment_energy, _, one_rdm = self._compute_energy(
                 mf_fragment, cc_onerdm, cc_twordm, fock_frag_copy, t_list, one_ele, two_ele, fock
             )
 

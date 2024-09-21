@@ -31,7 +31,9 @@ jobs:
         run: |
           pytest tencirchem tests --durations=0 --cov=tencirchem
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: run examples
         run: |
             cd example; bash run.sh

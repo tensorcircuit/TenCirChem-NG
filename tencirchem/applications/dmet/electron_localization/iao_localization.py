@@ -26,12 +26,13 @@ G. Knizia, JCTC 9, 4834-4843 (2013).
 
 """
 
-from pyscf import gto
-from pyscf.lo import iao
 from functools import reduce
-from pyscf.lo import orth
+
 import numpy as np
 import scipy
+from pyscf import gto
+from pyscf.lo import iao
+from pyscf.lo import orth
 
 
 def iao_localization(mol, mf):
@@ -211,7 +212,7 @@ def _iao_complementary_space(iao_ref, s, number_inactive):
 
     #   Get the MO Coefficient from the IAO density matrix
     a_mat = reduce(np.dot, (s, density_active, s))
-    eigval, eigvec = scipy.linalg.eigh(a=a_mat, b=s)
+    _, eigvec = scipy.linalg.eigh(a=a_mat, b=s)
 
     #   Extract inactive part of "MO Coefficient" and return it
     eigen_vectors = eigvec[:, :number_inactive]
@@ -233,7 +234,6 @@ def _iao_atoms(mol, iao1, iao2):
     """
 
     # Calclate the integrals for assignment
-    number_orbitals = mol.nao_nr()
     r_int1e = mol.intor("cint1e_r_sph", 3)
     iao_combine = np.hstack((iao1, iao2)) if iao2 else iao1
 

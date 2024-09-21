@@ -19,8 +19,9 @@ is done here.
 
 """
 
-import numpy as np
 from functools import reduce
+
+import numpy as np
 
 
 def dmet_low_rdm(active_fock, number_active_electrons):

@@ -24,9 +24,10 @@ However, using Boys localization is not recommended.
 
 """
 
-from pyscf import scf, ao2mo
-import numpy as np
 from functools import reduce
+
+import numpy as np
+from pyscf import scf, ao2mo
 
 
 class dmet_orbitals:

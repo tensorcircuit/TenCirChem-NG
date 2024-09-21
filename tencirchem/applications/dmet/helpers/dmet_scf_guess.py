@@ -19,9 +19,10 @@ SCF calculation in DMET calculation is done here.
 
 """
 
-import scipy
-import numpy as np
 from functools import reduce
+
+import numpy as np
+import scipy
 
 
 def dmet_fragment_guess(t_list, bath_orb, chemical_potential, norb_high, number_active_electron, active_fock):
