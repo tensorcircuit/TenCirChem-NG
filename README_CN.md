@@ -1,16 +1,18 @@
 # TenCirChem
 
-![TenCirChem](https://github.com/tensorcircuit/TenCirChem-ng/blob/master/docs/source/statics/logov0.png)
+![TenCirChem](https://github.com/tensorcircuit/TenCirChem-NG/blob/master/docs/source/statics/logov0.png)
 
-[![ci](https://img.shields.io/github/actions/workflow/status/tensorcircuit/TenCirChem-ng/ci.yml?branch=master)](https://github.com/tencent-quantum-lab/TenCirChem/actions)
-[![codecov](https://codecov.io/github/tensorcircuit/TenCirChem-ng/branch/master/graph/badge.svg?token=6QZP1RKVTT)](https://app.codecov.io/github/tencent-quantum-lab/TenCirChem)
+[![ci](https://img.shields.io/github/actions/workflow/status/tensorcircuit/TenCirChem-NG/ci.yml?branch=master)](https://github.com/tensorcircuit/TenCirChem-NG/actions)
+[![codecov](https://codecov.io/github/tensorcircuit/TenCirChem-NG/branch/master/graph/badge.svg?token=6QZP1RKVTT)](https://app.codecov.io/github/tensorcircuit/TenCirChem-NG)
 [![pypi](https://img.shields.io/pypi/v/tencirchem-ng.svg?logo=pypi)](https://pypi.org/project/tencirchem-ng/)
 [![doc](https://img.shields.io/badge/docs-link-green.svg)](https://tensorcircuit.github.io/TenCirChem-ng/index.html)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/tensorcircuit/TenCirChem-ng/master?labpath=docs%2Fsource%2Ftutorial_jupyter)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/tensorcircuit/TenCirChem-NG/master?labpath=docs%2Fsource%2Ftutorial_jupyter)
 
-[English](https://github.com/tensorcircuit/TenCirChem-ng/) | 简体中文
+[English](https://github.com/tensorcircuit/TenCirChem-NG/) | 简体中文
 
 TenCirChem 是一个高效且通用的分子性质量子计算软件包。TenCirChem 基于[TensorCircuit]，并针对化学应用进行了优化。
+
+TenCirChem-NG与TenCirChem完全兼容，并具有更多特性和漏洞修复。
 
 ## 安装
 安装 TenCirChem 非常简单。只需通过 pip 安装包即可：
@@ -52,7 +54,7 @@ print(uccsd.statevector(params))
 print(uccsd.energy(params))
 print(uccsd.energy_and_grad(params))
 ```
-有关更多示例和自定义，请参见[文档](https://tencent-quantum-lab.github.io/TenCirChem/index.html) 
+有关更多示例和自定义，请参见[文档](https://tensorcircuit.github.io/TenCirChem-NG/index.html) 
 
 
 ## 令人兴奋的功能
@@ -81,7 +83,7 @@ TenCirChem的设计原则是：
 
 ## 许可证
 TenCirChem 使用 Academic Public License 发布。
-有关详细信息，请参见[LICENSE 文件](https://github.com/tencent-quantum-lab/TenCirChem/blob/master/LICENSE) 。
+有关详细信息，请参见[LICENSE 文件](https://github.com/tensorcircuit/TenCirChem-NG/blob/master/LICENSE) 。
 简而言之，您可以免费使用 TenCirChem 用于非商业/学术目的，
 商业用途需要获得商业许可。
 
@@ -96,7 +98,7 @@ TenCirChem 使用 Academic Public License 发布。
 
 ### 变分基矢编码器
 变分基矢编码器是编码电声子系统中的声子用以量子计算的高效算法。
-请参考[例子](https://github.com/tencent-quantum-lab/TenCirChem/tree/master/example)
-及[教程](https://tencent-quantum-lab.github.io/TenCirChem/tutorial_jupyter/vbe_tutorial_td.html)。
+请参考[例子](https://github.com/tensorcircuit/TenCirChem-NG/tree/master/example)
+及[教程](https://tensorcircuit.github.io/TenCirChem-NG/tutorial_jupyter/vbe_tutorial_td.html)。
 参考论文: https://arxiv.org/pdf/2301.01442.pdf (发表于PRR).
 

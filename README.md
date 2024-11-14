@@ -1,9 +1,9 @@
 # TenCirChem
 
-![TenCirChem](https://github.com/tensorcircuit/TenCirChem-ng/blob/master/docs/source/statics/logov0.png)
+![TenCirChem](https://github.com/tensorcircuit/TenCirChem-NG/blob/master/docs/source/statics/logov0.png)
 
-[![ci](https://img.shields.io/github/actions/workflow/status/tensorcircuit/TenCirChem-ng/ci.yml?branch=master)](https://github.com/tencent-quantum-lab/TenCirChem/actions)
-[![codecov](https://codecov.io/github/tensorcircuit/TenCirChem-ng/branch/master/graph/badge.svg?token=6QZP1RKVTT)](https://app.codecov.io/github/tencent-quantum-lab/TenCirChem)
+[![ci](https://img.shields.io/github/actions/workflow/status/tensorcircuit/TenCirChem-NG/ci.yml?branch=master)](https://github.com/tensorcircuit/TenCirChem-NG/actions)
+[![codecov](https://codecov.io/github/tensorcircuit/TenCirChem-ng/branch/master/graph/badge.svg?token=6QZP1RKVTT)](https://app.codecov.io/github/tensorcircuit/TenCirChem-ng)
 [![pypi](https://img.shields.io/pypi/v/tencirchem-ng.svg?logo=pypi)](https://pypi.org/project/tencirchem-ng/)
 [![doc](https://img.shields.io/badge/docs-link-green.svg)](https://tensorcircuit.github.io/TenCirChem-ng/index.html)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/tensorcircuit/TenCirChem-ng/master?labpath=docs%2Fsource%2Ftutorial_jupyter)
@@ -57,7 +57,7 @@ print(uccsd.energy(params))
 print(uccsd.energy_and_grad(params))
 ```
 For more examples and customization,
-please refer to the [documentation](https://tencent-quantum-lab.github.io/TenCirChem/index.html) 
+please refer to the [documentation](https://tensorcircuit.github.io/TenCirChem-NG/index.html) 
 
 
 ## Exciting Features
@@ -86,8 +86,8 @@ TenCirChem is designed to be:
 
 ## License
 TenCirChem is released under Academic Public License.
-See the [LICENSE file](https://github.com/tencent-quantum-lab/TenCirChem/blob/master/LICENSE) for details.
-In short, you can use TenCirChem freely for non-commercial/academic purpose
+See the [LICENSE file](https://github.com/tensorcircuit/TenCirChem-NG/blob/master/LICENSE) for details.
+In short, you can use TenCirChem-NG freely for non-commercial/academic purpose
 and commercial use requires a commercial license.
 
 ## Citing TenCirChem
@@ -101,6 +101,6 @@ which is also a good introduction to the software.
 
 ### Variational basis state encoder
 An efficient algorithm to encode phonon states in electron-phonon systems for quantum computation.
-See [examples](https://github.com/tencent-quantum-lab/TenCirChem/tree/master/example)
-and the [tutorial](https://tencent-quantum-lab.github.io/TenCirChem/tutorial_jupyter/vbe_tutorial_td.html).
+See [examples](https://github.com/tensorcircuit/TenCirChem-NG/tree/master/example)
+and the [tutorial](https://tensorcircuit.github.io/TenCirChem-NG/tutorial_jupyter/vbe_tutorial_td.html).
 Reference paper: https://arxiv.org/pdf/2301.01442.pdf (published in PRR).
