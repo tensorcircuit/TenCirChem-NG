@@ -5,7 +5,7 @@
 [![ci](https://img.shields.io/github/actions/workflow/status/tensorcircuit/TenCirChem-NG/ci.yml?branch=master)](https://github.com/tensorcircuit/TenCirChem-NG/actions)
 [![codecov](https://codecov.io/github/tensorcircuit/TenCirChem-NG/branch/master/graph/badge.svg?token=6QZP1RKVTT)](https://app.codecov.io/github/tensorcircuit/TenCirChem-NG)
 [![pypi](https://img.shields.io/pypi/v/tencirchem-ng.svg?logo=pypi)](https://pypi.org/project/tencirchem-ng/)
-[![doc](https://img.shields.io/badge/docs-link-green.svg)](https://tensorcircuit.github.io/TenCirChem-ng/index.html)
+[![doc](https://img.shields.io/badge/docs-link-green.svg)](https://tensorcircuit.github.io/TenCirChem-NG/index.html)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/tensorcircuit/TenCirChem-NG/master?labpath=docs%2Fsource%2Ftutorial_jupyter)
 
 [English](https://github.com/tensorcircuit/TenCirChem-NG/) | 简体中文
@@ -20,6 +20,9 @@ TenCirChem-NG与TenCirChem完全兼容，并具有更多特性和漏洞修复。
 ```sh
 pip install tencirchem
 ```
+
+TenCirChem的一些功能依赖JAX，请参见[安装指南](https://jax.readthedocs.io/en/latest/installation.html)安装JAX，
+或直接通过``pip install tencirchem-ng[jax]``安装。
 
 ## 简单易用
 TenCirChem 用纯 Python 编写，使用起来非常简单。以下是计算 UCCSD 的示例：

@@ -124,12 +124,12 @@ def test_mf_input():
     hf = RHF(m)
     hf.kernel()
     dm, _, stable, _ = hf.stability(return_status=True)
-    if not stable:
+    while not stable:
         print("Instability detected in RHF")
         hf.kernel(dm)
         dm, _, stable, _ = hf.stability(return_status=True)
-        if not stable:
-            print("RHF is unstable")
+        if stable:
+            break
     ucc = UCCSD(hf, active_space=(4, 4))
     e = ucc.kernel()
     np.testing.assert_allclose(ucc.e_hf, -153.603405, atol=1e-4)

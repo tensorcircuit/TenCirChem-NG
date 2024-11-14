@@ -5,7 +5,7 @@
 [![ci](https://img.shields.io/github/actions/workflow/status/tensorcircuit/TenCirChem-NG/ci.yml?branch=master)](https://github.com/tensorcircuit/TenCirChem-NG/actions)
 [![codecov](https://codecov.io/github/tensorcircuit/TenCirChem-ng/branch/master/graph/badge.svg?token=6QZP1RKVTT)](https://app.codecov.io/github/tensorcircuit/TenCirChem-ng)
 [![pypi](https://img.shields.io/pypi/v/tencirchem-ng.svg?logo=pypi)](https://pypi.org/project/tencirchem-ng/)
-[![doc](https://img.shields.io/badge/docs-link-green.svg)](https://tensorcircuit.github.io/TenCirChem-ng/index.html)
+[![doc](https://img.shields.io/badge/docs-link-green.svg)](https://tensorcircuit.github.io/TenCirChem-NG/index.html)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/tensorcircuit/TenCirChem-ng/master?labpath=docs%2Fsource%2Ftutorial_jupyter)
 
 English | [简体中文](https://github.com/tensorcircuit/TenCirChem-ng/blob/master/README_CN.md)
@@ -22,6 +22,10 @@ Getting started with TenCirChem-NG by installing the package via pip:
 ```sh
 pip install tencirchem-ng
 ```
+
+Some functionality of TenCirChem-NG requires JAX.
+Please install JAX following [installation instructions](https://jax.readthedocs.io/en/latest/installation.html)
+or simply by ``pip install tencirchem-ng[jax]``.
 
 ## Simple to Use
 TenCirChem is written in pure Python, and its use is straightforward. Here's an example of calculating UCCSD:
