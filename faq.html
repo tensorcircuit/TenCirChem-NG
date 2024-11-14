@@ -422,6 +422,15 @@ offers more information on slow compilation.</p>
 <p>If you’re using CPU based JAX, switching to the GPU version can significantly speed up compilation.
 Otherwise, to the author’s knowledge currently there’s no way to solve the slow compilation problem.</p>
 </section>
+<section id="what-is-the-relation-between-tencirchem-and-tencirchem-ng">
+<h2>What is the relation between TenCirChem and TenCirChem-NG?<a class="headerlink" href="#what-is-the-relation-between-tencirchem-and-tencirchem-ng" title="Permalink to this heading">¶</a></h2>
+<p>Both packages are created by <a class="reference external" href="https://weitangligroup.com/">Weitang Li</a>.
+From users’ perspective, TenCirChem-NG maintains full compatibility with the TenCirChem API,
+enhancing it with additional features and critical bug fixes.
+Only TneCirChem-NG is kept up-to-date with the evolution of <a class="reference external" href="https://github.com/tensorcircuit/tensorcircuit-ng">TensorCircuit-NG</a>.</p>
+<p>TenCirChem-NG is intended as a drop-in replacement for TenCirChem, namely, by simply <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">uninstall</span> <span class="pre">TenCirChem</span></code>
+and <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">TenCirChem-NG</span></code>, your existing applications should continue to function seamlessly without requiring any modification to the codebase.</p>
+</section>
 </section>
 
         </article>
@@ -486,6 +495,7 @@ Otherwise, to the author’s knowledge currently there’s no way to solve the s
 <li><a class="reference internal" href="#how-does-tencirchem-evaluate-ucc-gradient">How does TenCirChem evaluate UCC gradient?</a></li>
 <li><a class="reference internal" href="#how-to-use-gpu-in-tencirchem">How to use GPU in TenCirChem?</a></li>
 <li><a class="reference internal" href="#why-is-jax-backend-so-slow-on-first-run">Why is JAX backend so slow on first run?</a></li>
+<li><a class="reference internal" href="#what-is-the-relation-between-tencirchem-and-tencirchem-ng">What is the relation between TenCirChem and TenCirChem-NG?</a></li>
 </ul>
 </li>
 </ul>

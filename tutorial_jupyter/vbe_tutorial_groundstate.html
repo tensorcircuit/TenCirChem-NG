@@ -296,7 +296,7 @@
 <span class="kn">import</span> <span class="nn">tensorcircuit</span> <span class="k">as</span> <span class="nn">tc</span>
 
 <span class="kn">from</span> <span class="nn">tencirchem</span> <span class="kn">import</span> <span class="n">set_backend</span><span class="p">,</span> <span class="n">Op</span><span class="p">,</span> <span class="n">BasisSHO</span><span class="p">,</span> <span class="n">BasisSimpleElectron</span><span class="p">,</span> <span class="n">Mpo</span><span class="p">,</span> <span class="n">Model</span>
-<span class="kn">from</span> <span class="nn">tencirchem.dynamic</span> <span class="kn">import</span> <span class="n">get_ansatz</span><span class="p">,</span> <span class="n">qubit_encode_op</span><span class="p">,</span> <span class="n">qubit_encode_basis</span>
+<span class="kn">from</span> <span class="nn">tencirchem.dynamic</span> <span class="kn">import</span> <span class="n">get_ansatz</span><span class="p">,</span> <span class="n">qubit_encode_op_grouped</span><span class="p">,</span> <span class="n">qubit_encode_basis</span>
 <span class="kn">from</span> <span class="nn">tencirchem.utils</span> <span class="kn">import</span> <span class="n">scipy_opt_wrap</span>
 <span class="kn">from</span> <span class="nn">tencirchem.applications.vbe_lib</span> <span class="kn">import</span> <span class="n">get_psi_indices</span><span class="p">,</span> <span class="n">get_contracted_mpo</span><span class="p">,</span> <span class="n">get_contract_args</span>
 </pre></div>
@@ -323,7 +323,6 @@ related arguments and functions are also marked. <img alt="fig1" src="../_images
 <span class="n">omega</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">v</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="c1"># two qubit for each mode</span>
-<span class="c1"># modify param_ids before modifying this</span>
 <span class="n">n_qubit_per_mode</span> <span class="o">=</span> <span class="mi">2</span>
 <span class="n">nbas_v</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">n_qubit_per_mode</span>
 
@@ -359,8 +358,7 @@ related arguments and functions are also marked. <img alt="fig1" src="../_images
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-2023-08-08 15:44:36.794994: E external/org_tensorflow/tensorflow/compiler/xla/stream_executor/cuda/cuda_driver.cc:267] failed call to cuInit: CUDA_ERROR_NO_DEVICE: no CUDA-capable device is detected
-WARNING:jax._src.lib.xla_bridge:No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
+An NVIDIA GPU may be present on this machine, but a CUDA-enabled jaxlib is not installed. Falling back to cpu.
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -383,7 +381,7 @@ psi_index_top:  [&#39;p-0-bottom&#39;, &#39;v-1-0-bottom&#39;, &#39;v-1-1-bottom
 \[\ket{\phi}=\prod_l^L {\prod_{&lt;j,k&gt;} e^{\theta_{ijk} {(\hat{a}_j^\dagger \hat{a}_k - \hat{a}_k^\dagger \hat{a}_j)}}
 \prod_j {e^{\theta_{lj}\hat{a}_j^\dagger \hat{a}_j (\hat{b}_j^\dagger - \hat{b}_j)}}} \ket{\phi_0}\]</div>
 </div>
-<p>The anasatz is transformed from electron-phonon basis to qubit basis through <code class="docutils literal notranslate"><span class="pre">qubit_encode_op()</span></code> and <code class="docutils literal notranslate"><span class="pre">qubit_encode_basis()</span></code></p>
+<p>The anasatz is transformed from electron-phonon basis to qubit basis through <code class="docutils literal notranslate"><span class="pre">qubit_encode_op_grouped()</span></code> and <code class="docutils literal notranslate"><span class="pre">qubit_encode_basis()</span></code></p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
@@ -395,8 +393,7 @@ psi_index_top:  [&#39;p-0-bottom&#39;, &#39;v-1-0-bottom&#39;, &#39;v-1-1-bottom
     <span class="n">ansatz_terms</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nsite</span><span class="p">):</span>
         <span class="n">j</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">nsite</span>
-        <span class="n">ansatz_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Op</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;a^\dagger a&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span> <span class="n">v</span><span class="p">))</span>
-        <span class="n">ansatz_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Op</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;a^\dagger a&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">],</span> <span class="o">-</span><span class="n">v</span><span class="p">))</span>
+        <span class="n">ansatz_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Op</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;a^\dagger a&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">],</span> <span class="n">v</span><span class="p">)</span> <span class="o">-</span> <span class="n">Op</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;a^\dagger a&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">],</span> <span class="n">v</span><span class="p">))</span>
         <span class="n">ansatz_terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Op</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;a^\dagger a b^\dagger-b&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">)],</span> <span class="n">g</span> <span class="o">*</span> <span class="n">omega</span><span class="p">))</span>
 
     <span class="n">basis</span> <span class="o">=</span> <span class="p">[]</span>
@@ -404,24 +401,24 @@ psi_index_top:  [&#39;p-0-bottom&#39;, &#39;v-1-0-bottom&#39;, &#39;v-1-1-bottom
         <span class="n">basis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">BasisSimpleElectron</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
         <span class="n">basis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">BasisSHO</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">omega</span><span class="p">,</span> <span class="n">nbas_v</span><span class="p">))</span>
 
-    <span class="n">ansatz_terms</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">qubit_encode_op</span><span class="p">(</span><span class="n">ansatz_terms</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">boson_encoding</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+    <span class="n">ansatz_terms</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">qubit_encode_op_grouped</span><span class="p">(</span><span class="n">ansatz_terms</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">boson_encoding</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
+
+    <span class="c1"># More flexible ansatz by decoupling the parameters in the e-ph coupling term</span>
+    <span class="n">ansatz_terms_extended</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nsite</span><span class="p">):</span>
+        <span class="n">ansatz_terms_extended</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">ansatz_terms</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span><span class="p">]]</span> <span class="o">+</span> <span class="n">ansatz_terms</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
     <span class="n">spin_basis</span> <span class="o">=</span> <span class="n">qubit_encode_basis</span><span class="p">(</span><span class="n">basis</span><span class="p">,</span> <span class="n">boson_encoding</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
-    <span class="c1"># this is currently hard-coded for `n_qubit_per_mode==2`</span>
-    <span class="c1"># if the values of param_ids are opposite to each other, the values of the parameters are forced to be opposite in the optimization.</span>
-    <span class="n">param_ids</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="o">-</span><span class="mi">9</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">18</span><span class="p">))</span> <span class="o">+</span> <span class="p">[</span><span class="mi">18</span><span class="p">,</span> <span class="o">-</span><span class="mi">18</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">19</span><span class="p">,</span> <span class="mi">27</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">ansatz_terms</span><span class="p">,</span> <span class="n">spin_basis</span><span class="p">,</span> <span class="n">param_ids</span>
+    <span class="k">return</span> <span class="n">ansatz_terms_extended</span><span class="p">,</span> <span class="n">spin_basis</span>
 
 
-<span class="n">ansatz_terms</span><span class="p">,</span> <span class="n">spin_basis</span><span class="p">,</span> <span class="n">param_ids</span> <span class="o">=</span> <span class="n">get_vha_terms</span><span class="p">()</span>
-<span class="n">ansatz</span> <span class="o">=</span> <span class="n">get_ansatz</span><span class="p">(</span><span class="n">ansatz_terms</span><span class="p">,</span> <span class="n">spin_basis</span><span class="p">,</span> <span class="n">n_layers</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">param_ids</span><span class="p">)</span>
+<span class="n">ansatz_terms</span><span class="p">,</span> <span class="n">spin_basis</span> <span class="o">=</span> <span class="n">get_vha_terms</span><span class="p">()</span>
+<span class="n">ansatz</span> <span class="o">=</span> <span class="n">get_ansatz</span><span class="p">(</span><span class="n">ansatz_terms</span><span class="p">,</span> <span class="n">spin_basis</span><span class="p">,</span> <span class="n">n_layers</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span>
     <span class="s2">&quot;ansatz_terms: </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
     <span class="n">ansatz_terms</span><span class="p">,</span>
     <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">spin_basis: </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
     <span class="n">spin_basis</span><span class="p">,</span>
-    <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">param_ids: </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
-    <span class="n">param_ids</span><span class="p">,</span>
     <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">ansatz: </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
     <span class="n">ansatz</span><span class="p">,</span>
 <span class="p">)</span>
@@ -434,13 +431,11 @@ psi_index_top:  [&#39;p-0-bottom&#39;, &#39;v-1-0-bottom&#39;, &#39;v-1-1-bottom
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 ansatz_terms:
- [Op(&#39;X Y&#39;, [0, 1], 0.5j), Op(&#39;Y X&#39;, [0, 1], -0.5j), Op(&#39;Y&#39;, [((0, 0), &#39;TCCQUBIT-1&#39;)], 0.1830127018922193j), Op(&#39;Z Y&#39;, [((0, 0), &#39;TCCQUBIT-0&#39;), ((0, 0), &#39;TCCQUBIT-1&#39;)], -0.6830127018922193j), Op(&#39;Y&#39;, [((0, 0), &#39;TCCQUBIT-0&#39;)], -0.3535533905932738j), Op(&#39;Y Z&#39;, [((0, 0), &#39;TCCQUBIT-0&#39;), ((0, 0), &#39;TCCQUBIT-1&#39;)], 0.3535533905932738j), Op(&#39;Z Y&#39;, [0, ((0, 0), &#39;TCCQUBIT-1&#39;)], -0.1830127018922193j), Op(&#39;Z Z Y&#39;, [0, ((0, 0), &#39;TCCQUBIT-0&#39;), ((0, 0), &#39;TCCQUBIT-1&#39;)], 0.6830127018922193j), Op(&#39;Z Y&#39;, [0, ((0, 0), &#39;TCCQUBIT-0&#39;)], 0.3535533905932738j), Op(&#39;Z Y Z&#39;, [0, ((0, 0), &#39;TCCQUBIT-0&#39;), ((0, 0), &#39;TCCQUBIT-1&#39;)], -0.3535533905932738j), Op(&#39;X Y&#39;, [1, 2], 0.5j), Op(&#39;Y X&#39;, [1, 2], -0.5j), Op(&#39;Y&#39;, [((1, 0), &#39;TCCQUBIT-1&#39;)], 0.1830127018922193j), Op(&#39;Z Y&#39;, [((1, 0), &#39;TCCQUBIT-0&#39;), ((1, 0), &#39;TCCQUBIT-1&#39;)], -0.6830127018922193j), Op(&#39;Y&#39;, [((1, 0), &#39;TCCQUBIT-0&#39;)], -0.3535533905932738j), Op(&#39;Y Z&#39;, [((1, 0), &#39;TCCQUBIT-0&#39;), ((1, 0), &#39;TCCQUBIT-1&#39;)], 0.3535533905932738j), Op(&#39;Z Y&#39;, [1, ((1, 0), &#39;TCCQUBIT-1&#39;)], -0.1830127018922193j), Op(&#39;Z Z Y&#39;, [1, ((1, 0), &#39;TCCQUBIT-0&#39;), ((1, 0), &#39;TCCQUBIT-1&#39;)], 0.6830127018922193j), Op(&#39;Z Y&#39;, [1, ((1, 0), &#39;TCCQUBIT-0&#39;)], 0.3535533905932738j), Op(&#39;Z Y Z&#39;, [1, ((1, 0), &#39;TCCQUBIT-0&#39;), ((1, 0), &#39;TCCQUBIT-1&#39;)], -0.3535533905932738j), Op(&#39;X Y&#39;, [0, 2], -0.5j), Op(&#39;Y X&#39;, [0, 2], 0.5j), Op(&#39;Y&#39;, [((2, 0), &#39;TCCQUBIT-1&#39;)], 0.1830127018922193j), Op(&#39;Z Y&#39;, [((2, 0), &#39;TCCQUBIT-0&#39;), ((2, 0), &#39;TCCQUBIT-1&#39;)], -0.6830127018922193j), Op(&#39;Y&#39;, [((2, 0), &#39;TCCQUBIT-0&#39;)], -0.3535533905932738j), Op(&#39;Y Z&#39;, [((2, 0), &#39;TCCQUBIT-0&#39;), ((2, 0), &#39;TCCQUBIT-1&#39;)], 0.3535533905932738j), Op(&#39;Z Y&#39;, [2, ((2, 0), &#39;TCCQUBIT-1&#39;)], -0.1830127018922193j), Op(&#39;Z Z Y&#39;, [2, ((2, 0), &#39;TCCQUBIT-0&#39;), ((2, 0), &#39;TCCQUBIT-1&#39;)], 0.6830127018922193j), Op(&#39;Z Y&#39;, [2, ((2, 0), &#39;TCCQUBIT-0&#39;)], 0.3535533905932738j), Op(&#39;Z Y Z&#39;, [2, ((2, 0), &#39;TCCQUBIT-0&#39;), ((2, 0), &#39;TCCQUBIT-1&#39;)], -0.3535533905932738j)]
+ [[Op(&#39;X Y&#39;, [0, 1], 0.5j), Op(&#39;Y X&#39;, [0, 1], -0.5j)], Op(&#39;Y&#39;, [((0, 0), &#39;TCCQUBIT-1&#39;)], 0.1830127018922193j), Op(&#39;Z Y&#39;, [((0, 0), &#39;TCCQUBIT-0&#39;), ((0, 0), &#39;TCCQUBIT-1&#39;)], -0.6830127018922193j), Op(&#39;Y&#39;, [((0, 0), &#39;TCCQUBIT-0&#39;)], -0.3535533905932738j), Op(&#39;Y Z&#39;, [((0, 0), &#39;TCCQUBIT-0&#39;), ((0, 0), &#39;TCCQUBIT-1&#39;)], 0.3535533905932738j), Op(&#39;Z Y&#39;, [0, ((0, 0), &#39;TCCQUBIT-1&#39;)], -0.1830127018922193j), Op(&#39;Z Z Y&#39;, [0, ((0, 0), &#39;TCCQUBIT-0&#39;), ((0, 0), &#39;TCCQUBIT-1&#39;)], 0.6830127018922193j), Op(&#39;Z Y&#39;, [0, ((0, 0), &#39;TCCQUBIT-0&#39;)], 0.3535533905932738j), Op(&#39;Z Y Z&#39;, [0, ((0, 0), &#39;TCCQUBIT-0&#39;), ((0, 0), &#39;TCCQUBIT-1&#39;)], -0.3535533905932738j), [Op(&#39;X Y&#39;, [1, 2], 0.5j), Op(&#39;Y X&#39;, [1, 2], -0.5j)], Op(&#39;Y&#39;, [((1, 0), &#39;TCCQUBIT-1&#39;)], 0.1830127018922193j), Op(&#39;Z Y&#39;, [((1, 0), &#39;TCCQUBIT-0&#39;), ((1, 0), &#39;TCCQUBIT-1&#39;)], -0.6830127018922193j), Op(&#39;Y&#39;, [((1, 0), &#39;TCCQUBIT-0&#39;)], -0.3535533905932738j), Op(&#39;Y Z&#39;, [((1, 0), &#39;TCCQUBIT-0&#39;), ((1, 0), &#39;TCCQUBIT-1&#39;)], 0.3535533905932738j), Op(&#39;Z Y&#39;, [1, ((1, 0), &#39;TCCQUBIT-1&#39;)], -0.1830127018922193j), Op(&#39;Z Z Y&#39;, [1, ((1, 0), &#39;TCCQUBIT-0&#39;), ((1, 0), &#39;TCCQUBIT-1&#39;)], 0.6830127018922193j), Op(&#39;Z Y&#39;, [1, ((1, 0), &#39;TCCQUBIT-0&#39;)], 0.3535533905932738j), Op(&#39;Z Y Z&#39;, [1, ((1, 0), &#39;TCCQUBIT-0&#39;), ((1, 0), &#39;TCCQUBIT-1&#39;)], -0.3535533905932738j), [Op(&#39;X Y&#39;, [0, 2], -0.5j), Op(&#39;Y X&#39;, [0, 2], 0.5j)], Op(&#39;Y&#39;, [((2, 0), &#39;TCCQUBIT-1&#39;)], 0.1830127018922193j), Op(&#39;Z Y&#39;, [((2, 0), &#39;TCCQUBIT-0&#39;), ((2, 0), &#39;TCCQUBIT-1&#39;)], -0.6830127018922193j), Op(&#39;Y&#39;, [((2, 0), &#39;TCCQUBIT-0&#39;)], -0.3535533905932738j), Op(&#39;Y Z&#39;, [((2, 0), &#39;TCCQUBIT-0&#39;), ((2, 0), &#39;TCCQUBIT-1&#39;)], 0.3535533905932738j), Op(&#39;Z Y&#39;, [2, ((2, 0), &#39;TCCQUBIT-1&#39;)], -0.1830127018922193j), Op(&#39;Z Z Y&#39;, [2, ((2, 0), &#39;TCCQUBIT-0&#39;), ((2, 0), &#39;TCCQUBIT-1&#39;)], 0.6830127018922193j), Op(&#39;Z Y&#39;, [2, ((2, 0), &#39;TCCQUBIT-0&#39;)], 0.3535533905932738j), Op(&#39;Z Y Z&#39;, [2, ((2, 0), &#39;TCCQUBIT-0&#39;), ((2, 0), &#39;TCCQUBIT-1&#39;)], -0.3535533905932738j)]
 spin_basis:
  [BasisHalfSpin(dof: 0, nbas: 2), BasisHalfSpin(dof: ((0, 0), &#39;TCCQUBIT-0&#39;), nbas: 2), BasisHalfSpin(dof: ((0, 0), &#39;TCCQUBIT-1&#39;), nbas: 2), BasisHalfSpin(dof: 1, nbas: 2), BasisHalfSpin(dof: ((1, 0), &#39;TCCQUBIT-0&#39;), nbas: 2), BasisHalfSpin(dof: ((1, 0), &#39;TCCQUBIT-1&#39;), nbas: 2), BasisHalfSpin(dof: 2, nbas: 2), BasisHalfSpin(dof: ((2, 0), &#39;TCCQUBIT-0&#39;), nbas: 2), BasisHalfSpin(dof: ((2, 0), &#39;TCCQUBIT-1&#39;), nbas: 2)]
-param_ids:
- [1, -1, 0, 2, 3, 4, 5, 6, 7, 8, 9, -9, 10, 11, 12, 13, 14, 15, 16, 17, 18, -18, 19, 20, 21, 22, 23, 24, 25, 26]
 ansatz:
- &lt;function get_ansatz.&lt;locals&gt;.ansatz at 0x7f2fd4ed29e0&gt;
+ &lt;function get_ansatz.&lt;locals&gt;.ansatz at 0x7fe2ab768670&gt;
 </pre></div></div>
 </div>
 </section>
@@ -572,11 +567,11 @@ ansatz:
 <h2>2.7 Main Structure of the Function<a class="headerlink" href="#2.7-Main-Structure-of-the-Function" title="Permalink to this heading">¶</a></h2>
 <p>This section is the main part of the funtion. The codes contain following parts: (i) Initialize the parameters and functions, some initializations are also preformed in section 2.2 (ii) Search for ground state, where <span class="math notranslate nohighlight">\(\theta_k\)</span> are updated via VQE and <span class="math notranslate nohighlight">\(B[l]\)</span> are calculated via functions in Section 2.6.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vqe_e</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">thetas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">max</span><span class="p">(</span><span class="n">param_ids</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">n_layers</span><span class="p">)</span>
+<span class="n">thetas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ansatz_terms</span><span class="p">)</span> <span class="o">*</span> <span class="n">n_layers</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="mi">3</span><span class="p">]:</span>
     <span class="k">for</span> <span class="n">nbas</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">32</span><span class="p">]:</span>
@@ -619,187 +614,187 @@ ansatz:
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 g: 1.5, nbas: 4
-Iter 0 VQE energy: -3.1462862688238387
-Iter 1 VQE energy: -3.1467101393155392
-Iter 2 VQE energy: -3.1516072207104755
-Iter 3 VQE energy: -3.146809472707097
-Iter 4 VQE energy: -3.1436199703762058
-Iter 5 VQE energy: -3.1436211792549265
-Iter 6 VQE energy: -3.1436161320531255
-Iter 7 VQE energy: -3.1436163145946456
-Iter 8 VQE energy: -3.143610688816215
-Iter 9 VQE energy: -3.143615904093609
+Iter 0 VQE energy: -3.1508416128890313
+Iter 1 VQE energy: -3.1507858838816376
+Iter 2 VQE energy: -3.1508608481716656
+Iter 3 VQE energy: -3.150867173130474
+Iter 4 VQE energy: -3.1507760219657097
+Iter 5 VQE energy: -3.1508712542841204
+Iter 6 VQE energy: -3.1508619663363584
+Iter 7 VQE energy: -3.150862097675895
+Iter 8 VQE energy: -3.1508558599533214
+Iter 9 VQE energy: -3.1508452460745824
 g: 1.5, nbas: 8
-Iter 0 VQE energy: -3.143618182488605
-Iter 1 VQE energy: -3.200840457440427
-Iter 2 VQE energy: -3.2122982581916806
-Iter 3 VQE energy: -3.2148415941913107
-Iter 4 VQE energy: -3.214454540682066
-Iter 5 VQE energy: -3.214612010154128
-Iter 6 VQE energy: -3.2147110746262615
-Iter 7 VQE energy: -3.2147665497225395
-Iter 8 VQE energy: -3.2148131940534586
-Iter 9 VQE energy: -3.2154252365889784
+Iter 0 VQE energy: -3.150839580645302
+Iter 1 VQE energy: -3.2066949093848724
+Iter 2 VQE energy: -3.212971955811858
+Iter 3 VQE energy: -3.21359027706454
+Iter 4 VQE energy: -3.213786701570586
+Iter 5 VQE energy: -3.213875852088408
+Iter 6 VQE energy: -3.2139390416159745
+Iter 7 VQE energy: -3.213949104011919
+Iter 8 VQE energy: -3.213987256845763
+Iter 9 VQE energy: -3.2152956996689386
 g: 1.5, nbas: 12
-Iter 0 VQE energy: -3.1514261568965116
-Iter 1 VQE energy: -3.207712921399021
-Iter 2 VQE energy: -3.2143507766993564
-Iter 3 VQE energy: -3.2151165867343625
-Iter 4 VQE energy: -3.215551620056812
-Iter 5 VQE energy: -3.21568849222177
-Iter 6 VQE energy: -3.215871719331443
-Iter 7 VQE energy: -3.215941510624362
-Iter 8 VQE energy: -3.2160628060732046
-Iter 9 VQE energy: -3.216149074896171
+Iter 0 VQE energy: -3.1506086065941177
+Iter 1 VQE energy: -3.207291050935305
+Iter 2 VQE energy: -3.2135257229321295
+Iter 3 VQE energy: -3.2141699728510145
+Iter 4 VQE energy: -3.2143365747584576
+Iter 5 VQE energy: -3.214441211557893
+Iter 6 VQE energy: -3.2149215057907408
+Iter 7 VQE energy: -3.215021952188251
+Iter 8 VQE energy: -3.2150830781181865
+Iter 9 VQE energy: -3.2151588242226294
 g: 1.5, nbas: 16
-Iter 0 VQE energy: -3.1514406055444124
-Iter 1 VQE energy: -3.2076420281600306
-Iter 2 VQE energy: -3.2142584040499904
-Iter 3 VQE energy: -3.215027472815238
-Iter 4 VQE energy: -3.215298468441994
-Iter 5 VQE energy: -3.215473370191188
-Iter 6 VQE energy: -3.215603547226202
-Iter 7 VQE energy: -3.2157277687243084
-Iter 8 VQE energy: -3.21585866940053
-Iter 9 VQE energy: -3.215945718302776
+Iter 0 VQE energy: -3.151275240878887
+Iter 1 VQE energy: -3.2070935536922067
+Iter 2 VQE energy: -3.2136287739682468
+Iter 3 VQE energy: -3.2143020839991756
+Iter 4 VQE energy: -3.2144651007997775
+Iter 5 VQE energy: -3.2145842050117097
+Iter 6 VQE energy: -3.2146841025772996
+Iter 7 VQE energy: -3.21479318479846
+Iter 8 VQE energy: -3.2148943236005287
+Iter 9 VQE energy: -3.2149540916947945
 g: 1.5, nbas: 20
-Iter 0 VQE energy: -3.1514390786099793
-Iter 1 VQE energy: -3.207490813088342
-Iter 2 VQE energy: -3.214102161196929
-Iter 3 VQE energy: -3.2148182787029125
-Iter 4 VQE energy: -3.215041112156586
-Iter 5 VQE energy: -3.2151813495719064
-Iter 6 VQE energy: -3.2153433350190888
-Iter 7 VQE energy: -3.215488882659097
-Iter 8 VQE energy: -3.2156246556276216
-Iter 9 VQE energy: -3.2157174737499026
+Iter 0 VQE energy: -3.151289122850235
+Iter 1 VQE energy: -3.207014859265433
+Iter 2 VQE energy: -3.2132344731718514
+Iter 3 VQE energy: -3.2141907479392553
+Iter 4 VQE energy: -3.2143546694580207
+Iter 5 VQE energy: -3.214450278123804
+Iter 6 VQE energy: -3.2145674514358706
+Iter 7 VQE energy: -3.2146390373914153
+Iter 8 VQE energy: -3.2150470541341685
+Iter 9 VQE energy: -3.215173127034174
 g: 1.5, nbas: 24
-Iter 0 VQE energy: -3.1514387774077157
-Iter 1 VQE energy: -3.207367390115564
-Iter 2 VQE energy: -3.2139409419868894
-Iter 3 VQE energy: -3.214681092894311
-Iter 4 VQE energy: -3.2148647347163752
-Iter 5 VQE energy: -3.2149976397508198
-Iter 6 VQE energy: -3.2150898148896068
-Iter 7 VQE energy: -3.215209498240965
-Iter 8 VQE energy: -3.215350330348768
-Iter 9 VQE energy: -3.215489480343017
+Iter 0 VQE energy: -3.150827151041051
+Iter 1 VQE energy: -3.207129572687281
+Iter 2 VQE energy: -3.2137825485777864
+Iter 3 VQE energy: -3.2144545350583797
+Iter 4 VQE energy: -3.214629617805067
+Iter 5 VQE energy: -3.214737029069743
+Iter 6 VQE energy: -3.214830643223987
+Iter 7 VQE energy: -3.2149177270776037
+Iter 8 VQE energy: -3.215007843231478
+Iter 9 VQE energy: -3.2150878222798105
 g: 1.5, nbas: 28
-Iter 0 VQE energy: -3.151439525393469
-Iter 1 VQE energy: -3.2073726435058725
-Iter 2 VQE energy: -3.21394347501351
-Iter 3 VQE energy: -3.2146357208139835
-Iter 4 VQE energy: -3.2147953021340396
-Iter 5 VQE energy: -3.2149183613661005
-Iter 6 VQE energy: -3.2150120210391324
-Iter 7 VQE energy: -3.2151326321686358
-Iter 8 VQE energy: -3.2152609684807225
-Iter 9 VQE energy: -3.2153772130446274
+Iter 0 VQE energy: -3.1513226796412654
+Iter 1 VQE energy: -3.206975159802363
+Iter 2 VQE energy: -3.21360025168811
+Iter 3 VQE energy: -3.2143725838746917
+Iter 4 VQE energy: -3.2145131528688684
+Iter 5 VQE energy: -3.214604325896769
+Iter 6 VQE energy: -3.2146927550103013
+Iter 7 VQE energy: -3.214787435576051
+Iter 8 VQE energy: -3.2148807292126254
+Iter 9 VQE energy: -3.214950439086758
 g: 1.5, nbas: 32
-Iter 0 VQE energy: -3.1514407536942515
-Iter 1 VQE energy: -3.2073747584311443
-Iter 2 VQE energy: -3.213913960989289
-Iter 3 VQE energy: -3.214575999427622
-Iter 4 VQE energy: -3.2147908760265476
-Iter 5 VQE energy: -3.214908337484859
-Iter 6 VQE energy: -3.214995903540079
-Iter 7 VQE energy: -3.2151048002575178
-Iter 8 VQE energy: -3.2151780903906246
-Iter 9 VQE energy: -3.215267190685132
-[array(-3.1436159), array(-3.21542524), array(-3.21614907), array(-3.21594572), array(-3.21571747), array(-3.21548948), array(-3.21537721), array(-3.21526719)]
+Iter 0 VQE energy: -3.1508096031820507
+Iter 1 VQE energy: -3.206930098390965
+Iter 2 VQE energy: -3.213589086530922
+Iter 3 VQE energy: -3.214254153558814
+Iter 4 VQE energy: -3.2143964407024552
+Iter 5 VQE energy: -3.2144846301084025
+Iter 6 VQE energy: -3.2145623430858894
+Iter 7 VQE energy: -3.214620531205786
+Iter 8 VQE energy: -3.2147225823351513
+Iter 9 VQE energy: -3.2147844815701507
+[-3.1508452460745824, -3.2152956996689386, -3.2151588242226294, -3.2149540916947945, -3.215173127034174, -3.2150878222798105, -3.214950439086758, -3.2147844815701507]
 g: 3, nbas: 4
-Iter 0 VQE energy: -5.970388609022889
-Iter 1 VQE energy: -5.970388750660544
-Iter 2 VQE energy: -5.970380747881972
-Iter 3 VQE energy: -5.9703823363984405
-Iter 4 VQE energy: -5.970361506210726
-Iter 5 VQE energy: -5.970387322685639
-Iter 6 VQE energy: -5.970395203902614
-Iter 7 VQE energy: -5.970391647335198
-Iter 8 VQE energy: -5.970399166505385
-Iter 9 VQE energy: -5.970381692433662
+Iter 0 VQE energy: -5.970095373880274
+Iter 1 VQE energy: -5.97011140752757
+Iter 2 VQE energy: -5.970112221832909
+Iter 3 VQE energy: -5.970097206562884
+Iter 4 VQE energy: -5.970097522226955
+Iter 5 VQE energy: -5.970084918795675
+Iter 6 VQE energy: -5.97009612094958
+Iter 7 VQE energy: -5.970090087724759
+Iter 8 VQE energy: -5.970084917787736
+Iter 9 VQE energy: -5.970092472244904
 g: 3, nbas: 8
-Iter 0 VQE energy: -5.97038378078057
-Iter 1 VQE energy: -7.5564103165274705
-Iter 2 VQE energy: -7.867598000881585
-Iter 3 VQE energy: -7.886883542215796
-Iter 4 VQE energy: -7.8885422575017525
-Iter 5 VQE energy: -7.88860270448971
-Iter 6 VQE energy: -7.888976697629529
-Iter 7 VQE energy: -7.889032282397925
-Iter 8 VQE energy: -7.87508588628647
-Iter 9 VQE energy: -7.88070265416792
+Iter 0 VQE energy: -5.970078968351394
+Iter 1 VQE energy: -7.563619315159238
+Iter 2 VQE energy: -7.86542656566074
+Iter 3 VQE energy: -7.88623299324116
+Iter 4 VQE energy: -7.8756160081347755
+Iter 5 VQE energy: -7.87669855576027
+Iter 6 VQE energy: -7.8770414783544185
+Iter 7 VQE energy: -7.877214342205345
+Iter 8 VQE energy: -7.877399262407691
+Iter 9 VQE energy: -7.877447749293062
 g: 3, nbas: 12
-Iter 0 VQE energy: -5.97067566818566
-Iter 1 VQE energy: -8.243806185428152
-Iter 2 VQE energy: -8.734803721364637
-Iter 3 VQE energy: -8.761741304437681
-Iter 4 VQE energy: -8.763332322992516
-Iter 5 VQE energy: -8.763771458365108
-Iter 6 VQE energy: -8.764185047602272
-Iter 7 VQE energy: -8.764384932213805
-Iter 8 VQE energy: -8.76466850977698
-Iter 9 VQE energy: -8.764911481717341
+Iter 0 VQE energy: -5.970404607808003
+Iter 1 VQE energy: -8.210512264715195
+Iter 2 VQE energy: -8.734258414528332
+Iter 3 VQE energy: -8.761817418245505
+Iter 4 VQE energy: -8.764385439689185
+Iter 5 VQE energy: -8.765150683117824
+Iter 6 VQE energy: -8.765371623528338
+Iter 7 VQE energy: -8.765594133409062
+Iter 8 VQE energy: -8.765731045348685
+Iter 9 VQE energy: -8.765868762122404
 g: 3, nbas: 16
-Iter 0 VQE energy: -5.96862038743091
-Iter 1 VQE energy: -8.429794930919833
-Iter 2 VQE energy: -9.026873692202507
-Iter 3 VQE energy: -9.056442107809515
-Iter 4 VQE energy: -9.05694061960338
-Iter 5 VQE energy: -9.057045669005818
-Iter 6 VQE energy: -9.057238086937822
-Iter 7 VQE energy: -9.057282106387905
-Iter 8 VQE energy: -9.057566284361702
-Iter 9 VQE energy: -9.057828042375913
+Iter 0 VQE energy: -5.968823174685871
+Iter 1 VQE energy: -8.433088894554963
+Iter 2 VQE energy: -9.027450708952731
+Iter 3 VQE energy: -9.056048877152831
+Iter 4 VQE energy: -9.057310249886191
+Iter 5 VQE energy: -9.057405427978866
+Iter 6 VQE energy: -9.057711262240172
+Iter 7 VQE energy: -9.057977529966319
+Iter 8 VQE energy: -9.058229991701616
+Iter 9 VQE energy: -9.058429201135686
 g: 3, nbas: 20
-Iter 0 VQE energy: -5.970618486961766
-Iter 1 VQE energy: -8.46027786865908
-Iter 2 VQE energy: -9.083147656265663
-Iter 3 VQE energy: -9.114099808352503
-Iter 4 VQE energy: -9.11560775880261
-Iter 5 VQE energy: -9.115877265080734
-Iter 6 VQE energy: -9.116097672280478
-Iter 7 VQE energy: -9.116229576435904
-Iter 8 VQE energy: -9.116393057481334
-Iter 9 VQE energy: -9.116547264265742
+Iter 0 VQE energy: -5.948528657871584
+Iter 1 VQE energy: -8.368829839591752
+Iter 2 VQE energy: -9.083438191408403
+Iter 3 VQE energy: -9.11436452030949
+Iter 4 VQE energy: -9.115669532398497
+Iter 5 VQE energy: -9.115868599561257
+Iter 6 VQE energy: -9.116043601598792
+Iter 7 VQE energy: -9.116167929411532
+Iter 8 VQE energy: -9.11643438333657
+Iter 9 VQE energy: -9.116603277604245
 g: 3, nbas: 24
-Iter 0 VQE energy: -5.970625270862546
-Iter 1 VQE energy: -8.45711233270321
-Iter 2 VQE energy: -9.088394950174024
-Iter 3 VQE energy: -9.119585611496353
-Iter 4 VQE energy: -9.120622157156225
-Iter 5 VQE energy: -9.12076874586676
-Iter 6 VQE energy: -9.120868946965105
-Iter 7 VQE energy: -9.120961208842665
-Iter 8 VQE energy: -9.121266704999321
-Iter 9 VQE energy: -9.121400092721187
+Iter 0 VQE energy: -5.947042292691847
+Iter 1 VQE energy: -8.365954455675366
+Iter 2 VQE energy: -9.03656892084732
+Iter 3 VQE energy: -9.11649389980292
+Iter 4 VQE energy: -9.12039969438638
+Iter 5 VQE energy: -9.120853070374695
+Iter 6 VQE energy: -9.121044950929027
+Iter 7 VQE energy: -9.121198735794241
+Iter 8 VQE energy: -9.121394623009978
+Iter 9 VQE energy: -9.12156465701712
 g: 3, nbas: 28
-Iter 0 VQE energy: -5.970428599007128
-Iter 1 VQE energy: -8.457873653767907
-Iter 2 VQE energy: -9.080983847442083
-Iter 3 VQE energy: -9.11887015866691
-Iter 4 VQE energy: -9.120581625216305
-Iter 5 VQE energy: -9.120780165844552
-Iter 6 VQE energy: -9.120861448711434
-Iter 7 VQE energy: -9.120944883939789
-Iter 8 VQE energy: -9.121064294222425
-Iter 9 VQE energy: -9.121158073032065
+Iter 0 VQE energy: -5.94852290058614
+Iter 1 VQE energy: -8.373669662264637
+Iter 2 VQE energy: -9.077430296028782
+Iter 3 VQE energy: -9.118353243461202
+Iter 4 VQE energy: -9.120646592845254
+Iter 5 VQE energy: -9.121017986552905
+Iter 6 VQE energy: -9.121200880818158
+Iter 7 VQE energy: -9.121406754497627
+Iter 8 VQE energy: -9.12160334523664
+Iter 9 VQE energy: -9.121785885087258
 g: 3, nbas: 32
-Iter 0 VQE energy: -5.969871735326939
-Iter 1 VQE energy: -8.45468700588645
-Iter 2 VQE energy: -9.081070798150298
-Iter 3 VQE energy: -9.11871782591465
-Iter 4 VQE energy: -9.120482174048545
-Iter 5 VQE energy: -9.1206758213174
-Iter 6 VQE energy: -9.12076495864178
-Iter 7 VQE energy: -9.12087305152589
-Iter 8 VQE energy: -9.120974560170358
-Iter 9 VQE energy: -9.121128971234404
-[array(-3.1436159), array(-3.21542524), array(-3.21614907), array(-3.21594572), array(-3.21571747), array(-3.21548948), array(-3.21537721), array(-3.21526719), array(-5.97038169), array(-7.88070265), array(-8.76491148), array(-9.05782804), array(-9.11654726), array(-9.12140009), array(-9.12115807), array(-9.12112897)]
+Iter 0 VQE energy: -5.955856129341857
+Iter 1 VQE energy: -8.411614122038424
+Iter 2 VQE energy: -9.013222667482161
+Iter 3 VQE energy: -9.115359115707335
+Iter 4 VQE energy: -9.120333885780456
+Iter 5 VQE energy: -9.12077712341391
+Iter 6 VQE energy: -9.120890286646729
+Iter 7 VQE energy: -9.120977919424327
+Iter 8 VQE energy: -9.121046355348854
+Iter 9 VQE energy: -9.121145181818363
+[-3.1508452460745824, -3.2152956996689386, -3.2151588242226294, -3.2149540916947945, -3.215173127034174, -3.2150878222798105, -3.214950439086758, -3.2147844815701507, -5.970092472244904, -7.877447749293062, -8.765868762122404, -9.058429201135686, -9.116603277604245, -9.12156465701712, -9.121785885087258, -9.121145181818363]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># plot the results</span>
@@ -814,7 +809,7 @@ Iter 9 VQE energy: -9.121128971234404
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
