@@ -189,3 +189,14 @@ offers more information on slow compilation.
 
 If you're using CPU based JAX, switching to the GPU version can significantly speed up compilation.
 Otherwise, to the author's knowledge currently there's no way to solve the slow compilation problem.
+
+What is the relation between TenCirChem and TenCirChem-NG?
+----------------------------------------------------------------
+
+Both packages are created by `Weitang Li <https://weitangligroup.com/>`__.
+From users’ perspective, TenCirChem-NG maintains full compatibility with the TenCirChem API,
+enhancing it with additional features and critical bug fixes.
+Only TneCirChem-NG is kept up-to-date with the evolution of `TensorCircuit-NG <https://github.com/tensorcircuit/tensorcircuit-ng>`__.
+
+TenCirChem-NG is intended as a drop-in replacement for TenCirChem, namely, by simply ``pip uninstall TenCirChem``
+and ``pip install TenCirChem-NG``, your existing applications should continue to function seamlessly without requiring any modification to the codebase.

@@ -1,19 +1,20 @@
-ACADEMIC PUBLIC LICENSE for TenCirChem, v1.0
+ACADEMIC PUBLIC LICENSE for TenCirChem-ng, v1.0
 
-The following license governs the use of TenCirChem in non-commercial academic environments. Commercial use requires a
+The following license governs the use of TenCirChem-ng in non-commercial academic environments. Commercial use requires a
 commercial license (qlab@tencent.com).
 
 Copyright (C) 2023 THL A29 Limited, a Tencent company.  All rights reserved.
+Modified by TenCirChem-ng Developers, 2024.
 
 Preamble
 
-This license contains the terms and conditions of using TenCirChem in non-commercial settings: at academic institutions
+This license contains the terms and conditions of using TenCirChem-ng in non-commercial settings: at academic institutions
 for teaching and research use, and at not-for-profit research organizations. You will find that this license provides
-non-commercial users of TenCirChem with rights that are similar to the well-known GNU General Public License 2.0, yet it
-retains the possibility for TenCirChem authors to financially support the development by selling commercial licenses.
-In fact, if you intend to use TenCirChem in a "for-profit" environment, where TenCirChem is used to develop or enhance
-a product (including commercial or industry-sponsored research at academic institutions), or to use TenCirChem in a
-commercial service offering, then you need to obtain a commercial license for TenCirChem. In that case, please contact
+non-commercial users of TenCirChem-ng with rights that are similar to the well-known GNU General Public License 2.0, yet it
+retains the possibility for TenCirChem-ng authors to financially support the development by selling commercial licenses.
+In fact, if you intend to use TenCirChem-ng in a "for-profit" environment, where TenCirChem-ng is used to develop or enhance
+a product (including commercial or industry-sponsored research at academic institutions), or to use TenCirChem-ng in a
+commercial service offering, then you need to obtain a commercial license for TenCirChem-ng. In that case, please contact
 qlab@tencent.com to inquire about commercial licenses.
 
 What are the rights given to non-commercial users? Similarly, to GPL 2.0, you have the right to use the software, to
@@ -21,10 +22,10 @@ distribute copies, to receive source code, to change the software and distribute
 software. Also, similarly to the GPL 2.0, if you distribute verbatim or modified copies of this software, they must be
 distributed under this license.
 
-By modeling the GPL 2.0, this license guarantees that you’re safe when using TenCirChem in your work, for teaching, and
-research. This license guarantees that TenCirChem will remain available free of charge for non-profit use. You can
-modify TenCirChem to your purposes, and you can also share your modifications. Even in the unlikely case of the authors
-abandoning TenCirChem entirely, this license permits anyone to continue developing it from the last release, and to
+By modeling the GPL 2.0, this license guarantees that you’re safe when using TenCirChem-ng in your work, for teaching, and
+research. This license guarantees that TenCirChem-ng will remain available free of charge for non-profit use. You can
+modify TenCirChem-ng to your purposes, and you can also share your modifications. Even in the unlikely case of the authors
+abandoning TenCirChem-ng entirely, this license permits anyone to continue developing it from the last release, and to
 create further releases under this license.
 
 We believe that the combination of non-commercial open source and commercial licensing will be beneficial for the whole
@@ -38,7 +39,7 @@ Terms and Conditions for Use, Copying, Distribution and Modification
 
 Definitions
 
-"Program" means a copy of TenCirChem, which is said to be distributed under this Academic Public License.
+"Program" means a copy of TenCirChem-ng, which is said to be distributed under this Academic Public License.
 
 "Work based on the Program" means either the Program or any derivative work under copyright law: that is to say, a work
 containing the Program or a portion of it, either verbatim or with modifications and/or translated into another language
@@ -120,4 +121,4 @@ by law or agreed in writing. The disclaimer also includes consequential damages 
 alone or in conjunction with other programs, including but not limited to the loss or corruption of data.
 
 Initially written by Andras Varga (public domain) for OMNeT++ https://omnetpp.org/intro/license,
-adapted by THL A29 Limited. The adaptation is licensed under CC0 1.0 (Public Domain Dedication).
+adapted by TenCirChem-ng Developers. The adaptation is licensed under CC0 1.0 (Public Domain Dedication).

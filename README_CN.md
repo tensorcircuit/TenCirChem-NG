@@ -1,14 +1,14 @@
 # TenCirChem
 
-![TenCirChem](https://github.com/tencent-quantum-lab/TenCirChem/blob/master/docs/source/statics/logov0.png)
+![TenCirChem](https://github.com/tensorcircuit/TenCirChem-ng/blob/master/docs/source/statics/logov0.png)
 
-[![ci](https://img.shields.io/github/actions/workflow/status/tencent-quantum-lab/tencirchem/ci.yml?branch=master)](https://github.com/tencent-quantum-lab/TenCirChem/actions)
-[![codecov](https://codecov.io/github/tencent-quantum-lab/TenCirChem/branch/master/graph/badge.svg?token=6QZP1RKVTT)](https://app.codecov.io/github/tencent-quantum-lab/TenCirChem)
-[![pypi](https://img.shields.io/pypi/v/tencirchem.svg?logo=pypi)](https://pypi.org/project/tencirchem/)
-[![doc](https://img.shields.io/badge/docs-link-green.svg)](https://tencent-quantum-lab.github.io/TenCirChem/index.html)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/tencent-quantum-lab/TenCirChem/master?labpath=docs%2Fsource%2Ftutorial_jupyter)
+[![ci](https://img.shields.io/github/actions/workflow/status/tensorcircuit/TenCirChem-ng/ci.yml?branch=master)](https://github.com/tencent-quantum-lab/TenCirChem/actions)
+[![codecov](https://codecov.io/github/tensorcircuit/TenCirChem-ng/branch/master/graph/badge.svg?token=6QZP1RKVTT)](https://app.codecov.io/github/tencent-quantum-lab/TenCirChem)
+[![pypi](https://img.shields.io/pypi/v/tencirchem-ng.svg?logo=pypi)](https://pypi.org/project/tencirchem-ng/)
+[![doc](https://img.shields.io/badge/docs-link-green.svg)](https://tensorcircuit.github.io/TenCirChem-ng/index.html)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/tensorcircuit/TenCirChem-ng/master?labpath=docs%2Fsource%2Ftutorial_jupyter)
 
-[English](https://github.com/tencent-quantum-lab/TenCirChem/) | 简体中文
+[English](https://github.com/tensorcircuit/TenCirChem-ng/) | 简体中文
 
 TenCirChem 是一个高效且通用的分子性质量子计算软件包。TenCirChem 基于[TensorCircuit]，并针对化学应用进行了优化。
 

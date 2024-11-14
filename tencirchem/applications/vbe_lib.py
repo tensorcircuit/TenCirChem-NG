@@ -34,7 +34,7 @@ def get_contracted_mpo(h_mpo, b_array, n_qubit_per_mode, b_dof_pidx, psi_indices
     b_shape = tuple([2] * n_qubit_per_mode + [nbas])
     args = []
     for i in range(len(h_mpo)):
-        args.append(h_mpo[i])
+        args.append(h_mpo[i].array)
         args.append([f"mpo-{i}", f"p-{i}-top", f"p-{i}-bottom", f"mpo-{i + 1}"])
     for i in range(len(b_array)):
         dof_pidx = b_dof_pidx[i]
@@ -58,7 +58,7 @@ def get_contract_args(psi, h_mpo, b_array, i, n_qubit_per_mode, psi_idx_top, psi
     args = [psi.reshape(psi_shape2).conj(), psi_idx_top] + [psi.reshape(psi_shape2), psi_idx_bottom]
     # H
     for j in range(len(h_mpo)):
-        args.append(h_mpo[j])
+        args.append(h_mpo[j].array)
         args.append([f"mpo-{j}", f"p-{j}-top", f"p-{j}-bottom", f"mpo-{j + 1}"])
     # b
     for j in range(len(b_array)):

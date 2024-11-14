@@ -1,24 +1,26 @@
 # TenCirChem
 
-![TenCirChem](https://github.com/tencent-quantum-lab/TenCirChem/blob/master/docs/source/statics/logov0.png)
+![TenCirChem](https://github.com/tensorcircuit/TenCirChem-ng/blob/master/docs/source/statics/logov0.png)
 
-[![ci](https://img.shields.io/github/actions/workflow/status/tencent-quantum-lab/tencirchem/ci.yml?branch=master)](https://github.com/tencent-quantum-lab/TenCirChem/actions)
-[![codecov](https://codecov.io/github/tencent-quantum-lab/TenCirChem/branch/master/graph/badge.svg?token=6QZP1RKVTT)](https://app.codecov.io/github/tencent-quantum-lab/TenCirChem)
-[![pypi](https://img.shields.io/pypi/v/tencirchem.svg?logo=pypi)](https://pypi.org/project/tencirchem/)
-[![doc](https://img.shields.io/badge/docs-link-green.svg)](https://tencent-quantum-lab.github.io/TenCirChem/index.html)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/tencent-quantum-lab/TenCirChem/master?labpath=docs%2Fsource%2Ftutorial_jupyter)
+[![ci](https://img.shields.io/github/actions/workflow/status/tensorcircuit/TenCirChem-ng/ci.yml?branch=master)](https://github.com/tencent-quantum-lab/TenCirChem/actions)
+[![codecov](https://codecov.io/github/tensorcircuit/TenCirChem-ng/branch/master/graph/badge.svg?token=6QZP1RKVTT)](https://app.codecov.io/github/tencent-quantum-lab/TenCirChem)
+[![pypi](https://img.shields.io/pypi/v/tencirchem-ng.svg?logo=pypi)](https://pypi.org/project/tencirchem-ng/)
+[![doc](https://img.shields.io/badge/docs-link-green.svg)](https://tensorcircuit.github.io/TenCirChem-ng/index.html)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/tensorcircuit/TenCirChem-ng/master?labpath=docs%2Fsource%2Ftutorial_jupyter)
 
-English | [简体中文](https://github.com/tencent-quantum-lab/TenCirChem/blob/master/README_CN.md)
+English | [简体中文](https://github.com/tensorcircuit/TenCirChem-ng/blob/master/README_CN.md)
 
 TenCirChem is an efficient and versatile quantum computation package for molecular properties.
-TenCirChem is based on [TensorCircuit](https://github.com/tencent-quantum-lab/tensorcircuit) 
+TenCirChem is based on [TensorCircuit](https://github.com/tensorcircuit/tensorcircuit-ng) 
 and is optimized for chemistry applications.
 
+TenCirChem-NG is fully compatible with TenCirChem with more new features and bug fixes.
+
 ## Easy Installation
-Getting started with TenCirChem by installing the package via pip:
+Getting started with TenCirChem-NG by installing the package via pip:
 
 ```sh
-pip install tencirchem
+pip install tencirchem-ng
 ```
 
 ## Simple to Use
