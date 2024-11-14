@@ -4,10 +4,8 @@ pandas
 jax
 jaxlib
 pyscf
-tensorcircuit
+tensorcircuit-ng[qiskit]
 openfermion
-qiskit<1.0
 pylatexenc
-SciencePlots
 noisyopt
 renormalizer==0.0.10
