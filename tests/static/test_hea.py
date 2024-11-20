@@ -2,8 +2,8 @@ import numpy as np
 import pytest
 from qiskit.circuit.library import RealAmplitudes
 
-from tencirchem import UCCSD, HEA, parity, set_backend
-from tencirchem.molecule import h2
+from tencirchem import UCCSD, ROUCCSD, HEA, parity, set_backend
+from tencirchem.molecule import h2, h_chain
 from tests.static.test_engine import set_backend_with_skip
 
 
@@ -62,3 +62,27 @@ def test_rdm(mapping, reset_backend):
     hea.kernel()
     np.testing.assert_allclose(hea.make_rdm1(), uccsd.make_rdm1(basis="MO"), atol=1e-4)
     np.testing.assert_allclose(hea.make_rdm2(), uccsd.make_rdm2(basis="MO"), atol=1e-4)
+
+
+def test_open_shell():
+    set_backend("jax")
+
+    m = h_chain(4, charge=1, spin=1)
+
+    hea = HEA.from_molecule(m, n_layers=6, mapping="parity")
+    # try multiple times to avoid local minimum
+    es = []
+    for i in range(3):
+        hea.init_guess = np.random.random(hea.init_guess.shape)
+        es.append(hea.kernel())
+    e1 = min(es)
+
+    ucc = ROUCCSD(m)
+    e2 = ucc.kernel()
+
+    # for debugging
+    # ucc.print_summary()
+
+    # usually ROUCCSD is more accurate
+    np.testing.assert_allclose(e2, ucc.e_fci, atol=1e-4)
+    np.testing.assert_allclose(e1, ucc.e_fci, atol=2e-3)

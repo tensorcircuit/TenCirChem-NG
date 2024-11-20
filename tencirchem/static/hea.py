@@ -91,9 +91,11 @@ def _parity(fermion_operator, n_modes):
     return binary_code_transform(fermion_operator, parity_code(n_modes))
 
 
-def parity(fermion_operator: FermionOperator, n_modes: int, n_elec: int) -> QubitOperator:
+def parity(fermion_operator: FermionOperator, n_modes: int, n_elec: Union[int, Tuple[int, int]]) -> QubitOperator:
     """
-    Performs parity transformation.
+    Performs parity transformation and saves 2 qubits assuming electron number conservation in each spin sector.
+    For example, ``011011`` is first transformed to ``010010`` and then ``0101``.
+    ``110100`` is transformed to ``100111`` and then `1011`.
 
     Parameters
     ----------
@@ -101,8 +103,8 @@ def parity(fermion_operator: FermionOperator, n_modes: int, n_elec: int) -> Qubi
         The fermion operator.
     n_modes: int
         The number of modes (spin-orbitals).
-    n_elec: int
-        The number of electrons.
+    n_elec: int or tuple
+        The number of electrons, or numbers of alpha/beta electrons
 
     Returns
     -------
@@ -112,7 +114,14 @@ def parity(fermion_operator: FermionOperator, n_modes: int, n_elec: int) -> Qubi
     res = 0
     assert n_modes % 2 == 0
     reduction_indices = [n_modes // 2 - 1, n_modes - 1]
-    phase_alpha = (-1) ** (n_elec // 2)
+    if isinstance(n_elec, int):
+        if n_elec % 2 != 0:
+            raise ValueError("Specify alpha and beta spin as a tuple when the total number or electron is not even")
+        n_elec_s = [n_elec // 2, n_elec // 2]
+    else:
+        n_elec_s = n_elec
+    phase_alpha = (-1) ** n_elec_s[0]
+    phase_beta = (-1) ** sum(n_elec_s)
     for qop in qubit_operator:
         # qop example: 0.5 [Z1 X2 X3]
         pauli_string, coeff = next(iter(qop.terms.items()))
@@ -129,6 +138,8 @@ def parity(fermion_operator: FermionOperator, n_modes: int, n_elec: int) -> Qubi
                     assert symbol == "Z"
                     if is_alpha:
                         coeff *= phase_alpha
+                    else:
+                        coeff *= phase_beta
                     continue
             if not is_alpha:
                 idx -= 1
@@ -218,15 +229,19 @@ class HEA:
         """
         from tencirchem import UCC
 
-        ucc = UCC(m, active_space=active_space, run_ccsd=False, run_fci=False)
-        return cls.ry(ucc.int1e, ucc.int2e, ucc.n_elec, ucc.e_core, n_layers=n_layers, mapping=mapping, **kwargs)
+        if m.spin == 0:
+            init_method = "mp2"
+        else:
+            init_method = "zeros"
+        ucc = UCC(m, init_method=init_method, active_space=active_space, run_ccsd=False, run_fci=False)
+        return cls.ry(ucc.int1e, ucc.int2e, ucc.n_elec_s, ucc.e_core, n_layers=n_layers, mapping=mapping, **kwargs)
 
     @classmethod
     def ry(
         cls,
         int1e: np.ndarray,
         int2e: np.ndarray,
-        n_elec: int,
+        n_elec: Union[int, Tuple[int, int]],
         e_core: float,
         n_layers: int,
         init_circuit: Circuit = None,
@@ -258,8 +273,8 @@ class HEA:
             One-body integral in spatial orbital.
         int2e: np.ndarray
             Two-body integral, in spatial orbital, chemists' notation, and without considering symmetry.
-        n_elec: int
-            The number of electrons
+        n_elec: int or tuple
+            The number of electrons, or numbers of alpha/beta electrons
         e_core: float
             The nuclear energy or core energy if active space approximation is involved.
         n_layers: int
@@ -304,7 +319,7 @@ class HEA:
         cls,
         int1e: np.ndarray,
         int2e: np.ndarray,
-        n_elec: int,
+        n_elec: Union[int, Tuple[int, int]],
         e_core: float,
         mapping: str,
         circuit: Union[Callable, QuantumCircuit],
@@ -321,8 +336,8 @@ class HEA:
             One-body integral in spatial orbital.
         int2e: np.ndarray
             Two-body integral, in spatial orbital, chemists' notation, and without considering symmetry.
-        n_elec: int
-            The number of electrons
+        n_elec: int or tuple
+            The number of electrons, or numbers of alpha/beta electrons
         e_core: float
             The nuclear energy or core energy if active space approximation is involved.
         mapping: str
@@ -343,13 +358,18 @@ class HEA:
         """
 
         if isinstance(n_elec, tuple):
-            if len(n_elec) != 2 or n_elec[0] != n_elec[1]:
-                raise ValueError(f"Incompatible n_elec: {n_elec}")
-            n_elec = n_elec[0] + n_elec[1]
+            n_elec_s = n_elec
+            n_elec = sum(n_elec)
+            spin = abs(n_elec_s[0] - n_elec_s[1])
+        else:
+            if n_elec % 2 != 0:
+                raise ValueError("Specify alpha and beta spin as a tuple when the total number or electron is not even")
+            n_elec_s = (n_elec // 2, n_elec // 2)
+            spin = 0
 
         hop = get_hop_from_integral(int1e, int2e) + e_core
         n_sorb = 2 * len(int1e)
-        h_qubit_op = fop_to_qop(hop, mapping, n_sorb, n_elec)
+        h_qubit_op = fop_to_qop(hop, mapping, n_sorb, n_elec_s)
 
         instance = cls(h_qubit_op, circuit, init_guess, **kwargs)
 
@@ -357,6 +377,7 @@ class HEA:
         instance.int1e = int1e
         instance.int2e = int2e
         instance.n_elec = n_elec
+        instance.spin = spin
         instance.e_core = e_core
         instance.hop = hop
         return instance
@@ -518,6 +539,7 @@ class HEA:
         self.int1e = None
         self.int2e = None
         self.n_elec = None
+        self.spin = None
         self.e_core = None
         self.hop = None
 
@@ -1056,6 +1078,11 @@ class HEA:
         if not v in ["param-shift", "autodiff", "free"]:
             raise ValueError(f"Invalid gradient method {v}")
         self._grad = v
+
+    @property
+    def n_elec_s(self):
+        """The number of electrons for alpha and beta spin"""
+        return (self.n_elec + self.spin) // 2, (self.n_elec - self.spin) // 2
 
     @property
     def n_params(self):

@@ -129,8 +129,11 @@ and JIT time is usually much longer than the actual run time.
 Sometimes JIT will also result in out-of-memory error.
 Thus, in general NumPy and CuPy are the recommended backends over JAX.
 
-For noisy circuit simulation, the performance of NumPy and JAX is comparable.
-For quantum dynamics simulation, the JAX backend is usually preferred.
+JAX backend is generally recommended for the :class:`HEA <tencirchem.HEA>` class due to its superior efficiency,
+particularly with the ``"tensornetwork"`` engine.
+In terms of noisy circuit simulation, the performance of NumPy and JAX is roughly comparable.
+
+For quantum dynamics simulation, the JAX backend is preferred.
 
 TenCirChem shares the same API with TensorCircuit for setting backends and data types, at runtime:
 

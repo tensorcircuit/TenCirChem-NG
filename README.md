@@ -14,7 +14,9 @@ TenCirChem is an efficient and versatile quantum computation package for molecul
 TenCirChem is based on [TensorCircuit](https://github.com/tensorcircuit/tensorcircuit-ng) 
 and is optimized for chemistry applications.
 
-TenCirChem-NG is fully compatible with TenCirChem with more new features and bug fixes.
+TenCirChem-NG is 
+[fully compatible](https://tensorcircuit.github.io/TenCirChem-NG/faq.html#what-is-the-relation-between-tencirchem-and-tencirchem-ng)
+with TenCirChem with more new features and bug fixes.
 
 ## Easy Installation
 Getting started with TenCirChem-NG by installing the package via pip:

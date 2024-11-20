@@ -12,7 +12,7 @@
 
 TenCirChem 是一个高效且通用的分子性质量子计算软件包。TenCirChem 基于[TensorCircuit]，并针对化学应用进行了优化。
 
-TenCirChem-NG与TenCirChem完全兼容，并具有更多特性和漏洞修复。
+TenCirChem-NG与TenCirChem[完全兼容]((https://tensorcircuit.github.io/TenCirChem-NG/faq.html#what-is-the-relation-between-tencirchem-and-tencirchem-ng))，并具有更多特性和漏洞修复。
 
 ## 安装
 安装 TenCirChem 非常简单。只需通过 pip 安装包即可：
