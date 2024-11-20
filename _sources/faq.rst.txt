@@ -190,6 +190,19 @@ offers more information on slow compilation.
 If you're using CPU based JAX, switching to the GPU version can significantly speed up compilation.
 Otherwise, to the author's knowledge currently there's no way to solve the slow compilation problem.
 
+
+Can I use real QPU in TenCirChem?
+---------------------------------
+
+Yes. the current version of TenCirChem supports
+QPU through `TensorCircuit-NG <https://github.com/tensorcircuit/tensorcircuit-ng>`__.
+Please check out the
+`TensorCircuit-NG documentation <https://tensorcircuit-ng.readthedocs.io/en/latest/tutorials/qcloud_sdk_demo.html>`__
+to get started.
+You may set the ``engine`` of the ``HEA`` class to ``qpu`` to use QPU
+or you may use ``TenCirChem`` as a preprocessing layer for ``TensorCircuit-NG``.
+
+
 What is the relation between TenCirChem and TenCirChem-NG?
 ----------------------------------------------------------------
 

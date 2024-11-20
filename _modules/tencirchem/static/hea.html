@@ -352,9 +352,11 @@
     <span class="k">return</span> <span class="n">binary_code_transform</span><span class="p">(</span><span class="n">fermion_operator</span><span class="p">,</span> <span class="n">parity_code</span><span class="p">(</span><span class="n">n_modes</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="parity"><a class="viewcode-back" href="../../../api/hea.html#tencirchem.parity">[docs]</a><span class="k">def</span> <span class="nf">parity</span><span class="p">(</span><span class="n">fermion_operator</span><span class="p">:</span> <span class="n">FermionOperator</span><span class="p">,</span> <span class="n">n_modes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_elec</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QubitOperator</span><span class="p">:</span>
+<div class="viewcode-block" id="parity"><a class="viewcode-back" href="../../../api/hea.html#tencirchem.parity">[docs]</a><span class="k">def</span> <span class="nf">parity</span><span class="p">(</span><span class="n">fermion_operator</span><span class="p">:</span> <span class="n">FermionOperator</span><span class="p">,</span> <span class="n">n_modes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_elec</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">QubitOperator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Performs parity transformation.</span>
+<span class="sd">    Performs parity transformation and saves 2 qubits assuming electron number conservation in each spin sector.</span>
+<span class="sd">    For example, ``011011`` is first transformed to ``010010`` and then ``0101``.</span>
+<span class="sd">    ``110100`` is transformed to ``100111`` and then `1011`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -362,8 +364,8 @@
 <span class="sd">        The fermion operator.</span>
 <span class="sd">    n_modes: int</span>
 <span class="sd">        The number of modes (spin-orbitals).</span>
-<span class="sd">    n_elec: int</span>
-<span class="sd">        The number of electrons.</span>
+<span class="sd">    n_elec: int or tuple</span>
+<span class="sd">        The number of electrons, or numbers of alpha/beta electrons</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -373,7 +375,14 @@
     <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">assert</span> <span class="n">n_modes</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span>
     <span class="n">reduction_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">n_modes</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_modes</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
-    <span class="n">phase_alpha</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">n_elec</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_elec</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">n_elec</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Specify alpha and beta spin as a tuple when the total number or electron is not even&quot;</span><span class="p">)</span>
+        <span class="n">n_elec_s</span> <span class="o">=</span> <span class="p">[</span><span class="n">n_elec</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n_elec</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">n_elec_s</span> <span class="o">=</span> <span class="n">n_elec</span>
+    <span class="n">phase_alpha</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="n">n_elec_s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">phase_beta</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="nb">sum</span><span class="p">(</span><span class="n">n_elec_s</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">qop</span> <span class="ow">in</span> <span class="n">qubit_operator</span><span class="p">:</span>
         <span class="c1"># qop example: 0.5 [Z1 X2 X3]</span>
         <span class="n">pauli_string</span><span class="p">,</span> <span class="n">coeff</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">qop</span><span class="o">.</span><span class="n">terms</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
@@ -390,6 +399,8 @@
                     <span class="k">assert</span> <span class="n">symbol</span> <span class="o">==</span> <span class="s2">&quot;Z&quot;</span>
                     <span class="k">if</span> <span class="n">is_alpha</span><span class="p">:</span>
                         <span class="n">coeff</span> <span class="o">*=</span> <span class="n">phase_alpha</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">coeff</span> <span class="o">*=</span> <span class="n">phase_beta</span>
                     <span class="k">continue</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">is_alpha</span><span class="p">:</span>
                 <span class="n">idx</span> <span class="o">-=</span> <span class="mi">1</span>
@@ -479,15 +490,19 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">tencirchem</span> <span class="kn">import</span> <span class="n">UCC</span>
 
-        <span class="n">ucc</span> <span class="o">=</span> <span class="n">UCC</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">active_space</span><span class="o">=</span><span class="n">active_space</span><span class="p">,</span> <span class="n">run_ccsd</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">run_fci</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ry</span><span class="p">(</span><span class="n">ucc</span><span class="o">.</span><span class="n">int1e</span><span class="p">,</span> <span class="n">ucc</span><span class="o">.</span><span class="n">int2e</span><span class="p">,</span> <span class="n">ucc</span><span class="o">.</span><span class="n">n_elec</span><span class="p">,</span> <span class="n">ucc</span><span class="o">.</span><span class="n">e_core</span><span class="p">,</span> <span class="n">n_layers</span><span class="o">=</span><span class="n">n_layers</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="n">mapping</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">spin</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">init_method</span> <span class="o">=</span> <span class="s2">&quot;mp2&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">init_method</span> <span class="o">=</span> <span class="s2">&quot;zeros&quot;</span>
+        <span class="n">ucc</span> <span class="o">=</span> <span class="n">UCC</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">init_method</span><span class="o">=</span><span class="n">init_method</span><span class="p">,</span> <span class="n">active_space</span><span class="o">=</span><span class="n">active_space</span><span class="p">,</span> <span class="n">run_ccsd</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">run_fci</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">ry</span><span class="p">(</span><span class="n">ucc</span><span class="o">.</span><span class="n">int1e</span><span class="p">,</span> <span class="n">ucc</span><span class="o">.</span><span class="n">int2e</span><span class="p">,</span> <span class="n">ucc</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">,</span> <span class="n">ucc</span><span class="o">.</span><span class="n">e_core</span><span class="p">,</span> <span class="n">n_layers</span><span class="o">=</span><span class="n">n_layers</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="n">mapping</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="HEA.ry"><a class="viewcode-back" href="../../../api/hea.html#tencirchem.HEA.ry">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">ry</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">int1e</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">int2e</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-        <span class="n">n_elec</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">n_elec</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span>
         <span class="n">e_core</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">n_layers</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">init_circuit</span><span class="p">:</span> <span class="n">Circuit</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -519,8 +534,8 @@
 <span class="sd">            One-body integral in spatial orbital.</span>
 <span class="sd">        int2e: np.ndarray</span>
 <span class="sd">            Two-body integral, in spatial orbital, chemists&#39; notation, and without considering symmetry.</span>
-<span class="sd">        n_elec: int</span>
-<span class="sd">            The number of electrons</span>
+<span class="sd">        n_elec: int or tuple</span>
+<span class="sd">            The number of electrons, or numbers of alpha/beta electrons</span>
 <span class="sd">        e_core: float</span>
 <span class="sd">            The nuclear energy or core energy if active space approximation is involved.</span>
 <span class="sd">        n_layers: int</span>
@@ -565,7 +580,7 @@
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">int1e</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">int2e</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-        <span class="n">n_elec</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">n_elec</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span>
         <span class="n">e_core</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">mapping</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">circuit</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">QuantumCircuit</span><span class="p">],</span>
@@ -582,8 +597,8 @@
 <span class="sd">            One-body integral in spatial orbital.</span>
 <span class="sd">        int2e: np.ndarray</span>
 <span class="sd">            Two-body integral, in spatial orbital, chemists&#39; notation, and without considering symmetry.</span>
-<span class="sd">        n_elec: int</span>
-<span class="sd">            The number of electrons</span>
+<span class="sd">        n_elec: int or tuple</span>
+<span class="sd">            The number of electrons, or numbers of alpha/beta electrons</span>
 <span class="sd">        e_core: float</span>
 <span class="sd">            The nuclear energy or core energy if active space approximation is involved.</span>
 <span class="sd">        mapping: str</span>
@@ -604,13 +619,18 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_elec</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">n_elec</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">n_elec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">n_elec</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Incompatible n_elec: </span><span class="si">{</span><span class="n">n_elec</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">n_elec</span> <span class="o">=</span> <span class="n">n_elec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">n_elec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">n_elec_s</span> <span class="o">=</span> <span class="n">n_elec</span>
+            <span class="n">n_elec</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">n_elec</span><span class="p">)</span>
+            <span class="n">spin</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">n_elec_s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">n_elec_s</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">n_elec</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Specify alpha and beta spin as a tuple when the total number or electron is not even&quot;</span><span class="p">)</span>
+            <span class="n">n_elec_s</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_elec</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">n_elec</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">spin</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="n">hop</span> <span class="o">=</span> <span class="n">get_hop_from_integral</span><span class="p">(</span><span class="n">int1e</span><span class="p">,</span> <span class="n">int2e</span><span class="p">)</span> <span class="o">+</span> <span class="n">e_core</span>
         <span class="n">n_sorb</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">int1e</span><span class="p">)</span>
-        <span class="n">h_qubit_op</span> <span class="o">=</span> <span class="n">fop_to_qop</span><span class="p">(</span><span class="n">hop</span><span class="p">,</span> <span class="n">mapping</span><span class="p">,</span> <span class="n">n_sorb</span><span class="p">,</span> <span class="n">n_elec</span><span class="p">)</span>
+        <span class="n">h_qubit_op</span> <span class="o">=</span> <span class="n">fop_to_qop</span><span class="p">(</span><span class="n">hop</span><span class="p">,</span> <span class="n">mapping</span><span class="p">,</span> <span class="n">n_sorb</span><span class="p">,</span> <span class="n">n_elec_s</span><span class="p">)</span>
 
         <span class="n">instance</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">h_qubit_op</span><span class="p">,</span> <span class="n">circuit</span><span class="p">,</span> <span class="n">init_guess</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -618,6 +638,7 @@
         <span class="n">instance</span><span class="o">.</span><span class="n">int1e</span> <span class="o">=</span> <span class="n">int1e</span>
         <span class="n">instance</span><span class="o">.</span><span class="n">int2e</span> <span class="o">=</span> <span class="n">int2e</span>
         <span class="n">instance</span><span class="o">.</span><span class="n">n_elec</span> <span class="o">=</span> <span class="n">n_elec</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">spin</span> <span class="o">=</span> <span class="n">spin</span>
         <span class="n">instance</span><span class="o">.</span><span class="n">e_core</span> <span class="o">=</span> <span class="n">e_core</span>
         <span class="n">instance</span><span class="o">.</span><span class="n">hop</span> <span class="o">=</span> <span class="n">hop</span>
         <span class="k">return</span> <span class="n">instance</span></div>
@@ -779,6 +800,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">int1e</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">int2e</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_elec</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spin</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">e_core</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hop</span> <span class="o">=</span> <span class="kc">None</span></div>
 
@@ -1317,6 +1339,11 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;param-shift&quot;</span><span class="p">,</span> <span class="s2">&quot;autodiff&quot;</span><span class="p">,</span> <span class="s2">&quot;free&quot;</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid gradient method </span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_grad</span> <span class="o">=</span> <span class="n">v</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n_elec_s</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of electrons for alpha and beta spin&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_elec</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">spin</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_elec</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">spin</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">n_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

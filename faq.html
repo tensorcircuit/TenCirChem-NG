@@ -422,6 +422,16 @@ offers more information on slow compilation.</p>
 <p>If you’re using CPU based JAX, switching to the GPU version can significantly speed up compilation.
 Otherwise, to the author’s knowledge currently there’s no way to solve the slow compilation problem.</p>
 </section>
+<section id="can-i-use-real-qpu-in-tencirchem">
+<h2>Can I use real QPU in TenCirChem?<a class="headerlink" href="#can-i-use-real-qpu-in-tencirchem" title="Permalink to this heading">¶</a></h2>
+<p>Yes. the current version of TenCirChem supports
+QPU through <a class="reference external" href="https://github.com/tensorcircuit/tensorcircuit-ng">TensorCircuit-NG</a>.
+Please check out the
+<a class="reference external" href="https://tensorcircuit-ng.readthedocs.io/en/latest/tutorials/qcloud_sdk_demo.html">TensorCircuit-NG documentation</a>
+to get started.
+You may set the <code class="docutils literal notranslate"><span class="pre">engine</span></code> of the <code class="docutils literal notranslate"><span class="pre">HEA</span></code> class to <code class="docutils literal notranslate"><span class="pre">qpu</span></code> to use QPU
+or you may use <code class="docutils literal notranslate"><span class="pre">TenCirChem</span></code> as a preprocessing layer for <code class="docutils literal notranslate"><span class="pre">TensorCircuit-NG</span></code>.</p>
+</section>
 <section id="what-is-the-relation-between-tencirchem-and-tencirchem-ng">
 <h2>What is the relation between TenCirChem and TenCirChem-NG?<a class="headerlink" href="#what-is-the-relation-between-tencirchem-and-tencirchem-ng" title="Permalink to this heading">¶</a></h2>
 <p>Both packages are created by <a class="reference external" href="https://weitangligroup.com/">Weitang Li</a>.
@@ -495,6 +505,7 @@ and <code class="docutils literal notranslate"><span class="pre">pip</span> <spa
 <li><a class="reference internal" href="#how-does-tencirchem-evaluate-ucc-gradient">How does TenCirChem evaluate UCC gradient?</a></li>
 <li><a class="reference internal" href="#how-to-use-gpu-in-tencirchem">How to use GPU in TenCirChem?</a></li>
 <li><a class="reference internal" href="#why-is-jax-backend-so-slow-on-first-run">Why is JAX backend so slow on first run?</a></li>
+<li><a class="reference internal" href="#can-i-use-real-qpu-in-tencirchem">Can I use real QPU in TenCirChem?</a></li>
 <li><a class="reference internal" href="#what-is-the-relation-between-tencirchem-and-tencirchem-ng">What is the relation between TenCirChem and TenCirChem-NG?</a></li>
 </ul>
 </li>
