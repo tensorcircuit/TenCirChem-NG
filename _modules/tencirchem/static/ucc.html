@@ -1,12 +1,12 @@
 <!doctype html>
-<html class="no-js" lang="en" data-content_root="">
+<html class="no-js" lang="en" data-content_root="../../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.ico"/><!-- Generated with Sphinx 7.1.2 and Furo 2024.08.06 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/><!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
         <title>tencirchem.static.ucc - TenCirChem documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -265,33 +265,33 @@
 <span class="c1">#  and WITHOUT ANY WARRANTY. See the LICENSE file for details.</span>
 
 
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">product</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">product</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">time</span><span class="w"> </span><span class="kn">import</span> <span class="n">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">minimize</span>
-<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">comb</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">openfermion</span> <span class="kn">import</span> <span class="n">jordan_wigner</span><span class="p">,</span> <span class="n">FermionOperator</span><span class="p">,</span> <span class="n">QubitOperator</span>
-<span class="kn">from</span> <span class="nn">pyscf.gto.mole</span> <span class="kn">import</span> <span class="n">Mole</span>
-<span class="kn">from</span> <span class="nn">pyscf.scf</span> <span class="kn">import</span> <span class="n">RHF</span>
-<span class="kn">from</span> <span class="nn">pyscf.scf</span> <span class="kn">import</span> <span class="n">ROHF</span>
-<span class="kn">from</span> <span class="nn">pyscf.scf.hf</span> <span class="kn">import</span> <span class="n">RHF</span> <span class="k">as</span> <span class="n">RHF_TYPE</span>
-<span class="kn">from</span> <span class="nn">pyscf.scf.rohf</span> <span class="kn">import</span> <span class="n">ROHF</span> <span class="k">as</span> <span class="n">ROHF_TYPE</span>
-<span class="kn">from</span> <span class="nn">pyscf.cc.addons</span> <span class="kn">import</span> <span class="n">spatial2spin</span>
-<span class="kn">from</span> <span class="nn">pyscf.mcscf</span> <span class="kn">import</span> <span class="n">CASCI</span>
-<span class="kn">from</span> <span class="nn">pyscf</span> <span class="kn">import</span> <span class="n">fci</span>
-<span class="kn">import</span> <span class="nn">tensorcircuit</span> <span class="k">as</span> <span class="nn">tc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">minimize</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">comb</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">openfermion</span><span class="w"> </span><span class="kn">import</span> <span class="n">jordan_wigner</span><span class="p">,</span> <span class="n">FermionOperator</span><span class="p">,</span> <span class="n">QubitOperator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyscf.gto.mole</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mole</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyscf.scf</span><span class="w"> </span><span class="kn">import</span> <span class="n">RHF</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyscf.scf</span><span class="w"> </span><span class="kn">import</span> <span class="n">ROHF</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyscf.scf.hf</span><span class="w"> </span><span class="kn">import</span> <span class="n">RHF</span> <span class="k">as</span> <span class="n">RHF_TYPE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyscf.scf.rohf</span><span class="w"> </span><span class="kn">import</span> <span class="n">ROHF</span> <span class="k">as</span> <span class="n">ROHF_TYPE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyscf.cc.addons</span><span class="w"> </span><span class="kn">import</span> <span class="n">spatial2spin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyscf.mcscf</span><span class="w"> </span><span class="kn">import</span> <span class="n">CASCI</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyscf</span><span class="w"> </span><span class="kn">import</span> <span class="n">fci</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorcircuit</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tc</span>
 
-<span class="kn">from</span> <span class="nn">tencirchem.constants</span> <span class="kn">import</span> <span class="n">DISCARD_EPS</span>
-<span class="kn">from</span> <span class="nn">tencirchem.molecule</span> <span class="kn">import</span> <span class="n">_Molecule</span>
-<span class="kn">from</span> <span class="nn">tencirchem.utils.misc</span> <span class="kn">import</span> <span class="n">reverse_qop_idx</span><span class="p">,</span> <span class="n">scipy_opt_wrap</span><span class="p">,</span> <span class="n">rdm_mo2ao</span><span class="p">,</span> <span class="n">canonical_mo_coeff</span>
-<span class="kn">from</span> <span class="nn">tencirchem.utils.circuit</span> <span class="kn">import</span> <span class="n">get_circuit_dataframe</span>
-<span class="kn">from</span> <span class="nn">tencirchem.static.engine_ucc</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">DISCARD_EPS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem.molecule</span><span class="w"> </span><span class="kn">import</span> <span class="n">_Molecule</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem.utils.misc</span><span class="w"> </span><span class="kn">import</span> <span class="n">reverse_qop_idx</span><span class="p">,</span> <span class="n">scipy_opt_wrap</span><span class="p">,</span> <span class="n">rdm_mo2ao</span><span class="p">,</span> <span class="n">canonical_mo_coeff</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem.utils.circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_circuit_dataframe</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem.static.engine_ucc</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_civector</span><span class="p">,</span>
     <span class="n">get_statevector</span><span class="p">,</span>
     <span class="n">get_energy</span><span class="p">,</span>
@@ -299,14 +299,14 @@
     <span class="n">apply_excitation</span><span class="p">,</span>
     <span class="n">translate_init_state</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">tencirchem.static.hamiltonian</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem.static.hamiltonian</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_integral_from_hf</span><span class="p">,</span>
     <span class="n">get_h_from_integral</span><span class="p">,</span>
     <span class="n">get_hop_from_integral</span><span class="p">,</span>
     <span class="n">get_hop_hcb_from_integral</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">tencirchem.static.ci_utils</span> <span class="kn">import</span> <span class="n">get_ci_strings</span><span class="p">,</span> <span class="n">get_ex_bitstring</span><span class="p">,</span> <span class="n">get_addr</span><span class="p">,</span> <span class="n">get_init_civector</span>
-<span class="kn">from</span> <span class="nn">tencirchem.static.evolve_tensornetwork</span> <span class="kn">import</span> <span class="n">get_circuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem.static.ci_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_ci_strings</span><span class="p">,</span> <span class="n">get_ex_bitstring</span><span class="p">,</span> <span class="n">get_addr</span><span class="p">,</span> <span class="n">get_init_civector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem.static.evolve_tensornetwork</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_circuit</span>
 
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -315,13 +315,17 @@
 <span class="n">Tensor</span> <span class="o">=</span> <span class="n">Any</span>
 
 
-<div class="viewcode-block" id="UCC"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC">[docs]</a><span class="k">class</span> <span class="nc">UCC</span><span class="p">:</span>
+<div class="viewcode-block" id="UCC">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UCC</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base class for :class:`UCCSD`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="UCC.from_integral"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.from_integral">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">from_integral</span><span class="p">(</span>
+<div class="viewcode-block" id="UCC.from_integral">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.from_integral">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_integral</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">int1e</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">int2e</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -363,8 +367,11 @@
         <span class="n">m</span> <span class="o">=</span> <span class="n">_Molecule</span><span class="p">(</span><span class="n">int1e</span><span class="p">,</span> <span class="n">int2e</span><span class="p">,</span> <span class="n">n_elec</span><span class="p">,</span> <span class="n">spin</span><span class="p">,</span> <span class="n">e_core</span><span class="p">,</span> <span class="n">ovlp</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="UCC.as_pyscf_solver"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.as_pyscf_solver">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">as_pyscf_solver</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">config_function</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+<div class="viewcode-block" id="UCC.as_pyscf_solver">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.as_pyscf_solver">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">as_pyscf_solver</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">config_function</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Converts the ``UCC`` class to a PySCF FCI solver.</span>
 
@@ -396,8 +403,8 @@
 <span class="sd">        -4.16647335</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">class</span> <span class="nc">FakeFCISolver</span><span class="p">:</span>
-            <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">class</span><span class="w"> </span><span class="nc">FakeFCISolver</span><span class="p">:</span>
+            <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="p">:</span> <span class="n">UCC</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">config_function</span> <span class="o">=</span> <span class="n">config_function</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">instance_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
@@ -405,29 +412,32 @@
                     <span class="c1"># keep MP2 for initial guess</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">instance_kwargs</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
 
-            <span class="k">def</span> <span class="nf">kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h1</span><span class="p">,</span> <span class="n">h2</span><span class="p">,</span> <span class="n">norb</span><span class="p">,</span> <span class="n">nelec</span><span class="p">,</span> <span class="n">ci0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ecore</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h1</span><span class="p">,</span> <span class="n">h2</span><span class="p">,</span> <span class="n">norb</span><span class="p">,</span> <span class="n">nelec</span><span class="p">,</span> <span class="n">ci0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ecore</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">instance</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_integral</span><span class="p">(</span><span class="n">h1</span><span class="p">,</span> <span class="n">h2</span><span class="p">,</span> <span class="n">nelec</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">instance_kwargs</span><span class="p">)</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">config_function</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">config_function</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="p">)</span>
                 <span class="n">e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">kernel</span><span class="p">()</span>
                 <span class="k">return</span> <span class="n">e</span> <span class="o">+</span> <span class="n">ecore</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">params</span>
 
-            <span class="k">def</span> <span class="nf">make_rdm1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">norb</span><span class="p">,</span> <span class="n">nelec</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">make_rdm1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">norb</span><span class="p">,</span> <span class="n">nelec</span><span class="p">):</span>
                 <span class="n">civector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">civector</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">make_rdm1</span><span class="p">(</span><span class="n">civector</span><span class="p">)</span>
 
-            <span class="k">def</span> <span class="nf">make_rdm12</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">norb</span><span class="p">,</span> <span class="n">nelec</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">make_rdm12</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">norb</span><span class="p">,</span> <span class="n">nelec</span><span class="p">):</span>
                 <span class="n">civector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">civector</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
                 <span class="n">rdm1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">make_rdm1</span><span class="p">(</span><span class="n">civector</span><span class="p">)</span>
                 <span class="n">rdm2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance</span><span class="o">.</span><span class="n">make_rdm2</span><span class="p">(</span><span class="n">civector</span><span class="p">)</span>
                 <span class="k">return</span> <span class="n">rdm1</span><span class="p">,</span> <span class="n">rdm2</span>
 
-            <span class="k">def</span> <span class="nf">spin_square</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">norb</span><span class="p">,</span> <span class="n">nelec</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">spin_square</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">norb</span><span class="p">,</span> <span class="n">nelec</span><span class="p">):</span>
                 <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
 
         <span class="k">return</span> <span class="n">FakeFCISolver</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="UCC.__init__"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+
+<div class="viewcode-block" id="UCC.__init__">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">mol</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mole</span><span class="p">,</span> <span class="n">RHF</span><span class="p">],</span>
         <span class="n">init_method</span><span class="o">=</span><span class="s2">&quot;mp2&quot;</span><span class="p">,</span>
@@ -632,7 +642,10 @@
         <span class="c1"># for manually set</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_params</span> <span class="o">=</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="UCC.kernel"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.kernel">[docs]</a>    <span class="k">def</span> <span class="nf">kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+
+<div class="viewcode-block" id="UCC.kernel">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.kernel">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The kernel to perform the VQE algorithm.</span>
 <span class="sd">        The L-BFGS-B method in SciPy is used for optimization</span>
@@ -675,7 +688,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">opt_res</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">opt_res</span><span class="o">.</span><span class="n">e</span></div>
 
-<div class="viewcode-block" id="UCC.get_opt_function"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.get_opt_function">[docs]</a>    <span class="k">def</span> <span class="nf">get_opt_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_time</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+
+<div class="viewcode-block" id="UCC.get_opt_function">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.get_opt_function">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_opt_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_time</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the cost function in SciPy format for optimization.</span>
 <span class="sd">        The gradient is included.</span>
@@ -705,7 +721,8 @@
             <span class="k">return</span> <span class="n">energy_and_grad</span><span class="p">,</span> <span class="n">time2</span> <span class="o">-</span> <span class="n">time1</span>
         <span class="k">return</span> <span class="n">energy_and_grad</span></div>
 
-    <span class="k">def</span> <span class="nf">_check_params_argument</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_params_argument</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span>
@@ -722,12 +739,12 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Incompatible parameter shape. </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_params</span><span class="si">}</span><span class="s2"> is desired. Got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">tc</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">params</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">tc</span><span class="o">.</span><span class="n">rdtypestr</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_check_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">engine</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">engine</span><span class="p">):</span>
         <span class="n">supported_engine</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;tensornetwork&quot;</span><span class="p">,</span> <span class="s2">&quot;statevector&quot;</span><span class="p">,</span> <span class="s2">&quot;civector&quot;</span><span class="p">,</span> <span class="s2">&quot;civector-large&quot;</span><span class="p">,</span> <span class="s2">&quot;pyscf&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">engine</span> <span class="ow">in</span> <span class="n">supported_engine</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Engine &#39;</span><span class="si">{</span><span class="n">engine</span><span class="si">}</span><span class="s2">&#39; not supported&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_sanity_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sanity_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ex_ops</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`ex_ops` or `param_ids` not defined&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_ids</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ex_ops</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_ids</span><span class="p">)):</span>
@@ -735,7 +752,9 @@
                 <span class="sa">f</span><span class="s2">&quot;Excitation operator size </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ex_ops</span><span class="p">)</span><span class="si">}</span><span class="s2"> and parameter size </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_ids</span><span class="p">)</span><span class="si">}</span><span class="s2"> do not match&quot;</span>
             <span class="p">)</span>
 
-<div class="viewcode-block" id="UCC.civector"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.civector">[docs]</a>    <span class="k">def</span> <span class="nf">civector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">engine</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<div class="viewcode-block" id="UCC.civector">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.civector">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">civector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">engine</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate the configuration interaction (CI) vector.</span>
 
@@ -776,7 +795,10 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">civector</span></div>
 
-<div class="viewcode-block" id="UCC.get_ci_strings"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.get_ci_strings">[docs]</a>    <span class="k">def</span> <span class="nf">get_ci_strings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strs2addr</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+
+<div class="viewcode-block" id="UCC.get_ci_strings">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.get_ci_strings">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_ci_strings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strs2addr</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the CI bitstrings for all configurations in the CI vector.</span>
 
@@ -806,10 +828,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">get_ci_strings</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hcb</span><span class="p">,</span> <span class="n">strs2addr</span><span class="o">=</span><span class="n">strs2addr</span><span class="p">)</span></div>
 
+
     <span class="c1"># since there&#39;s ci_vector method</span>
     <span class="n">ci_strings</span> <span class="o">=</span> <span class="n">get_ci_strings</span>
 
-<div class="viewcode-block" id="UCC.get_addr"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.get_addr">[docs]</a>    <span class="k">def</span> <span class="nf">get_addr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bitstring</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<div class="viewcode-block" id="UCC.get_addr">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.get_addr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_addr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bitstring</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the address (index) of a CI bitstring in the CI vector.</span>
 
@@ -841,7 +866,10 @@
         <span class="n">_</span><span class="p">,</span> <span class="n">strs2addr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_ci_strings</span><span class="p">(</span><span class="n">strs2addr</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">get_addr</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bitstring</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">,</span> <span class="n">strs2addr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hcb</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="UCC.statevector"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.statevector">[docs]</a>    <span class="k">def</span> <span class="nf">statevector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">engine</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+
+<div class="viewcode-block" id="UCC.statevector">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.statevector">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">statevector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">engine</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate the circuit state vector.</span>
 
@@ -882,7 +910,8 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">statevector</span></div>
 
-    <span class="k">def</span> <span class="nf">_get_hamiltonian_and_core</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">engine</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_hamiltonian_and_core</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">engine</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_engine</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">engine</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">engine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span>
@@ -906,7 +935,9 @@
                 <span class="n">e_core</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">e_core</span>
         <span class="k">return</span> <span class="n">hamiltonian</span><span class="p">,</span> <span class="n">e_core</span><span class="p">,</span> <span class="n">engine</span>
 
-<div class="viewcode-block" id="UCC.energy"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.energy">[docs]</a>    <span class="k">def</span> <span class="nf">energy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">engine</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="UCC.energy">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.energy">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">energy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">engine</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate the total energy.</span>
 
@@ -955,7 +986,10 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">e_core</span></div>
 
-<div class="viewcode-block" id="UCC.energy_and_grad"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.energy_and_grad">[docs]</a>    <span class="k">def</span> <span class="nf">energy_and_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">engine</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="UCC.energy_and_grad">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.energy_and_grad">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">energy_and_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">engine</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate the total energy and parameter gradients.</span>
 
@@ -1007,7 +1041,10 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">e</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">e_core</span><span class="p">),</span> <span class="n">tc</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">numpy</span><span class="p">(</span><span class="n">g</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="UCC.apply_excitation"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.apply_excitation">[docs]</a>    <span class="k">def</span> <span class="nf">apply_excitation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">ex_op</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">engine</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+
+<div class="viewcode-block" id="UCC.apply_excitation">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.apply_excitation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_excitation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">ex_op</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">engine</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Apply a given excitation operator to a given state.</span>
 
@@ -1037,7 +1074,8 @@
             <span class="n">engine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span>
         <span class="k">return</span> <span class="n">apply_excitation</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">,</span> <span class="n">ex_op</span><span class="p">,</span> <span class="n">hcb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hcb</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_statevector_to_civector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statevector</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_statevector_to_civector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statevector</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">statevector</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">civector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">civector</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1053,7 +1091,9 @@
         <span class="n">civector</span> <span class="o">=</span> <span class="n">tc</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">numpy</span><span class="p">(</span><span class="n">tc</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">civector</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">civector</span>
 
-<div class="viewcode-block" id="UCC.make_rdm1"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.make_rdm1">[docs]</a>    <span class="k">def</span> <span class="nf">make_rdm1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statevector</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">basis</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;AO&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<div class="viewcode-block" id="UCC.make_rdm1">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.make_rdm1">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_rdm1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statevector</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">basis</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;AO&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate the spin-traced one-body reduced density matrix (1RDM).</span>
 
@@ -1094,7 +1134,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">rdm_mo2ao</span><span class="p">(</span><span class="n">rdm1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hf</span><span class="o">.</span><span class="n">mo_coeff</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="UCC.make_rdm2"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.make_rdm2">[docs]</a>    <span class="k">def</span> <span class="nf">make_rdm2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statevector</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">basis</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;AO&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+
+<div class="viewcode-block" id="UCC.make_rdm2">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.make_rdm2">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_rdm2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statevector</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">basis</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;AO&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Evaluate the spin-traced two-body reduced density matrix (2RDM).</span>
 
@@ -1152,7 +1195,10 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">rdm_mo2ao</span><span class="p">(</span><span class="n">rdm2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hf</span><span class="o">.</span><span class="n">mo_coeff</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="UCC.embed_rdm_cas"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.embed_rdm_cas">[docs]</a>    <span class="k">def</span> <span class="nf">embed_rdm_cas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rdm_cas</span><span class="p">):</span>
+
+<div class="viewcode-block" id="UCC.embed_rdm_cas">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.embed_rdm_cas">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">embed_rdm_cas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rdm_cas</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Embed CAS RDM into RDM of the whole system</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1183,11 +1229,17 @@
                 <span class="n">rdm2</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">slice_cas</span><span class="p">,</span> <span class="n">slice_cas</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rdm2</span><span class="p">[</span><span class="n">slice_cas</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">slice_cas</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">rdm1_cas</span>
             <span class="k">return</span> <span class="n">rdm2</span></div>
 
-<div class="viewcode-block" id="UCC.get_ex_ops"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.get_ex_ops">[docs]</a>    <span class="k">def</span> <span class="nf">get_ex_ops</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">t2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+
+<div class="viewcode-block" id="UCC.get_ex_ops">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.get_ex_ops">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_ex_ops</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">t2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Virtual method to be implemented&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="UCC.get_ex1_ops"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.get_ex1_ops">[docs]</a>    <span class="k">def</span> <span class="nf">get_ex1_ops</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+
+<div class="viewcode-block" id="UCC.get_ex1_ops">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.get_ex1_ops">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_ex1_ops</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get one-body excitation operators.</span>
 
@@ -1236,7 +1288,10 @@
 
         <span class="k">return</span> <span class="n">ex1_ops</span><span class="p">,</span> <span class="n">ex1_param_ids</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">ex1_init_guess</span></div>
 
-<div class="viewcode-block" id="UCC.get_ex2_ops"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.get_ex2_ops">[docs]</a>    <span class="k">def</span> <span class="nf">get_ex2_ops</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+
+<div class="viewcode-block" id="UCC.get_ex2_ops">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.get_ex2_ops">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_ex2_ops</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get two-body excitation operators.</span>
 
@@ -1270,16 +1325,16 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">t2</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">no</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">no</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nv</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nv</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">alpha_o</span><span class="p">(</span><span class="n">_i</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">alpha_o</span><span class="p">(</span><span class="n">_i</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">no</span> <span class="o">+</span> <span class="n">nv</span> <span class="o">+</span> <span class="n">_i</span>
 
-        <span class="k">def</span> <span class="nf">alpha_v</span><span class="p">(</span><span class="n">_i</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">alpha_v</span><span class="p">(</span><span class="n">_i</span><span class="p">):</span>
             <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">no</span> <span class="o">+</span> <span class="n">nv</span> <span class="o">+</span> <span class="n">_i</span>
 
-        <span class="k">def</span> <span class="nf">beta_o</span><span class="p">(</span><span class="n">_i</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">beta_o</span><span class="p">(</span><span class="n">_i</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">_i</span>
 
-        <span class="k">def</span> <span class="nf">beta_v</span><span class="p">(</span><span class="n">_i</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">beta_v</span><span class="p">(</span><span class="n">_i</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">no</span> <span class="o">+</span> <span class="n">_i</span>
 
         <span class="c1"># double excitations</span>
@@ -1331,14 +1386,17 @@
 
         <span class="k">return</span> <span class="n">ex_ops</span><span class="p">,</span> <span class="n">ex2_param_ids</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">ex2_init_guess</span></div>
 
+
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">e_ucc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">e_ucc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns UCC energy</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">energy</span><span class="p">()</span>
 
-<div class="viewcode-block" id="UCC.print_ansatz"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.print_ansatz">[docs]</a>    <span class="k">def</span> <span class="nf">print_ansatz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="UCC.print_ansatz">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.print_ansatz">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_ansatz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">df_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;#qubits&quot;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">],</span>
             <span class="s2">&quot;#params&quot;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">n_params</span><span class="p">],</span>
@@ -1350,7 +1408,10 @@
             <span class="n">df_dict</span><span class="p">[</span><span class="s2">&quot;initial condition&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;custom&quot;</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df_dict</span><span class="p">)</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="UCC.get_circuit"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.get_circuit">[docs]</a>    <span class="k">def</span> <span class="nf">get_circuit</span><span class="p">(</span>
+
+<div class="viewcode-block" id="UCC.get_circuit">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.get_circuit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_circuit</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">decompose_multicontrol</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">trotter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tc</span><span class="o">.</span><span class="n">Circuit</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1388,7 +1449,10 @@
             <span class="n">trotter</span><span class="o">=</span><span class="n">trotter</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="UCC.print_circuit"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.print_circuit">[docs]</a>    <span class="k">def</span> <span class="nf">print_circuit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="UCC.print_circuit">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.print_circuit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_circuit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Prints the circuit information. If you wish to print the circuit diagram,</span>
 <span class="sd">        use :func:`get_circuit` and then call ``draw()`` such as ``print(ucc.get_circuit().draw())``.</span>
@@ -1396,13 +1460,16 @@
         <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_circuit</span><span class="p">()</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">get_circuit_dataframe</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">format_flop</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">format_flop</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">f</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="n">formatters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;flop&quot;</span><span class="p">:</span> <span class="n">format_flop</span><span class="p">}</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">formatters</span><span class="o">=</span><span class="n">formatters</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="UCC.get_init_state_dataframe"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.get_init_state_dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">get_init_state_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coeff_epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DISCARD_EPS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+
+<div class="viewcode-block" id="UCC.get_init_state_dataframe">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.get_init_state_dataframe">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_init_state_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coeff_epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DISCARD_EPS</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns initial state information dataframe.</span>
 
@@ -1447,10 +1514,16 @@
             <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">ci_string</span><span class="p">,</span> <span class="n">coeff</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data_list</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="UCC.print_init_state"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.print_init_state">[docs]</a>    <span class="k">def</span> <span class="nf">print_init_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="UCC.print_init_state">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.print_init_state">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_init_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_init_state_dataframe</span><span class="p">()</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="UCC.get_excitation_dataframe"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.get_excitation_dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">get_excitation_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+
+<div class="viewcode-block" id="UCC.get_excitation_dataframe">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.get_excitation_dataframe">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_excitation_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;excitation&quot;</span><span class="p">,</span> <span class="s2">&quot;configuration&quot;</span><span class="p">,</span> <span class="s2">&quot;parameter&quot;</span><span class="p">,</span> <span class="s2">&quot;initial guess&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ex_ops</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
@@ -1474,10 +1547,16 @@
             <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">ex_op</span><span class="p">,</span> <span class="n">bitstring</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_guess</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data_list</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="UCC.print_excitations"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.print_excitations">[docs]</a>    <span class="k">def</span> <span class="nf">print_excitations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="UCC.print_excitations">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.print_excitations">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_excitations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_excitation_dataframe</span><span class="p">()</span><span class="o">.</span><span class="n">to_string</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="UCC.get_energy_dataframe"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.get_energy_dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">get_energy_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+
+<div class="viewcode-block" id="UCC.get_energy_dataframe">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.get_energy_dataframe">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_energy_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns energy information dataframe</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1500,16 +1579,22 @@
             <span class="n">df</span><span class="p">[</span><span class="s2">&quot;correlation energy (%)&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">energy</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">e_hf</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">e_fci</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">e_hf</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">df</span></div>
 
-<div class="viewcode-block" id="UCC.print_energy"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.print_energy">[docs]</a>    <span class="k">def</span> <span class="nf">print_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="UCC.print_energy">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.print_energy">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_energy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_energy_dataframe</span><span class="p">()</span>
 
-        <span class="k">def</span> <span class="nf">format_ce</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">format_ce</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
             <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">f</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="n">formatters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;correlation energy (%)&quot;</span><span class="p">:</span> <span class="n">format_ce</span><span class="p">}</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">formatters</span><span class="o">=</span><span class="n">formatters</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="UCC.print_summary"><a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.print_summary">[docs]</a>    <span class="k">def</span> <span class="nf">print_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_circuit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+
+<div class="viewcode-block" id="UCC.print_summary">
+<a class="viewcode-back" href="../../../api/ucc.html#tencirchem.UCC.print_summary">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">print_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_circuit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Print a summary of the class.</span>
 
@@ -1537,23 +1622,24 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_res</span><span class="p">)</span></div>
 
+
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">n_elec_s</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_elec_s</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of electrons for alpha and beta spin&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_elec</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">spin</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_elec</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">spin</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">no</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">no</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of occupied orbitals.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec</span> <span class="o">//</span> <span class="mi">2</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">nv</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">nv</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of virtual (unoccupied orbitals).&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">no</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">h_fermion_op</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FermionOperator</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">h_fermion_op</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FermionOperator</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Hamiltonian as openfermion.FermionOperator</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1562,7 +1648,7 @@
         <span class="k">return</span> <span class="n">get_hop_from_integral</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">int1e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">int2e</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">e_core</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">h_qubit_op</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QubitOperator</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">h_qubit_op</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QubitOperator</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Hamiltonian as openfermion.QubitOperator, mapped by</span>
 <span class="sd">        Jordan-Wigner transformation.</span>
@@ -1573,7 +1659,7 @@
             <span class="k">return</span> <span class="n">get_hop_hcb_from_integral</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">int1e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">int2e</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">e_core</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">n_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The number of parameter in the ansatz/circuit.&quot;&quot;&quot;</span>
         <span class="c1"># this definition ensures that `param[param_id]` is always valid</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_ids</span><span class="p">:</span>
@@ -1581,12 +1667,12 @@
         <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_ids</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">statevector_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">statevector_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The size of the statevector.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">civector_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">civector_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The size of the CI vector.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1597,7 +1683,7 @@
             <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">comb</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec</span> <span class="o">//</span> <span class="mi">2</span><span class="p">))</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">init_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The circuit initial state before applying the excitation operators. Usually RHF.</span>
 
@@ -1608,11 +1694,11 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_state</span>
 
     <span class="nd">@init_state</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">init_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_state</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">init_state</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_state</span> <span class="o">=</span> <span class="n">init_state</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The circuit parameters.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span>
@@ -1621,11 +1707,11 @@
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="nd">@params</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_params</span> <span class="o">=</span> <span class="n">params</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">param_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">param_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The mapping from excitations operators to parameters.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param_ids</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ex_ops</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1635,27 +1721,28 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_param_ids</span>
 
     <span class="nd">@param_ids</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">param_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">param_ids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_param_ids</span> <span class="o">=</span> <span class="n">v</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">param_to_ex_ops</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">param_to_ex_ops</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_ids</span><span class="p">):</span>
             <span class="n">d</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ex_ops</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">d</span></div>
 
 
-<span class="k">def</span> <span class="nf">compute_fe_t2</span><span class="p">(</span><span class="n">no</span><span class="p">,</span> <span class="n">nv</span><span class="p">,</span> <span class="n">int1e</span><span class="p">,</span> <span class="n">int2e</span><span class="p">):</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_fe_t2</span><span class="p">(</span><span class="n">no</span><span class="p">,</span> <span class="n">nv</span><span class="p">,</span> <span class="n">int1e</span><span class="p">,</span> <span class="n">int2e</span><span class="p">):</span>
     <span class="n">n_orb</span> <span class="o">=</span> <span class="n">no</span> <span class="o">+</span> <span class="n">nv</span>
 
-    <span class="k">def</span> <span class="nf">translate_o</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">translate_o</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">n</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">n_orb</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">n</span> <span class="o">//</span> <span class="mi">2</span>
 
-    <span class="k">def</span> <span class="nf">translate_v</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">translate_v</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">n</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">no</span> <span class="o">+</span> <span class="n">n_orb</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1688,7 +1775,7 @@
     <span class="k">return</span> <span class="n">t2</span>
 
 
-<span class="k">def</span> <span class="nf">_compute_e_diff</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">int1e</span><span class="p">,</span> <span class="n">int2e</span><span class="p">,</span> <span class="n">n_orb</span><span class="p">,</span> <span class="n">no</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_compute_e_diff</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">int1e</span><span class="p">,</span> <span class="n">int2e</span><span class="p">,</span> <span class="n">n_orb</span><span class="p">,</span> <span class="n">no</span><span class="p">):</span>
     <span class="n">inert_a</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">no</span><span class="p">))</span>
     <span class="n">inert_b</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">no</span><span class="p">))</span>
     <span class="n">old_a</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1723,7 +1810,7 @@
     <span class="k">return</span> <span class="n">e_diff_1e</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">e_diff_j</span> <span class="o">-</span> <span class="n">e_diff_k</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_compute_j_outer</span><span class="p">(</span><span class="n">diagj</span><span class="p">,</span> <span class="n">inert_a</span><span class="p">,</span> <span class="n">inert_b</span><span class="p">,</span> <span class="n">outer_a</span><span class="p">,</span> <span class="n">outer_b</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_compute_j_outer</span><span class="p">(</span><span class="n">diagj</span><span class="p">,</span> <span class="n">inert_a</span><span class="p">,</span> <span class="n">inert_b</span><span class="p">,</span> <span class="n">outer_a</span><span class="p">,</span> <span class="n">outer_b</span><span class="p">):</span>
     <span class="c1"># fmt: off</span>
     <span class="n">v</span> <span class="o">=</span> <span class="n">diagj</span><span class="p">[</span><span class="n">inert_a</span><span class="p">][:,</span> <span class="n">outer_a</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="n">diagj</span><span class="p">[</span><span class="n">outer_a</span><span class="p">][:,</span> <span class="n">inert_a</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="n">diagj</span><span class="p">[</span><span class="n">outer_a</span><span class="p">][:,</span> <span class="n">outer_a</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> \
       <span class="o">+</span> <span class="n">diagj</span><span class="p">[</span><span class="n">inert_a</span><span class="p">][:,</span> <span class="n">outer_b</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="n">diagj</span><span class="p">[</span><span class="n">outer_a</span><span class="p">][:,</span> <span class="n">inert_b</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="n">diagj</span><span class="p">[</span><span class="n">outer_a</span><span class="p">][:,</span> <span class="n">outer_b</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> \
@@ -1733,7 +1820,7 @@
     <span class="k">return</span> <span class="n">v</span>
 
 
-<span class="k">def</span> <span class="nf">_compute_k_outer</span><span class="p">(</span><span class="n">diagk</span><span class="p">,</span> <span class="n">inert_a</span><span class="p">,</span> <span class="n">inert_b</span><span class="p">,</span> <span class="n">outer_a</span><span class="p">,</span> <span class="n">outer_b</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_compute_k_outer</span><span class="p">(</span><span class="n">diagk</span><span class="p">,</span> <span class="n">inert_a</span><span class="p">,</span> <span class="n">inert_b</span><span class="p">,</span> <span class="n">outer_a</span><span class="p">,</span> <span class="n">outer_b</span><span class="p">):</span>
     <span class="c1"># fmt: off</span>
     <span class="n">v</span> <span class="o">=</span> <span class="n">diagk</span><span class="p">[</span><span class="n">inert_a</span><span class="p">][:,</span> <span class="n">outer_a</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="n">diagk</span><span class="p">[</span><span class="n">outer_a</span><span class="p">][:,</span> <span class="n">inert_a</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="n">diagk</span><span class="p">[</span><span class="n">outer_a</span><span class="p">][:,</span> <span class="n">outer_a</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> \
       <span class="o">+</span> <span class="n">diagk</span><span class="p">[</span><span class="n">inert_b</span><span class="p">][:,</span> <span class="n">outer_b</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="n">diagk</span><span class="p">[</span><span class="n">outer_b</span><span class="p">][:,</span> <span class="n">inert_b</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="n">diagk</span><span class="p">[</span><span class="n">outer_b</span><span class="p">][:,</span> <span class="n">outer_b</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
@@ -1771,9 +1858,9 @@
       
     </aside>
   </div>
-</div><script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=b3ba4146"></script>
-    <script src="../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+</div><script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     </body>

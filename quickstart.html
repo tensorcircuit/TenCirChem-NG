@@ -1,13 +1,13 @@
 <!doctype html>
-<html class="no-js" lang="en" data-content_root="">
+<html class="no-js" lang="en" data-content_root="./">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Advanced Topics" href="advanced.html" /><link rel="prev" title="Guide to TenCirChem" href="index.html" />
 
-    <link rel="shortcut icon" href="_static/favicon.ico"/><!-- Generated with Sphinx 7.1.2 and Furo 2024.08.06 -->
+    <link rel="shortcut icon" href="_static/favicon.ico"/><!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
         <title>Quick Start - TenCirChem documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -266,13 +266,13 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="quick-start">
-<h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this heading">¶</a></h1>
+<h1>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading">¶</a></h1>
 <p>TenCirChem contains two primary modules: the static module and the dynamic module,
 responsible for molecular static and dynamic properties respectively.
 In the static module, the <a class="reference internal" href="api/ucc.html#tencirchem.UCC" title="tencirchem.UCC"><code class="xref py py-class docutils literal notranslate"><span class="pre">UCC</span></code></a> classes is for noiseless UCC circuit simulation
 and the <a class="reference internal" href="api/hea.html#tencirchem.HEA" title="tencirchem.HEA"><code class="xref py py-class docutils literal notranslate"><span class="pre">HEA</span></code></a> class is for noisy simulation or arbitrary circuits.</p>
 <section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h2>
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
 <p>TenCirChem can be installed via <code class="docutils literal notranslate"><span class="pre">pip</span></code></p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>tencirchem
 </pre></div>
@@ -284,7 +284,7 @@ install <a class="reference external" href="https://github.com/google/jax">JAX</
 Windows users are recommended to install TenCirChem in the <a class="reference external" href="https://learn.microsoft.com/en-us/windows/wsl/">WSL</a> environment.</p>
 </section>
 <section id="ucc-calculation">
-<h2>UCC Calculation<a class="headerlink" href="#ucc-calculation" title="Permalink to this heading">¶</a></h2>
+<h2>UCC Calculation<a class="headerlink" href="#ucc-calculation" title="Link to this heading">¶</a></h2>
 <p>For static molecular properties using UCC ansatze,
 TenCirChem has implemented
 <a class="reference internal" href="api/uccsd.html#tencirchem.UCCSD" title="tencirchem.UCCSD"><code class="xref py py-class docutils literal notranslate"><span class="pre">UCCSD</span></code></a> (<a class="reference external" href="https://www.nature.com/articles/ncomms5213">Peruzzo2014</a>),
@@ -292,7 +292,7 @@ TenCirChem has implemented
 and
 <a class="reference internal" href="api/puccd.html#tencirchem.PUCCD" title="tencirchem.PUCCD"><code class="xref py py-class docutils literal notranslate"><span class="pre">pUCCD</span></code></a> (<a class="reference external" href="https://journals.aps.org/pra/abstract/10.1103/PhysRevA.103.032605">Elfving2021</a>),
 based on the <a class="reference internal" href="api/ucc.html#tencirchem.UCC" title="tencirchem.UCC"><code class="xref py py-class docutils literal notranslate"><span class="pre">UCC</span></code></a> base class.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span> <span class="nn">tencirchem</span> <span class="kn">import</span> <span class="n">UCCSD</span><span class="p">,</span> <span class="n">KUPCCGSD</span><span class="p">,</span> <span class="n">PUCCD</span><span class="p">,</span> <span class="n">M</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem</span><span class="w"> </span><span class="kn">import</span> <span class="n">UCCSD</span><span class="p">,</span> <span class="n">KUPCCGSD</span><span class="p">,</span> <span class="n">PUCCD</span><span class="p">,</span> <span class="n">M</span>
 <span class="linenos"> 2</span>
 <span class="linenos"> 3</span><span class="c1"># distance unit is angstrom</span>
 <span class="linenos"> 4</span><span class="n">d</span> <span class="o">=</span> <span class="mf">0.8</span>
@@ -329,7 +329,7 @@ the <a class="reference external" href="https://github.com/tencent-quantum-lab/T
 for working examples.</p>
 </section>
 <section id="ucc-speed">
-<h2>UCC Speed<a class="headerlink" href="#ucc-speed" title="Permalink to this heading">¶</a></h2>
+<h2>UCC Speed<a class="headerlink" href="#ucc-speed" title="Link to this heading">¶</a></h2>
 <p>The <a class="reference internal" href="api/ucc.html#tencirchem.UCC" title="tencirchem.UCC"><code class="xref py py-class docutils literal notranslate"><span class="pre">UCC</span></code></a> class exploits particle number conservation
 and <em>UCC factor expansion</em> for extremely efficient simulation.
 Here we show the tested UCCSD wall time of TenCirChem over hydrogen chain system,
@@ -405,7 +405,7 @@ and the rest is with <code class="docutils literal notranslate"><span class="pre
 For more details please refer to <a class="reference internal" href="faq.html#why-is-tencirchem-so-fast"><span class="std std-ref">Why is TenCirChem so fast?</span></a>.</p>
 </section>
 <section id="noisy-circuit-simulation">
-<h2>Noisy Circuit Simulation<a class="headerlink" href="#noisy-circuit-simulation" title="Permalink to this heading">¶</a></h2>
+<h2>Noisy Circuit Simulation<a class="headerlink" href="#noisy-circuit-simulation" title="Link to this heading">¶</a></h2>
 <p>TenCirChem supports noisy circuit simulation through the <a class="reference internal" href="api/hea.html#tencirchem.HEA" title="tencirchem.HEA"><code class="xref py py-class docutils literal notranslate"><span class="pre">HEA</span></code></a> class.
 <a class="reference internal" href="api/hea.html#tencirchem.HEA.ry" title="tencirchem.HEA.ry"><code class="xref py py-func docutils literal notranslate"><span class="pre">HEA.ry</span></code></a> accepts integrals and setups the class with <span class="math notranslate nohighlight">\(R_y\)</span> ansatz.
 The <code class="docutils literal notranslate"><span class="pre">engine</span></code> argument controls how the energy is evaluated.
@@ -413,8 +413,8 @@ The <code class="docutils literal notranslate"><span class="pre">engine</span></
 <code class="docutils literal notranslate"><span class="pre">&quot;tensornetwork-noise&quot;</span></code> includes gate noise,
 <code class="docutils literal notranslate"><span class="pre">&quot;tensornetwork-shot&quot;</span></code> includes measurement uncertainty,
 and <code class="docutils literal notranslate"><span class="pre">&quot;tensornetwork-noise&amp;shot&quot;</span></code> includes both.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span> <span class="nn">tencirchem</span> <span class="kn">import</span> <span class="n">UCCSD</span><span class="p">,</span> <span class="n">HEA</span>
-<span class="linenos"> 2</span><span class="kn">from</span> <span class="nn">tencirchem.molecule</span> <span class="kn">import</span> <span class="n">h2</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem</span><span class="w"> </span><span class="kn">import</span> <span class="n">UCCSD</span><span class="p">,</span> <span class="n">HEA</span>
+<span class="linenos"> 2</span><span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem.molecule</span><span class="w"> </span><span class="kn">import</span> <span class="n">h2</span>
 <span class="linenos"> 3</span>
 <span class="linenos"> 4</span><span class="c1"># use the `UCCSD` class to access the integrals</span>
 <span class="linenos"> 5</span><span class="n">uccsd</span> <span class="o">=</span> <span class="n">UCCSD</span><span class="p">(</span><span class="n">h2</span><span class="p">)</span>
@@ -435,7 +435,7 @@ The cutomization guide is included in the
 <a class="reference internal" href="tutorial_jupyter/noisy_simulation.html"><span class="doc">Noisy Circuit Simulation</span></a> tutorial.</p>
 </section>
 <section id="dynamics-calculation">
-<h2>Dynamics Calculation<a class="headerlink" href="#dynamics-calculation" title="Permalink to this heading">¶</a></h2>
+<h2>Dynamics Calculation<a class="headerlink" href="#dynamics-calculation" title="Link to this heading">¶</a></h2>
 <p>In the following we show how to perform quantum dynamics simulation using a 1-mode spin-boson model as an example.</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -446,7 +446,7 @@ The cutomization guide is included in the
 <p>TenCirChem uses the <code class="docutils literal notranslate"><span class="pre">Op</span></code> and <code class="docutils literal notranslate"><span class="pre">BasisSet</span></code> classes in <a class="reference external" href="https://github.com/shuaigroup/Renormalizer">Renormalizer</a>
 to define the Hamiltonian and the basis sets.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># equivalent to `from renormalizer import ...`</span>
-<span class="kn">from</span> <span class="nn">tencirchem</span> <span class="kn">import</span> <span class="n">Op</span><span class="p">,</span> <span class="n">BasisHalfSpin</span><span class="p">,</span> <span class="n">BasisSHO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem</span><span class="w"> </span><span class="kn">import</span> <span class="n">Op</span><span class="p">,</span> <span class="n">BasisHalfSpin</span><span class="p">,</span> <span class="n">BasisSHO</span>
 
 <span class="n">ham_terms</span> <span class="o">=</span> <span class="p">[</span>
     <span class="n">Op</span><span class="p">(</span><span class="s2">&quot;sigma_z&quot;</span><span class="p">,</span> <span class="s2">&quot;spin&quot;</span><span class="p">),</span>
@@ -460,7 +460,7 @@ to define the Hamiltonian and the basis sets.</p>
 <p>For more about these classes please refer to the
 <a class="reference external" href="https://shuaigroup.github.io/Renormalizer/model.html">Renormalizer document</a>.</p>
 <p>Next, run the time evolution</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tencirchem</span> <span class="kn">import</span> <span class="n">TimeEvolution</span><span class="p">,</span> <span class="n">set_backend</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeEvolution</span><span class="p">,</span> <span class="n">set_backend</span>
 
 <span class="c1"># the dynamics module only supports JAX backend</span>
 <span class="n">set_backend</span><span class="p">(</span><span class="s2">&quot;jax&quot;</span><span class="p">)</span>
@@ -476,7 +476,7 @@ to define the Hamiltonian and the basis sets.</p>
 <p>See the <a class="reference internal" href="tutorial_jupyter/sbm_dynamics.html"><span class="doc">Dynamics of the Spin-Boson Model</span></a> for what’s happening under the hood and how to customize the <code class="docutils literal notranslate"><span class="pre">TimeEvolution</span></code> class.</p>
 </section>
 <section id="further-readings">
-<h2>Further Readings<a class="headerlink" href="#further-readings" title="Permalink to this heading">¶</a></h2>
+<h2>Further Readings<a class="headerlink" href="#further-readings" title="Link to this heading">¶</a></h2>
 <p>That’s all for the basics of TenCirChem!
 If you wish to learn more, you may visit</p>
 <ul class="simple">
@@ -561,9 +561,9 @@ If you wish to learn more, you may visit</p>
       
     </aside>
   </div>
-</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
-    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+</div><script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>

@@ -1,13 +1,13 @@
 <!doctype html>
-<html class="no-js" lang="en" data-content_root="">
+<html class="no-js" lang="en" data-content_root="./">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Tutorials" href="tutorials.html" /><link rel="prev" title="Quick Start" href="quickstart.html" />
 
-    <link rel="shortcut icon" href="_static/favicon.ico"/><!-- Generated with Sphinx 7.1.2 and Furo 2024.08.06 -->
+    <link rel="shortcut icon" href="_static/favicon.ico"/><!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
         <title>Advanced Topics - TenCirChem documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -266,9 +266,9 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="advanced-topics">
-<h1>Advanced Topics<a class="headerlink" href="#advanced-topics" title="Permalink to this heading">¶</a></h1>
+<h1>Advanced Topics<a class="headerlink" href="#advanced-topics" title="Link to this heading">¶</a></h1>
 <section id="engines">
-<h2>Engines<a class="headerlink" href="#engines" title="Permalink to this heading">¶</a></h2>
+<h2>Engines<a class="headerlink" href="#engines" title="Link to this heading">¶</a></h2>
 <p>TenCirChem offers a set of different engines for the simulation of static molecular properties
 and is summarized below.</p>
 <div class="table-wrapper docutils container">
@@ -371,8 +371,8 @@ and then switch to the <code class="docutils literal notranslate"><span class="p
 and <code class="docutils literal notranslate"><span class="pre">&quot;civector-large&quot;</span></code> is used for larger scale calculation.
 In the <a class="reference internal" href="api/hea.html#tencirchem.HEA" title="tencirchem.HEA"><code class="xref py py-class docutils literal notranslate"><span class="pre">HEA</span></code></a> class the noiseless <code class="docutils literal notranslate"><span class="pre">&quot;tensornetwork&quot;</span></code> engine is used by default.</p>
 <p>To override the default engine, pass the string to the <code class="docutils literal notranslate"><span class="pre">engine</span></code> argument of the <code class="docutils literal notranslate"><span class="pre">UCC</span></code> class:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tencirchem</span> <span class="kn">import</span> <span class="n">UCCSD</span>
-<span class="kn">from</span> <span class="nn">tencirchem.molecule</span> <span class="kn">import</span> <span class="n">h4</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem</span><span class="w"> </span><span class="kn">import</span> <span class="n">UCCSD</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem.molecule</span><span class="w"> </span><span class="kn">import</span> <span class="n">h4</span>
 <span class="n">uccsd</span> <span class="o">=</span> <span class="n">UCCSD</span><span class="p">(</span><span class="n">h4</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;civector-large&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">uccsd</span><span class="o">.</span><span class="n">kernel</span><span class="p">())</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">uccsd</span><span class="o">.</span><span class="n">energy</span><span class="p">(</span><span class="n">engine</span><span class="o">=</span><span class="s2">&quot;tensornetwork&quot;</span><span class="p">))</span>
@@ -380,7 +380,7 @@ In the <a class="reference internal" href="api/hea.html#tencirchem.HEA" title="t
 </div>
 </section>
 <section id="backends">
-<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this heading">¶</a></h2>
+<h2>Backends<a class="headerlink" href="#backends" title="Link to this heading">¶</a></h2>
 <p>TenCirChem supports NumPy, CuPy and JAX backend, in combination with a set of different <a class="reference internal" href="#engines">Engines</a>.
 Note that the supported backends differ slightly between TenCirChem and TensorCircuit.</p>
 <ul class="simple">
@@ -399,7 +399,7 @@ particularly with the <code class="docutils literal notranslate"><span class="pr
 In terms of noisy circuit simulation, the performance of NumPy and JAX is roughly comparable.</p>
 <p>For quantum dynamics simulation, the JAX backend is preferred.</p>
 <p>TenCirChem shares the same API with TensorCircuit for setting backends and data types, at runtime:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tencirchem</span> <span class="kn">import</span> <span class="n">set_backend</span><span class="p">,</span> <span class="n">set_dtype</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_backend</span><span class="p">,</span> <span class="n">set_dtype</span>
 <span class="n">set_backend</span><span class="p">(</span><span class="s2">&quot;numpy&quot;</span><span class="p">)</span>
 <span class="n">set_dtype</span><span class="p">(</span><span class="s2">&quot;complex64&quot;</span><span class="p">)</span>
 </pre></div>
@@ -408,7 +408,7 @@ In terms of noisy circuit simulation, the performance of NumPy and JAX is roughl
 <code class="docutils literal notranslate"><span class="pre">complex128</span></code> is highly recommended with NumPy backend or <code class="docutils literal notranslate"><span class="pre">float64</span></code>-friendly GPU.</p>
 </section>
 <section id="boson-encoding">
-<h2>Boson Encoding<a class="headerlink" href="#boson-encoding" title="Permalink to this heading">¶</a></h2>
+<h2>Boson Encoding<a class="headerlink" href="#boson-encoding" title="Link to this heading">¶</a></h2>
 <p>An important step in quantum dynamics simulation is to map bosons into qubits.
 TenCirChem supports 4 different ways to encode boson DOFs into qubits.</p>
 <ul class="simple">
@@ -537,9 +537,9 @@ Other encodings can be specified through the <code class="docutils literal notra
       
     </aside>
   </div>
-</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
-    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+</div><script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>

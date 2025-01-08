@@ -1,12 +1,12 @@
 <!doctype html>
-<html class="no-js" lang="en" data-content_root="">
+<html class="no-js" lang="en" data-content_root="../../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.ico"/><!-- Generated with Sphinx 7.1.2 and Furo 2024.08.06 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.ico"/><!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
         <title>tencirchem.static.uccsd - TenCirChem documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -265,18 +265,20 @@
 <span class="c1">#  and WITHOUT ANY WARRANTY. See the LICENSE file for details.</span>
 
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">pyscf.gto.mole</span> <span class="kn">import</span> <span class="n">Mole</span>
-<span class="kn">from</span> <span class="nn">pyscf.scf</span> <span class="kn">import</span> <span class="n">RHF</span>
-<span class="kn">from</span> <span class="nn">pyscf.scf</span> <span class="kn">import</span> <span class="n">ROHF</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyscf.gto.mole</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mole</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyscf.scf</span><span class="w"> </span><span class="kn">import</span> <span class="n">RHF</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyscf.scf</span><span class="w"> </span><span class="kn">import</span> <span class="n">ROHF</span>
 
-<span class="kn">from</span> <span class="nn">tencirchem.static.ucc</span> <span class="kn">import</span> <span class="n">UCC</span>
-<span class="kn">from</span> <span class="nn">tencirchem.constants</span> <span class="kn">import</span> <span class="n">DISCARD_EPS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem.static.ucc</span><span class="w"> </span><span class="kn">import</span> <span class="n">UCC</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">DISCARD_EPS</span>
 
 
-<div class="viewcode-block" id="UCCSD"><a class="viewcode-back" href="../../../api/uccsd.html#tencirchem.UCCSD">[docs]</a><span class="k">class</span> <span class="nc">UCCSD</span><span class="p">(</span><span class="n">UCC</span><span class="p">):</span>
+<div class="viewcode-block" id="UCCSD">
+<a class="viewcode-back" href="../../../api/uccsd.html#tencirchem.UCCSD">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UCCSD</span><span class="p">(</span><span class="n">UCC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Run UCCSD calculation. For a comprehensive tutorial see :doc:`/tutorial_jupyter/ucc_functions`.</span>
 
@@ -292,7 +294,9 @@
 <span class="sd">    &gt;&gt;&gt; np.testing.assert_allclose(e_hf, uccsd.e_hf, atol=1e-10)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="UCCSD.__init__"><a class="viewcode-back" href="../../../api/uccsd.html#tencirchem.UCCSD.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="UCCSD.__init__">
+<a class="viewcode-back" href="../../../api/uccsd.html#tencirchem.UCCSD.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">mol</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mole</span><span class="p">,</span> <span class="n">RHF</span><span class="p">],</span>
         <span class="n">init_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mp2&quot;</span><span class="p">,</span>
@@ -372,7 +376,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">t2_discard_eps</span> <span class="o">=</span> <span class="n">epsilon</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ex_ops</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_ids</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_guess</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_ex_ops</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">t2</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="UCCSD.get_ex_ops"><a class="viewcode-back" href="../../../api/uccsd.html#tencirchem.UCCSD.get_ex_ops">[docs]</a>    <span class="k">def</span> <span class="nf">get_ex_ops</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">t2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
+
+<div class="viewcode-block" id="UCCSD.get_ex_ops">
+<a class="viewcode-back" href="../../../api/uccsd.html#tencirchem.UCCSD.get_ex_ops">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_ex_ops</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">t2</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get one-body and two-body excitation operators for UCCSD ansatz.</span>
 <span class="sd">        Pick and sort two-body operators if ``self.pick_ex2`` and ``self.sort_ex2`` are set to ``True``.</span>
@@ -424,7 +431,10 @@
         <span class="n">init_guess</span> <span class="o">=</span> <span class="n">ex1_init_guess</span> <span class="o">+</span> <span class="n">ex2_init_guess</span>
         <span class="k">return</span> <span class="n">ex_op</span><span class="p">,</span> <span class="n">param_ids</span><span class="p">,</span> <span class="n">init_guess</span></div>
 
-<div class="viewcode-block" id="UCCSD.pick_and_sort"><a class="viewcode-back" href="../../../api/uccsd.html#tencirchem.UCCSD.pick_and_sort">[docs]</a>    <span class="k">def</span> <span class="nf">pick_and_sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ex_ops</span><span class="p">,</span> <span class="n">param_ids</span><span class="p">,</span> <span class="n">init_guess</span><span class="p">,</span> <span class="n">do_pick</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">do_sort</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+
+<div class="viewcode-block" id="UCCSD.pick_and_sort">
+<a class="viewcode-back" href="../../../api/uccsd.html#tencirchem.UCCSD.pick_and_sort">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pick_and_sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ex_ops</span><span class="p">,</span> <span class="n">param_ids</span><span class="p">,</span> <span class="n">init_guess</span><span class="p">,</span> <span class="n">do_pick</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">do_sort</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="c1"># sort operators according to amplitude</span>
         <span class="k">if</span> <span class="n">do_sort</span><span class="p">:</span>
             <span class="n">sorted_ex_ops</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">ex_ops</span><span class="p">,</span> <span class="n">param_ids</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">init_guess</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]]))</span>
@@ -446,16 +456,18 @@
         <span class="n">ret_param_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">id_mapping</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ret_param_ids</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">ret_ex_ops</span><span class="p">,</span> <span class="n">ret_param_ids</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">ret_init_guess</span><span class="p">)</span></div>
 
+
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">e_uccsd</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">e_uccsd</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns UCCSD energy</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">energy</span><span class="p">()</span></div>
 
 
-<span class="k">class</span> <span class="nc">ROUCCSD</span><span class="p">(</span><span class="n">UCC</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ROUCCSD</span><span class="p">(</span><span class="n">UCC</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">mol</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mole</span><span class="p">,</span> <span class="n">ROHF</span><span class="p">],</span>
         <span class="n">active_space</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -493,16 +505,16 @@
         <span class="n">nob</span> <span class="o">=</span> <span class="n">no</span>
         <span class="n">nvb</span> <span class="o">=</span> <span class="n">ns</span> <span class="o">+</span> <span class="n">nv</span>
 
-        <span class="k">def</span> <span class="nf">alpha_o</span><span class="p">(</span><span class="n">_i</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">alpha_o</span><span class="p">(</span><span class="n">_i</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_space</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">_i</span>
 
-        <span class="k">def</span> <span class="nf">alpha_v</span><span class="p">(</span><span class="n">_i</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">alpha_v</span><span class="p">(</span><span class="n">_i</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_space</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">noa</span> <span class="o">+</span> <span class="n">_i</span>
 
-        <span class="k">def</span> <span class="nf">beta_o</span><span class="p">(</span><span class="n">_i</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">beta_o</span><span class="p">(</span><span class="n">_i</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">_i</span>
 
-        <span class="k">def</span> <span class="nf">beta_v</span><span class="p">(</span><span class="n">_i</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">beta_v</span><span class="p">(</span><span class="n">_i</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">nob</span> <span class="o">+</span> <span class="n">_i</span>
 
         <span class="c1"># single excitations</span>
@@ -576,9 +588,9 @@
       
     </aside>
   </div>
-</div><script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js?v=b3ba4146"></script>
-    <script src="../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+</div><script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=5fa4622c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     </body>

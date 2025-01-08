@@ -1,13 +1,13 @@
 <!doctype html>
-<html class="no-js" lang="en" data-content_root="">
+<html class="no-js" lang="en" data-content_root="../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Variational Basis State Encoder (Time Dependent)" href="vbe_tutorial_td.html" /><link rel="prev" title="Observing Marcus Inverted Region" href="marcus.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 7.1.2 and Furo 2024.08.06 -->
+    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
         <title>Variational Basis State Encoder (Ground State) - TenCirChem documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=302659d7" />
@@ -267,9 +267,9 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="Variational-Basis-State-Encoder-(Ground-State)">
-<h1>Variational Basis State Encoder (Ground State)<a class="headerlink" href="#Variational-Basis-State-Encoder-(Ground-State)" title="Permalink to this heading">¶</a></h1>
+<h1>Variational Basis State Encoder (Ground State)<a class="headerlink" href="#Variational-Basis-State-Encoder-(Ground-State)" title="Link to this heading">¶</a></h1>
 <section id="1-Backgroud">
-<h2>1 Backgroud<a class="headerlink" href="#1-Backgroud" title="Permalink to this heading">¶</a></h2>
+<h2>1 Backgroud<a class="headerlink" href="#1-Backgroud" title="Link to this heading">¶</a></h2>
 <p>This tutorial is for variational basis state encoder (VBE) for the ground state of the Holstein model.</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -283,29 +283,29 @@
 <p>Here, we transform the original phonon basis <span class="math notranslate nohighlight">\(\ket{m}\)</span> to the encoded basis <span class="math notranslate nohighlight">\(\ket{n}\)</span>, via transformation operator <span class="math notranslate nohighlight">\(\hat{B}[l]\)</span>. The form of <span class="math notranslate nohighlight">\(\hat{B}[l]\)</span> is the central of VBE and the algorithm are presented in section 2. For more details, see <a class="reference external" href="https://doi.org/10.1103/PhysRevResearch.5.023046">https://doi.org/10.1103/PhysRevResearch.5.023046</a></p>
 </section>
 <section id="2-Algorithm-Realization">
-<h2>2 Algorithm Realization<a class="headerlink" href="#2-Algorithm-Realization" title="Permalink to this heading">¶</a></h2>
+<h2>2 Algorithm Realization<a class="headerlink" href="#2-Algorithm-Realization" title="Link to this heading">¶</a></h2>
 <section id="2.1-Imports">
-<h3>2.1 Imports<a class="headerlink" href="#2.1-Imports" title="Permalink to this heading">¶</a></h3>
+<h3>2.1 Imports<a class="headerlink" href="#2.1-Imports" title="Link to this heading">¶</a></h3>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">scipy</span>
-<span class="kn">from</span> <span class="nn">opt_einsum</span> <span class="kn">import</span> <span class="n">contract</span>
-<span class="kn">import</span> <span class="nn">tensorcircuit</span> <span class="k">as</span> <span class="nn">tc</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">opt_einsum</span><span class="w"> </span><span class="kn">import</span> <span class="n">contract</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorcircuit</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tc</span>
 
-<span class="kn">from</span> <span class="nn">tencirchem</span> <span class="kn">import</span> <span class="n">set_backend</span><span class="p">,</span> <span class="n">Op</span><span class="p">,</span> <span class="n">BasisSHO</span><span class="p">,</span> <span class="n">BasisSimpleElectron</span><span class="p">,</span> <span class="n">Mpo</span><span class="p">,</span> <span class="n">Model</span>
-<span class="kn">from</span> <span class="nn">tencirchem.dynamic</span> <span class="kn">import</span> <span class="n">get_ansatz</span><span class="p">,</span> <span class="n">qubit_encode_op_grouped</span><span class="p">,</span> <span class="n">qubit_encode_basis</span>
-<span class="kn">from</span> <span class="nn">tencirchem.utils</span> <span class="kn">import</span> <span class="n">scipy_opt_wrap</span>
-<span class="kn">from</span> <span class="nn">tencirchem.applications.vbe_lib</span> <span class="kn">import</span> <span class="n">get_psi_indices</span><span class="p">,</span> <span class="n">get_contracted_mpo</span><span class="p">,</span> <span class="n">get_contract_args</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_backend</span><span class="p">,</span> <span class="n">Op</span><span class="p">,</span> <span class="n">BasisSHO</span><span class="p">,</span> <span class="n">BasisSimpleElectron</span><span class="p">,</span> <span class="n">Mpo</span><span class="p">,</span> <span class="n">Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem.dynamic</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_ansatz</span><span class="p">,</span> <span class="n">qubit_encode_op_grouped</span><span class="p">,</span> <span class="n">qubit_encode_basis</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">scipy_opt_wrap</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem.applications.vbe_lib</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_psi_indices</span><span class="p">,</span> <span class="n">get_contracted_mpo</span><span class="p">,</span> <span class="n">get_contract_args</span>
 </pre></div>
 </div>
 </div>
 </section>
 </section>
 <section id="2.2-Initial-setups">
-<h2>2.2 Initial setups<a class="headerlink" href="#2.2-Initial-setups" title="Permalink to this heading">¶</a></h2>
+<h2>2.2 Initial setups<a class="headerlink" href="#2.2-Initial-setups" title="Link to this heading">¶</a></h2>
 <p>In this section, we set intital parameters for coming sections. Here, <code class="docutils literal notranslate"><span class="pre">JAX</span></code> is used as backend. <code class="docutils literal notranslate"><span class="pre">nsite</span></code>, <code class="docutils literal notranslate"><span class="pre">omega</span></code>, <code class="docutils literal notranslate"><span class="pre">v</span></code> correspond to the site number, phonon frequency <span class="math notranslate nohighlight">\(\omega\)</span>, transfer intergral <span class="math notranslate nohighlight">\(V\)</span> in Holstein model, respectively:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -374,7 +374,7 @@ psi_index_top:  [&#39;p-0-bottom&#39;, &#39;v-1-0-bottom&#39;, &#39;v-1-1-bottom
 </div>
 </section>
 <section id="2.3-Get-Variational-Hamiltonian-Ansatz-(VHA)-Terms">
-<h2>2.3 Get Variational Hamiltonian Ansatz (VHA) Terms<a class="headerlink" href="#2.3-Get-Variational-Hamiltonian-Ansatz-(VHA)-Terms" title="Permalink to this heading">¶</a></h2>
+<h2>2.3 Get Variational Hamiltonian Ansatz (VHA) Terms<a class="headerlink" href="#2.3-Get-Variational-Hamiltonian-Ansatz-(VHA)-Terms" title="Link to this heading">¶</a></h2>
 <p>In this section, we will generate variational hamiltonian ansatz terms. The following ansatz is adopted:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -386,7 +386,7 @@ psi_index_top:  [&#39;p-0-bottom&#39;, &#39;v-1-0-bottom&#39;, &#39;v-1-1-bottom
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_vha_terms</span><span class="p">():</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">get_vha_terms</span><span class="p">():</span>
     <span class="c1"># variational Hamiltonian ansatz (vha) terms</span>
 
     <span class="n">g</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># dummy value, doesn&#39;t matter</span>
@@ -440,7 +440,7 @@ ansatz:
 </div>
 </section>
 <section id="2.4-Cost-Functions-for-VQE-Part">
-<h2>2.4 Cost Functions for VQE Part<a class="headerlink" href="#2.4-Cost-Functions-for-VQE-Part" title="Permalink to this heading">¶</a></h2>
+<h2>2.4 Cost Functions for VQE Part<a class="headerlink" href="#2.4-Cost-Functions-for-VQE-Part" title="Link to this heading">¶</a></h2>
 <p>The VQE parameters <span class="math notranslate nohighlight">\(\theta_k\)</span> are optimized via following equation:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -455,7 +455,7 @@ ansatz:
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">cost_fn</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">cost_fn</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
     <span class="n">state</span> <span class="o">=</span> <span class="n">ansatz</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span> <span class="o">@</span> <span class="p">(</span><span class="n">h</span> <span class="o">@</span> <span class="n">state</span><span class="p">))</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">real</span>
 
@@ -467,13 +467,13 @@ ansatz:
 </div>
 </section>
 <section id="2.5-Get-Hamiltonian-Terms-and-Basis">
-<h2>2.5 Get Hamiltonian Terms and Basis<a class="headerlink" href="#2.5-Get-Hamiltonian-Terms-and-Basis" title="Permalink to this heading">¶</a></h2>
+<h2>2.5 Get Hamiltonian Terms and Basis<a class="headerlink" href="#2.5-Get-Hamiltonian-Terms-and-Basis" title="Link to this heading">¶</a></h2>
 <p>In this section, we generate the operator of the Holstein Hamiltonian presented in Section 2.2. The format of the operator are shown in Fig. 1. Note that the number of phonon levels are controlled by <code class="docutils literal notranslate"><span class="pre">nbas</span></code>.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_ham_terms_and_basis</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">nbas</span><span class="p">):</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">get_ham_terms_and_basis</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">nbas</span><span class="p">):</span>
     <span class="n">terms</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nsite</span><span class="p">):</span>
         <span class="n">terms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Op</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;b^\dagger b&quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">omega</span><span class="p">))</span>
@@ -493,7 +493,7 @@ ansatz:
 </div>
 </section>
 <section id="2.6-Update-B[l]-in-Iteration">
-<h2>2.6 Update <span class="math notranslate nohighlight">\(B[l]\)</span> in Iteration<a class="headerlink" href="#2.6-Update-B[l]-in-Iteration" title="Permalink to this heading">¶</a></h2>
+<h2>2.6 Update <span class="math notranslate nohighlight">\(B[l]\)</span> in Iteration<a class="headerlink" href="#2.6-Update-B[l]-in-Iteration" title="Link to this heading">¶</a></h2>
 <p>In this section, the function that calculates <span class="math notranslate nohighlight">\(B[l]\)</span> are defined:</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -514,7 +514,7 @@ ansatz:
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">solve_b_array</span><span class="p">(</span><span class="n">psi</span><span class="p">,</span> <span class="n">h_mpo</span><span class="p">,</span> <span class="n">b_array</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">solve_b_array</span><span class="p">(</span><span class="n">psi</span><span class="p">,</span> <span class="n">h_mpo</span><span class="p">,</span> <span class="n">b_array</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
     <span class="n">nbas</span> <span class="o">=</span> <span class="n">b_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="c1"># get the input of tensor contraction function `contract`</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">get_contract_args</span><span class="p">(</span><span class="n">psi</span><span class="p">,</span> <span class="n">h_mpo</span><span class="p">,</span> <span class="n">b_array</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">n_qubit_per_mode</span><span class="p">,</span> <span class="n">psi_idx_top</span><span class="p">,</span> <span class="n">psi_idx_bottom</span><span class="p">,</span> <span class="n">b_dof_pidx</span><span class="p">)</span>
@@ -536,7 +536,7 @@ ansatz:
     <span class="n">contracted_h</span> <span class="o">=</span> <span class="n">contract</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">nbas</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">nbas</span><span class="p">)</span>
     <span class="n">nroot</span> <span class="o">=</span> <span class="mi">3</span>
 
-    <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">nroot</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">nbas</span><span class="p">)</span>
         <span class="c1"># calculate P[l]</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">contract</span><span class="p">(</span><span class="s2">&quot;abc, abd -&gt; acd&quot;</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">conj</span><span class="p">(),</span> <span class="n">x</span><span class="p">)</span>
@@ -564,8 +564,12 @@ ansatz:
 </div>
 </section>
 <section id="2.7-Main-Structure-of-the-Function">
-<h2>2.7 Main Structure of the Function<a class="headerlink" href="#2.7-Main-Structure-of-the-Function" title="Permalink to this heading">¶</a></h2>
-<p>This section is the main part of the funtion. The codes contain following parts: (i) Initialize the parameters and functions, some initializations are also preformed in section 2.2 (ii) Search for ground state, where <span class="math notranslate nohighlight">\(\theta_k\)</span> are updated via VQE and <span class="math notranslate nohighlight">\(B[l]\)</span> are calculated via functions in Section 2.6.</p>
+<h2>2.7 Main Structure of the Function<a class="headerlink" href="#2.7-Main-Structure-of-the-Function" title="Link to this heading">¶</a></h2>
+<p>This section is the main part of the funtion. The codes contain following parts:</p>
+<ol class="lowerroman simple">
+<li><p>Initialize the parameters and functions, some initializations are also preformed in section 2.2</p></li>
+<li><p>Search for ground state, where <span class="math notranslate nohighlight">\(\theta_k\)</span> are updated via VQE and <span class="math notranslate nohighlight">\(B[l]\)</span> are calculated via functions in Section 2.6.</p></li>
+</ol>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
@@ -798,7 +802,7 @@ Iter 9 VQE energy: -9.121145181818363
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># plot the results</span>
-<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 
 <span class="n">nbas</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">32</span><span class="p">]</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">nbas</span><span class="p">,</span> <span class="n">vqe_e</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">8</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;g=1.5&quot;</span><span class="p">)</span>
@@ -905,9 +909,9 @@ Text(0, 0.5, &#39;Energy&#39;)
       
     </aside>
   </div>
-</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+</div><script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>

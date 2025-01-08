@@ -1,13 +1,13 @@
 <!doctype html>
-<html class="no-js" lang="en" data-content_root="">
+<html class="no-js" lang="en" data-content_root="../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Dynamics of the Spin-Boson Model" href="sbm_dynamics.html" /><link rel="prev" title="Hubbard Model by UCCSD" href="hubbard_model.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 7.1.2 and Furo 2024.08.06 -->
+    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
         <title>Noisy Circuit Simulation - TenCirChem documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=302659d7" />
@@ -267,34 +267,34 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="Noisy-Circuit-Simulation">
-<h1>Noisy Circuit Simulation<a class="headerlink" href="#Noisy-Circuit-Simulation" title="Permalink to this heading">¶</a></h1>
+<h1>Noisy Circuit Simulation<a class="headerlink" href="#Noisy-Circuit-Simulation" title="Link to this heading">¶</a></h1>
 <section id="Overview">
-<h2>Overview<a class="headerlink" href="#Overview" title="Permalink to this heading">¶</a></h2>
+<h2>Overview<a class="headerlink" href="#Overview" title="Link to this heading">¶</a></h2>
 <p>In this notebook, we will show how to perform noisy circuit simulation using TenCirChem. The hydrogen molecule <span class="math notranslate nohighlight">\(\rm{H}_2\)</span> is used for the demonstration. Using parity transformation, the system corresponds to 2 qubits. We will firstly illustrate the workflow step by step, and then use well-wrapped high-level interfaces to complete the same task with much fewer lines of code. We will also show it is possible to use Qiskit ansatz directly in TenCirChem. In the end, we study the effect of gate
 noise and the number of measurement shots on the accuracy and uncertainty of VQE.</p>
 </section>
 <section id="Setup">
-<h2>Setup<a class="headerlink" href="#Setup" title="Permalink to this heading">¶</a></h2>
+<h2>Setup<a class="headerlink" href="#Setup" title="Link to this heading">¶</a></h2>
 <p>TenCirChem uses the <code class="docutils literal notranslate"><span class="pre">HEA</span></code> class for noisy circuit simulation, which has a different set of interfaces from the UCC classes. A primary reason is that <em>all</em> ideal UCC circuits are too large for both noisy circuit simulation and execution on state of the art quantum devices. Consequently, usually hardware-efficient ansatz (HEA) have to be adopted for such tasks. Another reason is that inherently the workflow for the noiseless UCC circuit simulation and noisy HEA circuit simulation are very
 different.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tencirchem</span> <span class="kn">import</span> <span class="n">HEA</span>
-<span class="kn">from</span> <span class="nn">tencirchem.molecule</span> <span class="kn">import</span> <span class="n">h2</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem</span><span class="w"> </span><span class="kn">import</span> <span class="n">HEA</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem.molecule</span><span class="w"> </span><span class="kn">import</span> <span class="n">h2</span>
 </pre></div>
 </div>
 </div>
 </section>
 <section id="Define-the-Hamiltonian">
-<h2>Define the Hamiltonian<a class="headerlink" href="#Define-the-Hamiltonian" title="Permalink to this heading">¶</a></h2>
+<h2>Define the Hamiltonian<a class="headerlink" href="#Define-the-Hamiltonian" title="Link to this heading">¶</a></h2>
 <p>The first difference between <code class="docutils literal notranslate"><span class="pre">UCC</span></code> and <code class="docutils literal notranslate"><span class="pre">HEA</span></code> is that the <code class="docutils literal notranslate"><span class="pre">HEA</span></code> class is not initialized by molecular inputs. Rather, <code class="docutils literal notranslate"><span class="pre">HEA</span></code> accepts the Hamiltonian in <code class="docutils literal notranslate"><span class="pre">openfermion.QubitOperator</span></code> form and the circuit ansatz for inputs. To facilitate defining the Hamiltonian, the <code class="docutils literal notranslate"><span class="pre">UCC</span></code> class provides several useful shortcuts via class attributes.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tencirchem</span> <span class="kn">import</span> <span class="n">UCCSD</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem</span><span class="w"> </span><span class="kn">import</span> <span class="n">UCCSD</span>
 
 <span class="n">uccsd</span> <span class="o">=</span> <span class="n">UCCSD</span><span class="p">(</span><span class="n">h2</span><span class="p">)</span>
 <span class="c1"># Hamiltonian as openfermion.FermionOperator</span>
@@ -330,7 +330,7 @@ different.</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tencirchem</span> <span class="kn">import</span> <span class="n">parity</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem</span><span class="w"> </span><span class="kn">import</span> <span class="n">parity</span>
 </pre></div>
 </div>
 </div>
@@ -360,21 +360,21 @@ different.</p>
 <p>An alternative approach is to use openfermion tools such as <code class="docutils literal notranslate"><span class="pre">openfermion.MolecularData</span></code>.</p>
 </section>
 <section id="Define-the-ansatz">
-<h2>Define the ansatz<a class="headerlink" href="#Define-the-ansatz" title="Permalink to this heading">¶</a></h2>
+<h2>Define the ansatz<a class="headerlink" href="#Define-the-ansatz" title="Link to this heading">¶</a></h2>
 <p>Next, define the ansatz using TensorCircuit. A 1-layer <span class="math notranslate nohighlight">\(R_y\)</span> ansatz composed of 4 parameters is constructed. A TensorCircuit ansatz is a function that has one argument (the circuit parameters) and returns the parameterized circuit.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">tensorcircuit</span> <span class="kn">import</span> <span class="n">Circuit</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tensorcircuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Circuit</span>
 
 <span class="c1"># the ansatz</span>
 <span class="n">n_qubits</span> <span class="o">=</span> <span class="mi">2</span>
 <span class="n">init_guess</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">get_circuit</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_circuit</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">Circuit</span><span class="p">(</span><span class="n">n_qubits</span><span class="p">)</span>
     <span class="c1"># the ansatz body</span>
     <span class="n">c</span><span class="o">.</span><span class="n">ry</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -399,7 +399,7 @@ different.</p>
 </div>
 </section>
 <section id="Noisy-simulation-with-the-HEA-class">
-<h2>Noisy simulation with the <code class="docutils literal notranslate"><span class="pre">HEA</span></code> class<a class="headerlink" href="#Noisy-simulation-with-the-HEA-class" title="Permalink to this heading">¶</a></h2>
+<h2>Noisy simulation with the <code class="docutils literal notranslate"><span class="pre">HEA</span></code> class<a class="headerlink" href="#Noisy-simulation-with-the-HEA-class" title="Link to this heading">¶</a></h2>
 <p>The rest of the workflow is similar to <code class="docutils literal notranslate"><span class="pre">UCC</span></code>: create an <code class="docutils literal notranslate"><span class="pre">HEA</span></code> instance, run the kernel and print the summary.</p>
 <p>By using the <code class="docutils literal notranslate"><span class="pre">&quot;tensornetwork-noise&quot;</span></code> engine, a depolarizing noise with probability <span class="math notranslate nohighlight">\(p=0.02\)</span> for the CNOT gate is added</p>
 <div class="math-wrapper docutils container">
@@ -453,8 +453,8 @@ different.</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tensorcircuit.noisemodel</span> <span class="kn">import</span> <span class="n">NoiseConf</span>
-<span class="kn">from</span> <span class="nn">tensorcircuit.channels</span> <span class="kn">import</span> <span class="n">isotropicdepolarizingchannel</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tensorcircuit.noisemodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">NoiseConf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tensorcircuit.channels</span><span class="w"> </span><span class="kn">import</span> <span class="n">isotropicdepolarizingchannel</span>
 
 <span class="n">engine_conf</span> <span class="o">=</span> <span class="n">NoiseConf</span><span class="p">()</span>
 <span class="c1"># larger noise, corresponding to 80% fidelity</span>
@@ -548,7 +548,7 @@ shots number: 4096 * 128
 </div>
 </section>
 <section id="Built-in-ansatz,-UCC-ansatz-and-Qiskit-ansatz">
-<h2>Built-in ansatz, UCC ansatz and Qiskit ansatz<a class="headerlink" href="#Built-in-ansatz,-UCC-ansatz-and-Qiskit-ansatz" title="Permalink to this heading">¶</a></h2>
+<h2>Built-in ansatz, UCC ansatz and Qiskit ansatz<a class="headerlink" href="#Built-in-ansatz,-UCC-ansatz-and-Qiskit-ansatz" title="Link to this heading">¶</a></h2>
 <p>TenCirChem has implemented the <span class="math notranslate nohighlight">\(R_y\)</span> ansatz. We can rebuild the <code class="docutils literal notranslate"><span class="pre">HEA</span></code> instance using the <code class="docutils literal notranslate"><span class="pre">HEA.ry</span></code> function, which builds the qubit Hamiltonian and the <span class="math notranslate nohighlight">\(R_y\)</span> ansatz automatically, and then run the kernel. Note that the default initial guess is randomly generated. The result is exactly the same as what we’ve done step by step in the above code.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
@@ -575,7 +575,7 @@ many CNOT gates in the circuit.</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
 
 <span class="n">get_circuit</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">uccsd</span><span class="o">.</span><span class="n">get_circuit</span><span class="p">,</span> <span class="n">decompose_multicontrol</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">hea</span> <span class="o">=</span> <span class="n">HEA</span><span class="p">(</span><span class="n">uccsd</span><span class="o">.</span><span class="n">h_qubit_op</span><span class="p">,</span> <span class="n">get_circuit</span><span class="p">,</span> <span class="n">uccsd</span><span class="o">.</span><span class="n">init_guess</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;tensornetwork-noise&quot;</span><span class="p">)</span>
@@ -598,8 +598,8 @@ many CNOT gates in the circuit.</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span>
-<span class="kn">from</span> <span class="nn">qiskit.circuit.library</span> <span class="kn">import</span> <span class="n">TwoLocal</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">qiskit</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantumCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">qiskit.circuit.library</span><span class="w"> </span><span class="kn">import</span> <span class="n">TwoLocal</span>
 
 <span class="n">ansatz</span> <span class="o">=</span> <span class="n">QuantumCircuit</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="n">ansatz</span> <span class="o">=</span> <span class="n">ansatz</span><span class="o">.</span><span class="n">compose</span><span class="p">(</span><span class="n">TwoLocal</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">rotation_blocks</span><span class="o">=</span><span class="s2">&quot;ry&quot;</span><span class="p">,</span> <span class="n">entanglement_blocks</span><span class="o">=</span><span class="s2">&quot;cx&quot;</span><span class="p">,</span> <span class="n">reps</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">decompose</span><span class="p">())</span>
@@ -635,13 +635,13 @@ many CNOT gates in the circuit.</p>
 </div>
 </section>
 <section id="Effect-of-gate-noise-on-VQE-energy">
-<h2>Effect of gate noise on VQE energy<a class="headerlink" href="#Effect-of-gate-noise-on-VQE-energy" title="Permalink to this heading">¶</a></h2>
+<h2>Effect of gate noise on VQE energy<a class="headerlink" href="#Effect-of-gate-noise-on-VQE-energy" title="Link to this heading">¶</a></h2>
 <p>Here we show how the CNOT depolarizing error affects the optimized VQE energy. If a one-layer ansatz is adopted, the energy increases linearly with the error probability up to <span class="math notranslate nohighlight">\(p=0.8\)</span>. This is a consequence of the special form of the ansatz: there’s only one CNOT gate in the circuit. Increasing the number of layers does not lead to more accurate energy estimation. Rather, the noise caused by more CNOT gates deteriorates the result.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tencirchem</span> <span class="kn">import</span> <span class="n">get_noise_conf</span><span class="p">,</span> <span class="n">set_backend</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_noise_conf</span><span class="p">,</span> <span class="n">set_backend</span>
 
 <span class="c1"># cnot error probabilities</span>
 <span class="n">error_probs</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.10</span><span class="p">,</span> <span class="mf">0.20</span><span class="p">,</span> <span class="mf">0.40</span><span class="p">,</span> <span class="mf">0.60</span><span class="p">,</span> <span class="mf">0.80</span><span class="p">]</span>
@@ -649,7 +649,7 @@ many CNOT gates in the circuit.</p>
 <span class="n">n_layers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
 <span class="n">e_list</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="c1"># record run time</span>
-<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
 
 <span class="n">time1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">n_layer</span> <span class="ow">in</span> <span class="n">n_layers</span><span class="p">:</span>
@@ -679,8 +679,8 @@ many CNOT gates in the circuit.</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-<span class="kn">import</span> <span class="nn">mpl_config</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">mpl_config</span>
 
 
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">error_probs</span><span class="p">,</span> <span class="n">e_array</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Noisy 1-layer&quot;</span><span class="p">)</span>
@@ -704,7 +704,7 @@ many CNOT gates in the circuit.</p>
 </div>
 </section>
 <section id="Effect-of-measurement-shots-on-VQE-energy-uncertainty">
-<h2>Effect of measurement shots on VQE energy uncertainty<a class="headerlink" href="#Effect-of-measurement-shots-on-VQE-energy-uncertainty" title="Permalink to this heading">¶</a></h2>
+<h2>Effect of measurement shots on VQE energy uncertainty<a class="headerlink" href="#Effect-of-measurement-shots-on-VQE-energy-uncertainty" title="Link to this heading">¶</a></h2>
 <p>Here we show how measurement shots affect the standard deviation of the optimized VQE energy. As expected, the standard deviation is in linear relation with <span class="math notranslate nohighlight">\(\sqrt{\frac{1}{N}}\)</span>. In general, increasing <span class="math notranslate nohighlight">\(p\)</span> causes a larger standard deviation of the energy, yet the effect is far less significant than adjusting <span class="math notranslate nohighlight">\(N\)</span>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
@@ -848,9 +848,9 @@ many CNOT gates in the circuit.</p>
       
     </aside>
   </div>
-</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+</div><script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>

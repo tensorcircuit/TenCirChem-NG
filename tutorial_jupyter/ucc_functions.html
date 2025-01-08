@@ -1,13 +1,13 @@
 <!doctype html>
-<html class="no-js" lang="en" data-content_root="">
+<html class="no-js" lang="en" data-content_root="../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Potential Energy Surface of the Water Molecule" href="h2o_pes.html" /><link rel="prev" title="Tutorials" href="../tutorials.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 7.1.2 and Furo 2024.08.06 -->
+    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
         <title>UCC Functions - TenCirChem documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=302659d7" />
@@ -267,20 +267,20 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="UCC-Functions">
-<h1>UCC Functions<a class="headerlink" href="#UCC-Functions" title="Permalink to this heading">¶</a></h1>
+<h1>UCC Functions<a class="headerlink" href="#UCC-Functions" title="Link to this heading">¶</a></h1>
 <section id="Overview">
-<h2>Overview<a class="headerlink" href="#Overview" title="Permalink to this heading">¶</a></h2>
+<h2>Overview<a class="headerlink" href="#Overview" title="Link to this heading">¶</a></h2>
 <p>In this notebook, we will introduce the basic functions of the <code class="docutils literal notranslate"><span class="pre">UCC</span></code> class. We will use <code class="docutils literal notranslate"><span class="pre">UCCSD</span></code> as a typical example. Other classes such as <code class="docutils literal notranslate"><span class="pre">kUpCCGSD</span></code> share the same interface.</p>
 <p>We will show that, along with nice high-level interface, the <code class="docutils literal notranslate"><span class="pre">UCC</span></code> class also offers great flexibility and allows users to easily build their own algorithms.</p>
 </section>
 <section id="Setup">
-<h2>Setup<a class="headerlink" href="#Setup" title="Permalink to this heading">¶</a></h2>
+<h2>Setup<a class="headerlink" href="#Setup" title="Link to this heading">¶</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tencirchem</span> <span class="kn">import</span> <span class="n">UCCSD</span>
-<span class="kn">from</span> <span class="nn">tencirchem.molecule</span> <span class="kn">import</span> <span class="n">h2</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem</span><span class="w"> </span><span class="kn">import</span> <span class="n">UCCSD</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem.molecule</span><span class="w"> </span><span class="kn">import</span> <span class="n">h2</span>
 </pre></div>
 </div>
 </div>
@@ -305,7 +305,7 @@
 </div>
 </section>
 <section id="Hello-world">
-<h2>Hello world<a class="headerlink" href="#Hello-world" title="Permalink to this heading">¶</a></h2>
+<h2>Hello world<a class="headerlink" href="#Hello-world" title="Link to this heading">¶</a></h2>
 <p>This cell illustrates a simple UCC calculation.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
@@ -369,7 +369,7 @@ FCI           -1.137274    0.000000                100.000
 <p>One may print different parts of the summary separately using corresponding standalone method such as <code class="docutils literal notranslate"><span class="pre">print_ansatz</span></code>.</p>
 </section>
 <section id="The-Circuit">
-<h2>The Circuit<a class="headerlink" href="#The-Circuit" title="Permalink to this heading">¶</a></h2>
+<h2>The Circuit<a class="headerlink" href="#The-Circuit" title="Link to this heading">¶</a></h2>
 <p>TenCirChem uses TensorCircuit <code class="docutils literal notranslate"><span class="pre">circuit</span></code> object for quantum circuit.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
@@ -441,7 +441,7 @@ FCI           -1.137274    0.000000                100.000
 </div>
 </section>
 <section id="Useful-Attributes">
-<h2>Useful Attributes<a class="headerlink" href="#Useful-Attributes" title="Permalink to this heading">¶</a></h2>
+<h2>Useful Attributes<a class="headerlink" href="#Useful-Attributes" title="Link to this heading">¶</a></h2>
 <p>TenCirChem chooses to expose its internal data whenever possible and in the simplest way. The intention is to make TenCirChem easy to hack and useful as a handy toolbox.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
@@ -729,13 +729,13 @@ array([ 5,  6,  9, 10], dtype=uint64)
 </div>
 </section>
 <section id="Active-Space-Approximation">
-<h2>Active Space Approximation<a class="headerlink" href="#Active-Space-Approximation" title="Permalink to this heading">¶</a></h2>
+<h2>Active Space Approximation<a class="headerlink" href="#Active-Space-Approximation" title="Link to this heading">¶</a></h2>
 <p>TenCirChem offers the simplest API for active space approximation among available packages.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tencirchem.molecule</span> <span class="kn">import</span> <span class="n">h8</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem.molecule</span><span class="w"> </span><span class="kn">import</span> <span class="n">h8</span>
 
 <span class="c1"># (2e, 2o) active space</span>
 <span class="n">uccsd</span> <span class="o">=</span> <span class="n">UCCSD</span><span class="p">(</span><span class="n">h8</span><span class="p">,</span> <span class="n">active_space</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
@@ -784,7 +784,7 @@ FCI           -4.163054  0.000000e+00                100.000
 <p>The reference energies including MP2, CCSD nad FCI are also based on the active space.</p>
 </section>
 <section id="Starting-from-the-Integrals">
-<h2>Starting from the Integrals<a class="headerlink" href="#Starting-from-the-Integrals" title="Permalink to this heading">¶</a></h2>
+<h2>Starting from the Integrals<a class="headerlink" href="#Starting-from-the-Integrals" title="Link to this heading">¶</a></h2>
 <p>One may start the UCC calculation from custom integrals without the need to define a molecule.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
@@ -806,13 +806,13 @@ FCI           -4.163054  0.000000e+00                100.000
 </div>
 </section>
 <section id="Feeding-in-Custom-Parameters">
-<h2>Feeding in Custom Parameters<a class="headerlink" href="#Feeding-in-Custom-Parameters" title="Permalink to this heading">¶</a></h2>
+<h2>Feeding in Custom Parameters<a class="headerlink" href="#Feeding-in-Custom-Parameters" title="Link to this heading">¶</a></h2>
 <p>In TenCirChem, it is also fairly easy to feed in customized parameters to get desired properties</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">uccsd</span><span class="o">.</span><span class="n">n_params</span><span class="p">)</span>
 </pre></div>
@@ -957,7 +957,7 @@ FCI           -4.163054    0.000000                100.000
 </div>
 </section>
 <section id="Reduced-Density-Matrix">
-<h2>Reduced Density Matrix<a class="headerlink" href="#Reduced-Density-Matrix" title="Permalink to this heading">¶</a></h2>
+<h2>Reduced Density Matrix<a class="headerlink" href="#Reduced-Density-Matrix" title="Link to this heading">¶</a></h2>
 <p>Calculate reduced density matrix in atomic orbital or molecule orbital basis</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
@@ -1073,9 +1073,9 @@ FCI           -4.163054    0.000000                100.000
       
     </aside>
   </div>
-</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+</div><script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>

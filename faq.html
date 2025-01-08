@@ -1,13 +1,13 @@
 <!doctype html>
-<html class="no-js" lang="en" data-content_root="">
+<html class="no-js" lang="en" data-content_root="./">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="API Reference" href="modules.html" /><link rel="prev" title="Variational Basis State Encoder (Time Dependent)" href="tutorial_jupyter/vbe_tutorial_td.html" />
 
-    <link rel="shortcut icon" href="_static/favicon.ico"/><!-- Generated with Sphinx 7.1.2 and Furo 2024.08.06 -->
+    <link rel="shortcut icon" href="_static/favicon.ico"/><!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
         <title>Frequently Asked Questions - TenCirChem documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
     
@@ -266,9 +266,9 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="frequently-asked-questions">
-<h1>Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permalink to this heading">¶</a></h1>
+<h1>Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Link to this heading">¶</a></h1>
 <section id="what-are-the-conventions-for-excitation-operators-integrals-orbital-indices">
-<h2>What are the conventions for excitation operators/integrals/orbital indices…<a class="headerlink" href="#what-are-the-conventions-for-excitation-operators-integrals-orbital-indices" title="Permalink to this heading">¶</a></h2>
+<h2>What are the conventions for excitation operators/integrals/orbital indices…<a class="headerlink" href="#what-are-the-conventions-for-excitation-operators-integrals-orbital-indices" title="Link to this heading">¶</a></h2>
 <p>The convention for indices of excitation operators and qubit ordering is as follows:</p>
 <ul class="simple">
 <li><p>An excitation operator is represented by a tuple of integers. Each integer corresponds to one spin-orbital.</p></li>
@@ -293,7 +293,8 @@ Counting the bitstring from left to right gives the spin-orbital index.
 An important reason for keeping the convention is to be consistent with <code class="docutils literal notranslate"><span class="pre">pyscf.fci.cistring</span></code>.</p>
 <p>In short, the convention for excitation operators and spin-orbital indices can be summarized in the following figure:</p>
 <figure class="align-default">
-<a class="reference internal image-reference" href="_images/excitation.png"><img alt="_images/excitation.png" src="_images/excitation.png" style="width: 510.0px; height: 252.0px;" /></a>
+<a class="reference internal image-reference" href="_images/excitation.png"><img alt="_images/excitation.png" src="_images/excitation.png" style="width: 510.0px; height: 252.0px;" />
+</a>
 </figure>
 <p>Following the qubit indexing convention above, the restricted Hartree-Fock state for such a system is represented as 00110011 in bitstring form.
 The highest orbital with <span class="math notranslate nohighlight">\(\alpha\)</span> spin comes first in the bitstring, and the lowest orbital with <span class="math notranslate nohighlight">\(\beta\)</span> spin comes last.
@@ -313,7 +314,7 @@ Excitation operators in the bare tuple form are usually named as <code class="do
 and after transformed to OpenFermion operator they are usually named as <code class="docutils literal notranslate"><span class="pre">fop</span></code>.</p>
 </section>
 <section id="why-are-the-number-of-excitation-operators-and-the-number-of-parameters-different-what-is-param-ids">
-<h2>Why are the number of excitation operators and the number of parameters different?/What is <code class="docutils literal notranslate"><span class="pre">param_ids</span></code>?<a class="headerlink" href="#why-are-the-number-of-excitation-operators-and-the-number-of-parameters-different-what-is-param-ids" title="Permalink to this heading">¶</a></h2>
+<h2>Why are the number of excitation operators and the number of parameters different?/What is <code class="docutils literal notranslate"><span class="pre">param_ids</span></code>?<a class="headerlink" href="#why-are-the-number-of-excitation-operators-and-the-number-of-parameters-different-what-is-param-ids" title="Link to this heading">¶</a></h2>
 <p>Some excitations share the same parameter due to symmetry.
 For example, <code class="docutils literal notranslate"><span class="pre">1001</span></code> and <code class="docutils literal notranslate"><span class="pre">0110</span></code> configurations have the same amplitude.
 Thus, <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">1)</span></code> and <code class="docutils literal notranslate"><span class="pre">(2,</span> <span class="pre">3)</span></code> excitations can use the same parameter.
@@ -328,7 +329,7 @@ To disable it, try the following</p>
 </div>
 </section>
 <section id="why-is-tencirchem-so-fast">
-<h2>Why is TenCirChem so fast?<a class="headerlink" href="#why-is-tencirchem-so-fast" title="Permalink to this heading">¶</a></h2>
+<h2>Why is TenCirChem so fast?<a class="headerlink" href="#why-is-tencirchem-so-fast" title="Link to this heading">¶</a></h2>
 <p>The speed of TenCirChem depends on the underlying engine.
 For the <code class="docutils literal notranslate"><span class="pre">&quot;civector&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;civector-large&quot;</span></code> engines,
 there are three main factors that makes them fast</p>
@@ -339,7 +340,8 @@ On the other hand, the possible configurations, constrained by the particle numb
 are <code class="docutils literal notranslate"><span class="pre">&quot;0101&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;1001&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;0110&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;1010&quot;</span></code>,</p></li>
 </ul>
 <figure class="align-default">
-<a class="reference internal image-reference" href="_images/configuration.png"><img alt="_images/configuration.png" src="_images/configuration.png" style="width: 561.0px; height: 145.5px;" /></a>
+<a class="reference internal image-reference" href="_images/configuration.png"><img alt="_images/configuration.png" src="_images/configuration.png" style="width: 561.0px; height: 145.5px;" />
+</a>
 </figure>
 <ul class="simple">
 <li><p>The excitation operator exponential <span class="math notranslate nohighlight">\(e^{\theta G}\)</span> is expanded in a polynomial form,
@@ -350,7 +352,7 @@ See <a class="reference internal" href="advanced.html#engines"><span class="std 
 </ul>
 </section>
 <section id="how-does-tencirchem-evaluate-ucc-gradient">
-<h2>How does TenCirChem evaluate UCC gradient?<a class="headerlink" href="#how-does-tencirchem-evaluate-ucc-gradient" title="Permalink to this heading">¶</a></h2>
+<h2>How does TenCirChem evaluate UCC gradient?<a class="headerlink" href="#how-does-tencirchem-evaluate-ucc-gradient" title="Link to this heading">¶</a></h2>
 <p>In general there are two ways in TenCirChem to evaluate energy gradient with respect to parameters in UCC.
 The first is by JAX auto-differentiation. The related concepts can be found in
 <a class="reference external" href="https://jax.readthedocs.io/en/latest/jax-101/index.html">JAX documentation</a>.</p>
@@ -395,24 +397,24 @@ Then, <span class="math notranslate nohighlight">\(\langle \phi^{(1)}_j |\)</spa
 Thus, this algorithm computes all gradients in one sweeping pass, requiring a constant amount of memory.</p>
 </section>
 <section id="how-to-use-gpu-in-tencirchem">
-<h2>How to use GPU in TenCirChem?<a class="headerlink" href="#how-to-use-gpu-in-tencirchem" title="Permalink to this heading">¶</a></h2>
+<h2>How to use GPU in TenCirChem?<a class="headerlink" href="#how-to-use-gpu-in-tencirchem" title="Link to this heading">¶</a></h2>
 <p>Choosing device is done by choosing backend for TenCirChem.
 TenCirChem by default uses NumPy backend, and supports JAX and CuPy backend.
 Both JAX and CuPy supports GPU.
 Install JAX and CuPy with appropriate GPU driver and set the backend in the following way</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tencirchem</span> <span class="kn">import</span> <span class="n">set_backend</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_backend</span>
 <span class="n">set_backend</span><span class="p">(</span><span class="s2">&quot;cupy&quot;</span><span class="p">)</span>  <span class="c1"># or &quot;jax&quot;</span>
 </pre></div>
 </div>
 <p>More fine-grained control over the devices is achieved through the JAX or CuPy package</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cupy</span> <span class="k">as</span> <span class="nn">cp</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">cupy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cp</span>
 <span class="c1"># use the second GPU</span>
 <span class="n">cp</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">Device</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">use</span><span class="p">()</span>
 </pre></div>
 </div>
 </section>
 <section id="why-is-jax-backend-so-slow-on-first-run">
-<h2>Why is JAX backend so slow on first run?<a class="headerlink" href="#why-is-jax-backend-so-slow-on-first-run" title="Permalink to this heading">¶</a></h2>
+<h2>Why is JAX backend so slow on first run?<a class="headerlink" href="#why-is-jax-backend-so-slow-on-first-run" title="Link to this heading">¶</a></h2>
 <p>JAX features JIT compilation, and the compile time can be quite long for typical TenCirChem use cases.
 In TenCirChem, it is common that the JIT compilation time is much longer than the actual optimization time.
 TenCirChem has already optimized the compilation speed,
@@ -423,7 +425,7 @@ offers more information on slow compilation.</p>
 Otherwise, to the author’s knowledge currently there’s no way to solve the slow compilation problem.</p>
 </section>
 <section id="can-i-use-real-qpu-in-tencirchem">
-<h2>Can I use real QPU in TenCirChem?<a class="headerlink" href="#can-i-use-real-qpu-in-tencirchem" title="Permalink to this heading">¶</a></h2>
+<h2>Can I use real QPU in TenCirChem?<a class="headerlink" href="#can-i-use-real-qpu-in-tencirchem" title="Link to this heading">¶</a></h2>
 <p>Yes. the current version of TenCirChem supports
 QPU through <a class="reference external" href="https://github.com/tensorcircuit/tensorcircuit-ng">TensorCircuit-NG</a>.
 Please check out the
@@ -433,7 +435,7 @@ You may set the <code class="docutils literal notranslate"><span class="pre">eng
 or you may use <code class="docutils literal notranslate"><span class="pre">TenCirChem</span></code> as a preprocessing layer for <code class="docutils literal notranslate"><span class="pre">TensorCircuit-NG</span></code>.</p>
 </section>
 <section id="what-is-the-relation-between-tencirchem-and-tencirchem-ng">
-<h2>What is the relation between TenCirChem and TenCirChem-NG?<a class="headerlink" href="#what-is-the-relation-between-tencirchem-and-tencirchem-ng" title="Permalink to this heading">¶</a></h2>
+<h2>What is the relation between TenCirChem and TenCirChem-NG?<a class="headerlink" href="#what-is-the-relation-between-tencirchem-and-tencirchem-ng" title="Link to this heading">¶</a></h2>
 <p>Both packages are created by <a class="reference external" href="https://weitangligroup.com/">Weitang Li</a>.
 From users’ perspective, TenCirChem-NG maintains full compatibility with the TenCirChem API,
 enhancing it with additional features and critical bug fixes.
@@ -518,9 +520,9 @@ and <code class="docutils literal notranslate"><span class="pre">pip</span> <spa
       
     </aside>
   </div>
-</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
-    <script src="_static/doctools.js?v=888ff710"></script>
-    <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+</div><script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=5fa4622c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>

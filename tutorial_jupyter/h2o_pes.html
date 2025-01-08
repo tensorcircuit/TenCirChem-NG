@@ -1,13 +1,13 @@
 <!doctype html>
-<html class="no-js" lang="en" data-content_root="">
+<html class="no-js" lang="en" data-content_root="../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="ADAPT VQE" href="adapt_vqe.html" /><link rel="prev" title="UCC Functions" href="ucc_functions.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 7.1.2 and Furo 2024.08.06 -->
+    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
         <title>Potential Energy Surface of the Water Molecule - TenCirChem documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=302659d7" />
@@ -267,28 +267,28 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="Potential-Energy-Surface-of-the-Water-Molecule">
-<h1>Potential Energy Surface of the Water Molecule<a class="headerlink" href="#Potential-Energy-Surface-of-the-Water-Molecule" title="Permalink to this heading">¶</a></h1>
+<h1>Potential Energy Surface of the Water Molecule<a class="headerlink" href="#Potential-Energy-Surface-of-the-Water-Molecule" title="Link to this heading">¶</a></h1>
 <section id="Overview">
-<h2>Overview<a class="headerlink" href="#Overview" title="Permalink to this heading">¶</a></h2>
+<h2>Overview<a class="headerlink" href="#Overview" title="Link to this heading">¶</a></h2>
 <p>In this notebook, we will use TenCirChem to build the potential energy surface of <span class="math notranslate nohighlight">\(\rm{H_2O}\)</span> molecule at UCCSD/STO-3G level of theory. Without incurring active space approximation, the system consists of 6 spatial orbitals and 8 electrons. Under Jordan-Wigner approximation, 12 qubits are required to simulate the system.</p>
 <p>We highlight how easy it is to solve chemistry problems with TenCirChem. We also highlight that the whole PES consisting of 100 points is contructed on a laptop within 1 minute.</p>
 </section>
 <section id="Setup">
-<h2>Setup<a class="headerlink" href="#Setup" title="Permalink to this heading">¶</a></h2>
+<h2>Setup<a class="headerlink" href="#Setup" title="Link to this heading">¶</a></h2>
 <p>Build a series of PySCF <code class="docutils literal notranslate"><span class="pre">mole</span></code>s for UCCSD calculation.</p>
 <p>The bond angles range from 80° to 115° and the bond lengths range from 0.90Å to 1.15Å. 10 points are sample from each DOF, resulting in totally 100 geometries.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="c1"># TenCirChem accepts PySCF Mole as input</span>
-<span class="kn">from</span> <span class="nn">pyscf</span> <span class="kn">import</span> <span class="n">M</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyscf</span><span class="w"> </span><span class="kn">import</span> <span class="n">M</span>
 
 
 <span class="c1"># assuming the same O-H length for the two bonds</span>
-<span class="k">def</span> <span class="nf">get_h2o_m</span><span class="p">(</span><span class="n">bond_angle</span><span class="p">,</span> <span class="n">bond_length</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_h2o_m</span><span class="p">(</span><span class="n">bond_angle</span><span class="p">,</span> <span class="n">bond_length</span><span class="p">):</span>
     <span class="n">phi</span> <span class="o">=</span> <span class="n">bond_angle</span> <span class="o">/</span> <span class="mi">2</span>
     <span class="n">r</span> <span class="o">=</span> <span class="n">bond_length</span>
     <span class="n">O</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;O&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
@@ -308,7 +308,7 @@
 <span class="n">bond_lengths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.90</span><span class="p">,</span> <span class="mf">1.15</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 
 <span class="c1"># build molecules</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">product</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">product</span>
 
 <span class="n">moles</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">bond_angle</span><span class="p">,</span> <span class="n">bond_length</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="n">bond_angles</span><span class="p">,</span> <span class="n">bond_lengths</span><span class="p">):</span>
@@ -328,14 +328,14 @@
 </div>
 </section>
 <section id="Calculate">
-<h2>Calculate<a class="headerlink" href="#Calculate" title="Permalink to this heading">¶</a></h2>
+<h2>Calculate<a class="headerlink" href="#Calculate" title="Link to this heading">¶</a></h2>
 <p>For each <code class="docutils literal notranslate"><span class="pre">mole</span></code> in <code class="docutils literal notranslate"><span class="pre">moles</span></code>, calculate UCCSD energy using the <code class="docutils literal notranslate"><span class="pre">UCCSD</span></code> class from TenCirChem.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">tencirchem</span> <span class="kn">import</span> <span class="n">UCCSD</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem</span><span class="w"> </span><span class="kn">import</span> <span class="n">UCCSD</span>
 
 <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">time1</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
@@ -359,12 +359,12 @@
 </div>
 </section>
 <section id="Plot">
-<h2>Plot<a class="headerlink" href="#Plot" title="Permalink to this heading">¶</a></h2>
+<h2>Plot<a class="headerlink" href="#Plot" title="Link to this heading">¶</a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">contourf</span><span class="p">(</span><span class="n">bond_lengths</span><span class="p">,</span> <span class="n">bond_angles</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="mi">180</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">res</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Blues_r&quot;</span><span class="p">,</span> <span class="n">levels</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
@@ -463,9 +463,9 @@
       
     </aside>
   </div>
-</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+</div><script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>

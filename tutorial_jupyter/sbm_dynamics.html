@@ -1,13 +1,13 @@
 <!doctype html>
-<html class="no-js" lang="en" data-content_root="">
+<html class="no-js" lang="en" data-content_root="../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Observing Marcus Inverted Region" href="marcus.html" /><link rel="prev" title="Noisy Circuit Simulation" href="noisy_simulation.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 7.1.2 and Furo 2024.08.06 -->
+    <link rel="shortcut icon" href="../_static/favicon.ico"/><!-- Generated with Sphinx 7.4.7 and Furo 2024.08.06 -->
         <title>Dynamics of the Spin-Boson Model - TenCirChem documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=302659d7" />
@@ -267,9 +267,9 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="Dynamics-of-the-Spin-Boson-Model">
-<h1>Dynamics of the Spin-Boson Model<a class="headerlink" href="#Dynamics-of-the-Spin-Boson-Model" title="Permalink to this heading">¶</a></h1>
+<h1>Dynamics of the Spin-Boson Model<a class="headerlink" href="#Dynamics-of-the-Spin-Boson-Model" title="Link to this heading">¶</a></h1>
 <section id="Overview">
-<h2>Overview<a class="headerlink" href="#Overview" title="Permalink to this heading">¶</a></h2>
+<h2>Overview<a class="headerlink" href="#Overview" title="Link to this heading">¶</a></h2>
 <p>In this notebook we will simulate the dynamics of a 1-mode spin-boson model.</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -279,13 +279,13 @@
 <p>We will first start with implementing it from scratch, and then show how to use the <code class="docutils literal notranslate"><span class="pre">TimeEvolution</span></code> class for the very same task.</p>
 </section>
 <section id="Determine-the-model-and-basis">
-<h2>Determine the model and basis<a class="headerlink" href="#Determine-the-model-and-basis" title="Permalink to this heading">¶</a></h2>
+<h2>Determine the model and basis<a class="headerlink" href="#Determine-the-model-and-basis" title="Link to this heading">¶</a></h2>
 <p>TenCirChem provides a simple yet versatile interface to define the Hamiltonian and the basis set. The Hamiltonian operators are specified through a list of <code class="docutils literal notranslate"><span class="pre">Op</span></code> object and simple harmonic oscillator (SHO) basis set is used for the boson in the spin-boson model. The relevant classes are borrowed from <a class="reference external" href="https://github.com/shuaigroup/Renormalizer">Renormalizer</a>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tencirchem</span> <span class="kn">import</span> <span class="n">Op</span><span class="p">,</span> <span class="n">BasisHalfSpin</span><span class="p">,</span> <span class="n">BasisSHO</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem</span><span class="w"> </span><span class="kn">import</span> <span class="n">Op</span><span class="p">,</span> <span class="n">BasisHalfSpin</span><span class="p">,</span> <span class="n">BasisSHO</span>
 
 <span class="n">epsilon</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="n">delta</span> <span class="o">=</span> <span class="mi">1</span>
@@ -324,7 +324,7 @@
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># transform the Hamiltonian and basis</span>
-<span class="kn">from</span> <span class="nn">tencirchem.dynamic</span> <span class="kn">import</span> <span class="n">qubit_encode_op</span><span class="p">,</span> <span class="n">qubit_encode_basis</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem.dynamic</span><span class="w"> </span><span class="kn">import</span> <span class="n">qubit_encode_op</span><span class="p">,</span> <span class="n">qubit_encode_basis</span>
 
 <span class="n">boson_encoding</span> <span class="o">=</span> <span class="s2">&quot;gray&quot;</span>
 <span class="n">ham_terms_spin</span><span class="p">,</span> <span class="n">constant</span> <span class="o">=</span> <span class="n">qubit_encode_op</span><span class="p">(</span><span class="n">ham_terms</span><span class="p">,</span> <span class="n">basis</span><span class="p">,</span> <span class="n">boson_encoding</span><span class="p">)</span>
@@ -365,7 +365,7 @@
 </div>
 </section>
 <section id="Construct-ansatz">
-<h2>Construct ansatz<a class="headerlink" href="#Construct-ansatz" title="Permalink to this heading">¶</a></h2>
+<h2>Construct ansatz<a class="headerlink" href="#Construct-ansatz" title="Link to this heading">¶</a></h2>
 <p>TenCirChem uses the variational Hamiltonian ansatz. Suppose the Hamiltonian has <span class="math notranslate nohighlight">\(N\)</span> terms and is written as</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
@@ -381,9 +381,9 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">tensorcircuit</span> <span class="k">as</span> <span class="nn">tc</span>
-<span class="kn">from</span> <span class="nn">tencirchem</span> <span class="kn">import</span> <span class="n">set_backend</span>
-<span class="kn">from</span> <span class="nn">tencirchem.dynamic</span> <span class="kn">import</span> <span class="n">get_ansatz</span><span class="p">,</span> <span class="n">get_jacobian_func</span><span class="p">,</span> <span class="n">get_deriv</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">tensorcircuit</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_backend</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem.dynamic</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_ansatz</span><span class="p">,</span> <span class="n">get_jacobian_func</span><span class="p">,</span> <span class="n">get_deriv</span>
 
 <span class="c1"># dynamics simulation requires auto-differentiation from JAX.</span>
 <span class="n">set_backend</span><span class="p">(</span><span class="s2">&quot;jax&quot;</span><span class="p">)</span>
@@ -396,7 +396,7 @@
 <span class="n">ansatz</span> <span class="o">=</span> <span class="n">get_ansatz</span><span class="p">(</span><span class="n">ham_terms_spin</span><span class="p">,</span> <span class="n">basis_spin</span><span class="p">,</span> <span class="n">n_layers</span><span class="p">,</span> <span class="n">init_circuit</span><span class="p">)</span>
 
 <span class="c1"># ansatz accepts parameters and outputs wavefunction</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 <span class="n">ansatz</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_layers</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">ham_terms_spin</span><span class="p">)))</span>
 </pre></div>
@@ -442,27 +442,27 @@ DeviceArray([1.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j,
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># the Hamiltonian in dense matrix format</span>
-<span class="kn">from</span> <span class="nn">tencirchem</span> <span class="kn">import</span> <span class="n">get_dense_operator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_dense_operator</span>
 
 <span class="n">h</span> <span class="o">=</span> <span class="n">get_dense_operator</span><span class="p">(</span><span class="n">basis_spin</span><span class="p">,</span> <span class="n">ham_terms_spin</span><span class="p">)</span>
 
 
 <span class="c1"># time derivative for $\theta_{kj}$ in the scipy solve_ivp format</span>
-<span class="k">def</span> <span class="nf">scipy_deriv</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">_theta</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">scipy_deriv</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">_theta</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">get_deriv</span><span class="p">(</span><span class="n">ansatz</span><span class="p">,</span> <span class="n">jacobian_func</span><span class="p">,</span> <span class="n">_theta</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 </section>
 <section id="Run-simulation">
-<h2>Run simulation<a class="headerlink" href="#Run-simulation" title="Permalink to this heading">¶</a></h2>
+<h2>Run simulation<a class="headerlink" href="#Run-simulation" title="Link to this heading">¶</a></h2>
 <p>Use SciPy RK45 solver to solve the <span class="math notranslate nohighlight">\(\theta\)</span> initial value problem (IVP). Calculate <span class="math notranslate nohighlight">\(\langle \hat \sigma_z \rangle\)</span> for plotting.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">solve_ivp</span>
-<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">expm</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_ivp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">expm</span>
 
 <span class="c1"># time step</span>
 <span class="n">tau</span> <span class="o">=</span> <span class="mf">0.1</span>
@@ -488,13 +488,13 @@ DeviceArray([1.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j,
 </div>
 </section>
 <section id="Plot">
-<h2>Plot<a class="headerlink" href="#Plot" title="Permalink to this heading">¶</a></h2>
+<h2>Plot<a class="headerlink" href="#Plot" title="Link to this heading">¶</a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-<span class="kn">import</span> <span class="nn">mpl_config</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">mpl_config</span>
 
 <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">101</span><span class="p">)</span> <span class="o">*</span> <span class="n">tau</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">z_list</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Variational&quot;</span><span class="p">)</span>
@@ -525,13 +525,13 @@ DeviceArray([1.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j,
 </div>
 </section>
 <section id="Use-TimeEvolution-class">
-<h2>Use <code class="docutils literal notranslate"><span class="pre">TimeEvolution</span></code> class<a class="headerlink" href="#Use-TimeEvolution-class" title="Permalink to this heading">¶</a></h2>
+<h2>Use <code class="docutils literal notranslate"><span class="pre">TimeEvolution</span></code> class<a class="headerlink" href="#Use-TimeEvolution-class" title="Link to this heading">¶</a></h2>
 <p>In this subsection we show how to use the <code class="docutils literal notranslate"><span class="pre">TimeEvolution</span></code> class to greatly simplify the workflow.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tencirchem</span> <span class="kn">import</span> <span class="n">TimeEvolution</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeEvolution</span>
 
 <span class="n">te</span> <span class="o">=</span> <span class="n">TimeEvolution</span><span class="p">(</span><span class="n">ham_terms_spin</span><span class="p">,</span> <span class="n">basis_spin</span><span class="p">,</span> <span class="n">property_op_dict</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Z&quot;</span><span class="p">:</span> <span class="n">Op</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="s2">&quot;spin&quot;</span><span class="p">)})</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
@@ -637,9 +637,9 @@ DeviceArray([1.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j, 0.+0.j,
       
     </aside>
   </div>
-</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+</div><script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
