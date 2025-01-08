@@ -19,6 +19,9 @@ for python_args in *.py; do
     if [ "$python_args" = "hea_geom_opt.py" ]; then
       pip install pyberny
     fi
+    if [ "$python_args" = "puccd_dnn.py" ]; then
+      pip install flax optax
+    fi
     echo ============================$python_args=============================
     timeout 20s python $python_args
     exit_code=$?
