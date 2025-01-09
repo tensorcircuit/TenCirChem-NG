@@ -442,6 +442,7 @@
         <span class="n">mol</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Mole</span><span class="p">,</span> <span class="n">RHF</span><span class="p">],</span>
         <span class="n">init_method</span><span class="o">=</span><span class="s2">&quot;mp2&quot;</span><span class="p">,</span>
         <span class="n">active_space</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">aslst</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">mo_coeff</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">hcb</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">engine</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -463,6 +464,15 @@
 <span class="sd">        active_space: Tuple[int, int], optional</span>
 <span class="sd">            Active space approximation. The first integer is the number of electrons and the second integer is</span>
 <span class="sd">            the number or spatial-orbitals. Defaults to None.</span>
+<span class="sd">        aslst: List[int], optional</span>
+<span class="sd">            Pick orbitals for the active space. Defaults to None which means the orbitals are sorted by energy.</span>
+<span class="sd">            The orbital index is 0-based.</span>
+
+<span class="sd">            .. note::</span>
+<span class="sd">                See `PySCF document &lt;https://pyscf.org/user/mcscf.html#picking-an-active-space&gt;`_</span>
+<span class="sd">                for choosing the active space orbitals. Here orbital index is 0-based, whereas in PySCF by default it</span>
+<span class="sd">                is 1-based.</span>
+
 <span class="sd">        mo_coeff: np.ndarray, optional</span>
 <span class="sd">            Molecule coefficients. If provided then RHF is skipped.</span>
 <span class="sd">            Can be used in combination with the ``init_state`` attribute.</span>
@@ -526,7 +536,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">inactive_occ</span> <span class="o">=</span> <span class="p">(</span><span class="n">mol</span><span class="o">.</span><span class="n">nelectron</span> <span class="o">-</span> <span class="n">active_space</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">//</span> <span class="mi">2</span>
         <span class="k">assert</span> <span class="p">(</span><span class="n">mol</span><span class="o">.</span><span class="n">nelectron</span> <span class="o">-</span> <span class="n">active_space</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inactive_vir</span> <span class="o">=</span> <span class="n">mol</span><span class="o">.</span><span class="n">nao</span> <span class="o">-</span> <span class="n">active_space</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">inactive_occ</span>
-        <span class="n">frozen_idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inactive_occ</span><span class="p">))</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">mol</span><span class="o">.</span><span class="n">nao</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">inactive_vir</span><span class="p">,</span> <span class="n">mol</span><span class="o">.</span><span class="n">nao</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">aslst</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">aslst</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inactive_occ</span><span class="p">,</span> <span class="n">mol</span><span class="o">.</span><span class="n">nao</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">inactive_vir</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">aslst</span><span class="p">)</span> <span class="o">!=</span> <span class="n">active_space</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;sort_mo should have the same length as the number of active orbitals.&quot;</span><span class="p">)</span>
+        <span class="n">frozen_idx</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mol</span><span class="o">.</span><span class="n">nao</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">aslst</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aslst</span> <span class="o">=</span> <span class="n">aslst</span>
 
         <span class="c1"># process backend</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_engine</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
@@ -599,7 +614,8 @@
         <span class="k">if</span> <span class="n">run_fci</span><span class="p">:</span>
             <span class="n">fci</span> <span class="o">=</span> <span class="n">CASCI</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_space</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_space</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="n">fci</span><span class="o">.</span><span class="n">max_memory</span> <span class="o">=</span> <span class="mi">32000</span>
-            <span class="n">res</span> <span class="o">=</span> <span class="n">fci</span><span class="o">.</span><span class="n">kernel</span><span class="p">()</span>
+            <span class="n">mo</span> <span class="o">=</span> <span class="n">fci</span><span class="o">.</span><span class="n">sort_mo</span><span class="p">(</span><span class="n">aslst</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">fci</span><span class="o">.</span><span class="n">kernel</span><span class="p">(</span><span class="n">mo</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">e_fci</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">civector_fci</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
@@ -926,7 +942,7 @@
             <span class="n">hamiltonian</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hamiltonian_lib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">htype</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">hamiltonian</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">int1e</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">int1e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">int2e</span><span class="p">,</span> <span class="n">e_core</span> <span class="o">=</span> <span class="n">get_integral_from_hf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_space</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">int1e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">int2e</span><span class="p">,</span> <span class="n">e_core</span> <span class="o">=</span> <span class="n">get_integral_from_hf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">aslst</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">e_core</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">e_core</span>
                 <span class="n">hamiltonian</span> <span class="o">=</span> <span class="n">get_h_from_integral</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">int1e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">int2e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hcb</span><span class="p">,</span> <span class="n">htype</span><span class="p">)</span>
