@@ -7,7 +7,7 @@
 import logging
 from inspect import isfunction
 from itertools import product
-from typing import Tuple
+from typing import Tuple, List
 
 import numpy as np
 import tensornetwork as tn
@@ -27,7 +27,7 @@ from tencirchem.constants import DISCARD_EPS
 logger = logging.getLogger(__name__)
 
 
-def get_integral_from_hf(hf: RHF, active_space: Tuple = None):
+def get_integral_from_hf(hf: RHF, active_space: Tuple = None, aslst: List[int] = None):
     if not isinstance(hf, RHF):
         raise TypeError(f"hf object must be RHF class, got {type(hf)}")
     m = hf.mol
@@ -42,8 +42,13 @@ def get_integral_from_hf(hf: RHF, active_space: Tuple = None):
         nelecas, ncas = active_space
 
     casci = CASCI(hf, ncas, nelecas)
-    int1e, e_core = casci.get_h1eff()
-    int2e = ao2mo.restore("s1", casci.get_h2eff(), ncas)
+    if aslst is None:
+        int1e, e_core = casci.get_h1eff()
+        int2e = ao2mo.restore("s1", casci.get_h2eff(), ncas)
+    else:
+        mo = casci.sort_mo(aslst, base=0)
+        int1e, e_core = casci.get_h1eff(mo)
+        int2e = ao2mo.restore("s1", casci.get_h2eff(mo), ncas)
 
     return int1e, int2e, e_core
 

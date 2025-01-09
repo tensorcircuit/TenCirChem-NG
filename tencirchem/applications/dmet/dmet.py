@@ -261,6 +261,7 @@ class DMET:
                             0.5 * np.einsum("ijkl,ijkl->", twoint, twordm))
 
         # Calculate fragment expectation value
+        # fmt: off
         fragment_energy_one_rdm = (
                 0.25 * np.einsum("ij,ij->", one_rdm[:norb, :], fock[:norb, :] + oneint[:norb, :])
                 + 0.25 * np.einsum("ij,ij->", one_rdm[:, :norb], fock[:, :norb] + oneint[:, :norb]))
@@ -271,6 +272,7 @@ class DMET:
             + 0.125 * np.einsum("ijkl,ijkl->", twordm[:, :, :norb, :], twoint[:, :, :norb, :])
             + 0.125 * np.einsum("ijkl,ijkl->", twordm[:, :, :, :norb], twoint[:, :, :, :norb])
         )
+        # fmt: on
 
         fragment_energy = fragment_energy_one_rdm + fragment_energy_twordm
 

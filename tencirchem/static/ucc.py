@@ -171,6 +171,7 @@ class UCC:
         mol: Union[Mole, RHF],
         init_method="mp2",
         active_space=None,
+        aslst=None,
         mo_coeff=None,
         hcb=False,
         engine=None,
@@ -192,6 +193,15 @@ class UCC:
         active_space: Tuple[int, int], optional
             Active space approximation. The first integer is the number of electrons and the second integer is
             the number or spatial-orbitals. Defaults to None.
+        aslst: List[int], optional
+            Pick orbitals for the active space. Defaults to None which means the orbitals are sorted by energy.
+            The orbital index is 0-based.
+
+            .. note::
+                See `PySCF document <https://pyscf.org/user/mcscf.html#picking-an-active-space>`_
+                for choosing the active space orbitals. Here orbital index is 0-based, whereas in PySCF by default it
+                is 1-based.
+
         mo_coeff: np.ndarray, optional
             Molecule coefficients. If provided then RHF is skipped.
             Can be used in combination with the ``init_state`` attribute.
@@ -255,7 +265,12 @@ class UCC:
         self.inactive_occ = (mol.nelectron - active_space[0]) // 2
         assert (mol.nelectron - active_space[0]) % 2 == 0
         self.inactive_vir = mol.nao - active_space[1] - self.inactive_occ
-        frozen_idx = list(range(self.inactive_occ)) + list(range(mol.nao - self.inactive_vir, mol.nao))
+        if aslst is None:
+            aslst = list(range(self.inactive_occ, mol.nao - self.inactive_vir))
+        if len(aslst) != active_space[1]:
+            raise ValueError("sort_mo should have the same length as the number of active orbitals.")
+        frozen_idx = [i for i in range(mol.nao) if i not in aslst]
+        self.aslst = aslst
 
         # process backend
         self._check_engine(engine)
@@ -328,7 +343,8 @@ class UCC:
         if run_fci:
             fci = CASCI(self.hf, self.active_space[1], self.active_space[0])
             fci.max_memory = 32000
-            res = fci.kernel()
+            mo = fci.sort_mo(aslst, base=0)
+            res = fci.kernel(mo)
             self.e_fci = res[0]
             self.civector_fci = res[2].ravel()
         else:
@@ -636,7 +652,7 @@ class UCC:
             hamiltonian = self.hamiltonian_lib.get(htype)
             if hamiltonian is None:
                 if self.int1e is None:
-                    self.int1e, self.int2e, e_core = get_integral_from_hf(self.hf, self.active_space)
+                    self.int1e, self.int2e, e_core = get_integral_from_hf(self.hf, self.active_space, self.aslst)
                 else:
                     e_core = self.e_core
                 hamiltonian = get_h_from_integral(self.int1e, self.int2e, self.n_elec_s, self.hcb, htype)

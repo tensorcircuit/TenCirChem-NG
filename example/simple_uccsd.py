@@ -10,3 +10,11 @@ uccsd = UCCSD(h4)
 uccsd.kernel()
 # analyze result
 uccsd.print_summary(include_circuit=True)
+
+
+# active space calculation
+uccsd = UCCSD(h4, active_space=(2, 2))
+# calculate
+uccsd.kernel()
+# analyze result
+uccsd.print_summary(include_circuit=True)

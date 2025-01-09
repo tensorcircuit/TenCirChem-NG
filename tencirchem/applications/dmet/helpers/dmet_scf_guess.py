@@ -52,10 +52,12 @@ def dmet_fragment_guess(t_list, bath_orb, chemical_potential, norb_high, number_
     eigenvectors = eigenvectors[:, eigenvalues.argsort()]
 
     # Extract the eigenvectors of the occupied orbitals as the guess orbitals
+    # fmt: off
     frag_guess = (
         np.dot(eigenvectors[:, : int(number_active_electron / 2)],
                eigenvectors[:, : int(number_active_electron / 2)].T)
         * 2
     )
+    # fmt: on
 
     return frag_guess

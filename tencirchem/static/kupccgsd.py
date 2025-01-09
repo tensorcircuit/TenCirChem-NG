@@ -27,6 +27,7 @@ class KUPCCGSD(UCC):
         self,
         mol: Union[Mole, RHF],
         active_space: Tuple[int, int] = None,
+        aslst: List[int] = None,
         mo_coeff: np.ndarray = None,
         k: int = 3,
         n_tries: int = 1,
@@ -46,6 +47,15 @@ class KUPCCGSD(UCC):
         active_space: Tuple[int, int], optional
             Active space approximation. The first integer is the number of electrons and the second integer is
             the number or spatial-orbitals. Defaults to None.
+        aslst: List[int], optional
+            Pick orbitals for the active space. Defaults to None which means the orbitals are sorted by energy.
+            The orbital index is 0-based.
+
+            .. note::
+                See `PySCF document <https://pyscf.org/user/mcscf.html#picking-an-active-space>`_
+                for choosing the active space orbitals. Here orbital index is 0-based, whereas in PySCF by default it
+                is 1-based.
+
         mo_coeff: np.ndarray, optional
             Molecule coefficients. If provided then RHF is skipped.
             Can be used in combination with the ``init_state`` attribute.
@@ -77,6 +87,7 @@ class KUPCCGSD(UCC):
             mol,
             init_method=None,
             active_space=active_space,
+            aslst=aslst,
             mo_coeff=mo_coeff,
             engine=engine,
             run_hf=run_hf,

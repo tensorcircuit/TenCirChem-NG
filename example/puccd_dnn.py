@@ -66,10 +66,8 @@ for name, m, active_space in m_list:
     fermion_circuit_state, hamiltonian, e_nuc, ci_mask, uccsd, ucc = process_mol(m, active_space)
     nn_size = uccsd.n_qubits
     size_factor = 2
-    model = MLP([nn_size * size_factor, nn_size * size_factor, nn_size * size_factor, nn_size * size_factor,
-                 nn_size * size_factor, 1])
+    model = MLP([nn_size * size_factor] * (uccsd.n_qubits // 2 - 3) + [1])
     batch = K.convert_to_tensor(list(product(*[[-1, 1] for _ in range(uccsd.n_qubits)])))
-
 
     @jax.jit
     def train_step(ts, fermion_circuit_state, hamiltonian, e_nuc):
@@ -85,7 +83,6 @@ for name, m, active_space in m_list:
         e, grads = grad_fn(ts.params)
         ts = ts.apply_gradients(grads=grads)
         return ts, e + e_nuc
-
 
     e_min_list = []
     for seed in range(10, 15):

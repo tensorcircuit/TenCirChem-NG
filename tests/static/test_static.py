@@ -89,7 +89,7 @@ def test_active_space():
     e1 = casci.kernel()[0]
     uccsd = UCCSD(m, active_space=(nelecas, ncas))
     e2 = uccsd.kernel()
-    np.testing.assert_allclose(e1, e2, atol=1e-5)
+    np.testing.assert_allclose(e2, e1, atol=1e-5)
     np.testing.assert_allclose(uccsd.make_rdm1(), casci.make_rdm1(), atol=1e-3)
     from pyscf.mcscf.addons import make_rdm12
 
@@ -97,6 +97,21 @@ def test_active_space():
     np.testing.assert_allclose(uccsd.make_rdm2(), rdm2, atol=1e-3)
 
     uccsd.print_summary(include_circuit=True)
+
+
+def test_active_space_aslst():
+    m = h_chain(12)
+    m.verbose = 0
+    ncas = 4
+    nelecas = 4
+    aslst = [0, 1, 8, 10]
+    uccsd = UCCSD(m, active_space=(nelecas, ncas), aslst=aslst)
+    casci = CASCI(uccsd.hf, ncas, nelecas)
+    mo = casci.sort_mo(aslst, base=0)
+    e1 = casci.kernel(mo)[0]
+    e2 = uccsd.kernel()
+    uccsd.print_summary()
+    np.testing.assert_allclose(e2, e1, atol=1e-5)
 
 
 def test_get_circuit():

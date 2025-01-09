@@ -36,6 +36,7 @@ class UCCSD(UCC):
         mol: Union[Mole, RHF],
         init_method: str = "mp2",
         active_space: Tuple[int, int] = None,
+        aslst: List[int] = None,
         mo_coeff: np.ndarray = None,
         pick_ex2: bool = True,
         epsilon: float = DISCARD_EPS,
@@ -59,6 +60,15 @@ class UCCSD(UCC):
         active_space: Tuple[int, int], optional
             Active space approximation. The first integer is the number of electrons and the second integer is
             the number or spatial-orbitals. Defaults to None.
+        aslst: List[int], optional
+            Pick orbitals for the active space. Defaults to None which means the orbitals are sorted by energy.
+            The orbital index is 0-based.
+
+            .. note::
+                See `PySCF document <https://pyscf.org/user/mcscf.html#picking-an-active-space>`_
+                for choosing the active space orbitals. Here orbital index is 0-based, whereas in PySCF by default it
+                is 1-based.
+
         mo_coeff: np.ndarray, optional
             Molecule coefficients. If provided then RHF is skipped.
             Can be used in combination with the ``init_state`` attribute.
@@ -95,6 +105,7 @@ class UCCSD(UCC):
             mol,
             init_method,
             active_space,
+            aslst,
             mo_coeff,
             engine=engine,
             run_hf=run_hf,
@@ -198,6 +209,7 @@ class ROUCCSD(UCC):
         self,
         mol: Union[Mole, ROHF],
         active_space: Tuple[int, int] = None,
+        aslst: List[int] = None,
         mo_coeff: np.ndarray = None,
         engine: str = "civector",
         run_hf: bool = True,
@@ -215,6 +227,7 @@ class ROUCCSD(UCC):
             mol,
             init_method,
             active_space,
+            aslst,
             mo_coeff,
             engine=engine,
             run_hf=run_hf,
