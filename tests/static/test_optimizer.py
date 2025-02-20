@@ -12,6 +12,7 @@ from tencirchem.utils.optimizer import soap
 
 
 def test_optimizer():
+    # see also example/custom_optimizer.py
     ucc = UCCSD(h4)
     ucc.kernel()
 
