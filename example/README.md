@@ -1,7 +1,9 @@
 # Examples
 
 - `custom_excitation.py`: Specify custom excitation operators for unitary coupled-cluster (UCC) ansatz.
+- `custom_optimizer.py`: Using custom optimizer for UCC and HEA calculation.
 - `dmet_benzene.py`: Density-matrix embedding for benzene based on unitary coupled cluster ansatz.
+- `hamiltonian_operator.py`: Get fermion or qubit Hamiltonian operator in OpenFermion form. 
 - `hea_force.py`: Calculate nuclear forces based on hardware-efficient ansatz (Ry ansatz).
 - `hea_beh2.py`: VQE of BeH2 based on hardware-efficient ansatz (Ry ansatz), with (4e, 4o) active space.
 - `hea_geom_opt.py`: Molecular geometry optimization of H2O based on hardware-efficient ansatz (Ry ansatz).
