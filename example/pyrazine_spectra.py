@@ -25,7 +25,7 @@ spin_basis = qubit_encode_basis(basis)
 h2 = Mpo(Model(spin_basis, spin_ham_terms)).todense()
 h2 += np.eye(len(h2)) * constant
 
-np.testing.assert_allclose(h2, h1)
+np.testing.assert_allclose(h2, h1, atol=1e-8)
 
 
 l = 2

@@ -57,7 +57,7 @@ def test_qubit_encoding(module, nlevels, boson_encoding):
     h2 += np.eye(len(h2)) * constant
 
     subspace_idx = get_subspace_idx(basis, boson_encoding)
-    np.testing.assert_allclose(h2[subspace_idx][:, subspace_idx], h1, atol=1e-10)
+    np.testing.assert_allclose(h2[subspace_idx][:, subspace_idx], h1, atol=1e-8)
 
 
 @pytest.mark.parametrize("boson_encoding", ["unary", "binary", "gray"])

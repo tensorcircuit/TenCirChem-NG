@@ -149,7 +149,7 @@ def parity(fermion_operator: FermionOperator, n_modes: int, n_elec: Union[int, T
     return res
 
 
-def fop_to_qop(fop: FermionOperator, mapping: str, n_sorb: int, n_elec: int) -> QubitOperator:
+def fop_to_qop(fop: FermionOperator, mapping: str, n_sorb: int, n_elec: Union[int, Tuple[int, int]]) -> QubitOperator:
     if mapping == "parity":
         qop = parity(fop, n_sorb, n_elec)
     elif mapping in ["jordan-wigner", "jordan_wigner"]:
@@ -969,18 +969,18 @@ class HEA:
         n_orb = n_sorb // 2
         rdm1 = np.zeros([n_orb] * 2)
 
-        # assuming closed shell
         # could optimize for tn engine by caching the statevector or dm
         for i in range(n_orb):
             for j in range(i + 1):
-                fop = FermionOperator(f"{i}^ {j}")
+                if self.spin == 0:
+                    fop = 2 * FermionOperator(f"{i}^ {j}")
+                else:
+                    fop = FermionOperator(f"{i}^ {j}") + FermionOperator(f"{i+n_orb}^ {j+n_orb}")
                 fop = fop + hermitian_conjugated(fop)
-                qop = fop_to_qop(fop, self.mapping, n_sorb, self.n_elec)
+                qop = fop_to_qop(fop, self.mapping, n_sorb, self.n_elec_s)
                 hea = HEA(qop, self.get_circuit, params, self.engine, self.engine_conf)
-                # for spin orbital RDM
-                v = hea.energy(params) / 2
-                # spatial orbital RDM
-                rdm1[i, j] = rdm1[j, i] = 2 * v
+                # divide by two since we have added the hermitian conjugation
+                rdm1[i, j] = rdm1[j, i] = hea.energy(params) / 2
 
         return rdm1
 
@@ -1032,19 +1032,24 @@ class HEA:
         for p, q, r, s in product(range(n_orb), repeat=4):
             if (p, q, r, s) in calculated_indices:
                 continue
-            # aaaa is the same as bbbb, abba is the same as baab
+
             fop_aaaa = FermionOperator(f"{p}^ {q}^ {r} {s}")
             fop_abba = FermionOperator(f"{p}^ {q+n_orb}^ {r+n_orb} {s}")
-            fop = fop_aaaa + fop_abba
+            if self.spin == 0:
+                # aaaa is the same as bbbb, abba is the same as baab
+                fop = 2 * (fop_aaaa + fop_abba)
+            else:
+                fop_bbbb = FermionOperator(f"{p+n_orb}^ {q+n_orb}^ {r+n_orb} {s+n_orb}")
+                fop_baab = FermionOperator(f"{p+n_orb}^ {q}^ {r} {s+n_orb}")
+                fop = fop_aaaa + fop_abba + fop_bbbb + fop_baab
             fop = fop + hermitian_conjugated(fop)
-            qop = fop_to_qop(fop, self.mapping, n_sorb, self.n_elec)
+            qop = fop_to_qop(fop, self.mapping, n_sorb, self.n_elec_s)
             hea = HEA(qop, self.get_circuit, params, self.engine, self.engine_conf)
-            # for spin RDM
+            # divide by two since we have added the hermitian conjugation
             v = hea.energy(params) / 2
             indices = [(p, q, r, s), (s, r, q, p), (q, p, s, r), (r, s, p, q)]
             for idx in indices:
-                # 2* for spatial RDM
-                rdm2[idx] = 2 * v
+                rdm2[idx] = v
                 calculated_indices.add(idx)
         # transpose to PySCF notation: rdm2[p,q,r,s] = <p^+ r^+ s q>
         rdm2 = rdm2.transpose(0, 3, 1, 2)

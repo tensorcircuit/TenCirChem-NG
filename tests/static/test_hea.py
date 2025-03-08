@@ -67,7 +67,7 @@ def test_rdm(mapping, reset_backend):
 def test_open_shell():
     set_backend("jax")
 
-    m = h_chain(4, charge=1, spin=1)
+    m = h_chain(3, charge=0, spin=1)
 
     hea = HEA.from_molecule(m, n_layers=6, mapping="parity")
     # try multiple times to avoid local minimum
@@ -86,3 +86,6 @@ def test_open_shell():
     # usually ROUCCSD is more accurate
     np.testing.assert_allclose(e2, ucc.e_fci, atol=1e-4)
     np.testing.assert_allclose(e1, ucc.e_fci, atol=2e-3)
+
+    np.testing.assert_allclose(hea.make_rdm1(), ucc.make_rdm1(basis="MO"), atol=5e-3)
+    np.testing.assert_allclose(hea.make_rdm2(), ucc.make_rdm2(basis="MO"), atol=5e-3)
