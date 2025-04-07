@@ -306,6 +306,7 @@
         <span class="n">pick_ex2</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">DISCARD_EPS</span><span class="p">,</span>
         <span class="n">sort_ex2</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;fermion&quot;</span><span class="p">,</span>
         <span class="n">engine</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">run_hf</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">run_mp2</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -342,6 +343,9 @@
 <span class="sd">            Whether screen out two body excitations based on the inital guess amplitude.</span>
 <span class="sd">            Defaults to True, which means excitations with amplitude less than ``epsilon`` (see below) are discarded.</span>
 <span class="sd">            The argument will be set to ``False`` if initial guesses are set to zero.</span>
+<span class="sd">        mode: str, optional</span>
+<span class="sd">            How to deal with particle symmetry. Possible values are ``&quot;fermion&quot;``, ``&quot;qubit&quot;``.</span>
+<span class="sd">            Default to ``&quot;fermion&quot;``.</span>
 <span class="sd">        epsilon: float, optional</span>
 <span class="sd">            The threshold to discard two body excitations. Defaults to 1e-12.</span>
 <span class="sd">        sort_ex2: bool, optional</span>
@@ -372,6 +376,7 @@
             <span class="n">active_space</span><span class="p">,</span>
             <span class="n">aslst</span><span class="p">,</span>
             <span class="n">mo_coeff</span><span class="p">,</span>
+            <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
             <span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">,</span>
             <span class="n">run_hf</span><span class="o">=</span><span class="n">run_hf</span><span class="p">,</span>
             <span class="n">run_mp2</span><span class="o">=</span><span class="n">run_mp2</span><span class="p">,</span>

@@ -306,6 +306,7 @@
     <span class="n">get_hop_hcb_from_integral</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem.static.ci_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_ci_strings</span><span class="p">,</span> <span class="n">get_ex_bitstring</span><span class="p">,</span> <span class="n">get_addr</span><span class="p">,</span> <span class="n">get_init_civector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem.static.evolve_civector</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_fermion_phase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tencirchem.static.evolve_tensornetwork</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_circuit</span>
 
 
@@ -444,7 +445,7 @@
         <span class="n">active_space</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">aslst</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">mo_coeff</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">hcb</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;fermion&quot;</span><span class="p">,</span>
         <span class="n">engine</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">run_hf</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">run_mp2</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -477,8 +478,10 @@
 <span class="sd">            Molecule coefficients. If provided then RHF is skipped.</span>
 <span class="sd">            Can be used in combination with the ``init_state`` attribute.</span>
 <span class="sd">            Defaults to None which means RHF orbitals are used.</span>
-<span class="sd">        hcb: bool, optional</span>
-<span class="sd">            Whether force electrons to pair as hard-core boson (HCB). Default to False.</span>
+<span class="sd">        mode: str, optional</span>
+<span class="sd">            How to deal with particle symmetry, such as whether force electrons to pair as hard-core boson (HCB).</span>
+<span class="sd">            Possible values are ``&quot;fermion&quot;``, ``&quot;qubit&quot;`` and ``&quot;hcb&quot;``.</span>
+<span class="sd">            Default to ``&quot;fermion&quot;``.</span>
 <span class="sd">        engine: str, optional</span>
 <span class="sd">            The engine to run the calculation. See :ref:`advanced:Engines` for details.</span>
 <span class="sd">        run_hf: bool, optional</span>
@@ -521,12 +524,12 @@
         <span class="k">if</span> <span class="n">active_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">active_space</span> <span class="o">=</span> <span class="p">(</span><span class="n">mol</span><span class="o">.</span><span class="n">nelectron</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">mol</span><span class="o">.</span><span class="n">nao</span><span class="p">))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">hcb</span> <span class="o">=</span> <span class="n">hcb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">spin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mol</span><span class="o">.</span><span class="n">spin</span>
-        <span class="k">if</span> <span class="n">hcb</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;hcb&quot;</span><span class="p">:</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">spin</span> <span class="o">==</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">active_space</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">hcb</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;hcb&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span> <span class="o">//=</span> <span class="mi">2</span>
 
         <span class="c1"># process activate space</span>
@@ -807,7 +810,7 @@
         <span class="k">if</span> <span class="n">engine</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">engine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span>
         <span class="n">civector</span> <span class="o">=</span> <span class="n">get_civector</span><span class="p">(</span>
-            <span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ex_ops</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_ids</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hcb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_state</span><span class="p">,</span> <span class="n">engine</span>
+            <span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ex_ops</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_ids</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_state</span><span class="p">,</span> <span class="n">engine</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">civector</span></div>
 
@@ -842,7 +845,7 @@
 <span class="sd">        &gt;&gt;&gt; uccsd.get_ci_strings(True)[1]  # only one spin sector</span>
 <span class="sd">        array([0, 0, 1, 0], dtype=uint64)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">get_ci_strings</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hcb</span><span class="p">,</span> <span class="n">strs2addr</span><span class="o">=</span><span class="n">strs2addr</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">get_ci_strings</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span> <span class="n">strs2addr</span><span class="o">=</span><span class="n">strs2addr</span><span class="p">)</span></div>
 
 
     <span class="c1"># since there&#39;s ci_vector method</span>
@@ -880,7 +883,7 @@
 <span class="sd">        1</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">strs2addr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_ci_strings</span><span class="p">(</span><span class="n">strs2addr</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">get_addr</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bitstring</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">,</span> <span class="n">strs2addr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hcb</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">get_addr</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">bitstring</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">,</span> <span class="n">strs2addr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="UCC.statevector">
@@ -922,7 +925,7 @@
         <span class="k">if</span> <span class="n">engine</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">engine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span>
         <span class="n">statevector</span> <span class="o">=</span> <span class="n">get_statevector</span><span class="p">(</span>
-            <span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ex_ops</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_ids</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hcb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_state</span><span class="p">,</span> <span class="n">engine</span>
+            <span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ex_ops</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_ids</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_state</span><span class="p">,</span> <span class="n">engine</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">statevector</span></div>
 
@@ -945,7 +948,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">int1e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">int2e</span><span class="p">,</span> <span class="n">e_core</span> <span class="o">=</span> <span class="n">get_integral_from_hf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">aslst</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">e_core</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">e_core</span>
-                <span class="n">hamiltonian</span> <span class="o">=</span> <span class="n">get_h_from_integral</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">int1e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">int2e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hcb</span><span class="p">,</span> <span class="n">htype</span><span class="p">)</span>
+                <span class="n">hamiltonian</span> <span class="o">=</span> <span class="n">get_h_from_integral</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">int1e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">int2e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span> <span class="n">htype</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">hamiltonian_lib</span><span class="p">[</span><span class="n">htype</span><span class="p">]</span> <span class="o">=</span> <span class="n">hamiltonian</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">e_core</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">e_core</span>
@@ -996,7 +999,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ex_ops</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">param_ids</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">hcb</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">init_state</span><span class="p">,</span>
             <span class="n">engine</span><span class="p">,</span>
         <span class="p">)</span>
@@ -1051,7 +1054,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ex_ops</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">param_ids</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">hcb</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">init_state</span><span class="p">,</span>
             <span class="n">engine</span><span class="p">,</span>
         <span class="p">)</span>
@@ -1088,7 +1091,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_engine</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">engine</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">engine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span>
-        <span class="k">return</span> <span class="n">apply_excitation</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">,</span> <span class="n">ex_op</span><span class="p">,</span> <span class="n">hcb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hcb</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">apply_excitation</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">,</span> <span class="n">ex_op</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_statevector_to_civector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statevector</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -1138,7 +1141,7 @@
 <span class="sd">        --------</span>
 <span class="sd">        make_rdm2: Evaluate the spin-traced two-body reduced density matrix (2RDM).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">hcb</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;fermion&quot;</span><span class="p">,</span> <span class="s2">&quot;qubit&quot;</span><span class="p">]</span>
         <span class="n">civector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_statevector_to_civector</span><span class="p">(</span><span class="n">statevector</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 
         <span class="n">rdm1_cas</span> <span class="o">=</span> <span class="n">fci</span><span class="o">.</span><span class="n">direct_spin1</span><span class="o">.</span><span class="n">make_rdm1</span><span class="p">(</span><span class="n">civector</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">)</span>
@@ -1199,7 +1202,7 @@
 <span class="sd">        &gt;&gt;&gt; e_hf = ucc.int1e.ravel() @ rdm1.ravel() + 1/2 * ucc.int2e.ravel() @ rdm2.ravel()</span>
 <span class="sd">        &gt;&gt;&gt; np.testing.assert_allclose(e_hf + ucc.e_nuc, ucc.e_hf, atol=1e-10)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">hcb</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;fermion&quot;</span><span class="p">,</span> <span class="s2">&quot;qubit&quot;</span><span class="p">]</span>
         <span class="n">civector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_statevector_to_civector</span><span class="p">(</span><span class="n">statevector</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
 
         <span class="n">rdm2_cas</span> <span class="o">=</span> <span class="n">fci</span><span class="o">.</span><span class="n">direct_spin1</span><span class="o">.</span><span class="n">make_rdm12</span><span class="p">(</span><span class="n">civector</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
@@ -1301,8 +1304,13 @@
                 <span class="n">ex1_ops</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">ex_op_a</span><span class="p">,</span> <span class="n">ex_op_b</span><span class="p">])</span>
                 <span class="n">ex1_param_ids</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">ex1_param_ids</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
                 <span class="n">ex1_init_guess</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t1</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">a</span><span class="p">])</span>
+        <span class="n">ex1_param_ids</span> <span class="o">=</span> <span class="n">ex1_param_ids</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
 
-        <span class="k">return</span> <span class="n">ex1_ops</span><span class="p">,</span> <span class="n">ex1_param_ids</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">ex1_init_guess</span></div>
+        <span class="c1"># deal with qubit symmetry</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;qubit&quot;</span><span class="p">:</span>
+            <span class="n">ex1_ops</span><span class="p">,</span> <span class="n">ex1_param_ids</span><span class="p">,</span> <span class="n">ex1_init_guess</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qubit_phase</span><span class="p">(</span><span class="n">ex1_ops</span><span class="p">,</span> <span class="n">ex1_param_ids</span><span class="p">,</span> <span class="n">ex1_init_guess</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">ex1_ops</span><span class="p">,</span> <span class="n">ex1_param_ids</span><span class="p">,</span> <span class="n">ex1_init_guess</span></div>
 
 
 <div class="viewcode-block" id="UCC.get_ex2_ops">
@@ -1399,9 +1407,26 @@
                             <span class="n">ex_ops</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">ex_op_ab3</span><span class="p">,</span> <span class="n">ex_op_ab4</span><span class="p">])</span>
                             <span class="n">ex2_param_ids</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">ex2_param_ids</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
                             <span class="n">ex2_init_guess</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t2</span><span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">i</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">b</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">ex2_param_ids</span> <span class="o">=</span> <span class="n">ex2_param_ids</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
 
-        <span class="k">return</span> <span class="n">ex_ops</span><span class="p">,</span> <span class="n">ex2_param_ids</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">ex2_init_guess</span></div>
+        <span class="c1"># deal with qubit symmetry</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;qubit&quot;</span><span class="p">:</span>
+            <span class="n">ex_ops</span><span class="p">,</span> <span class="n">ex2_param_ids</span><span class="p">,</span> <span class="n">ex2_init_guess</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qubit_phase</span><span class="p">(</span><span class="n">ex_ops</span><span class="p">,</span> <span class="n">ex2_param_ids</span><span class="p">,</span> <span class="n">ex2_init_guess</span><span class="p">)</span>
 
+        <span class="k">return</span> <span class="n">ex_ops</span><span class="p">,</span> <span class="n">ex2_param_ids</span><span class="p">,</span> <span class="n">ex2_init_guess</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_qubit_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ex_ops</span><span class="p">,</span> <span class="n">ex_param_ids</span><span class="p">,</span> <span class="n">ex_init_guess</span><span class="p">):</span>
+
+        <span class="n">hf_str</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_ci_strings</span><span class="p">()[:</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span>
+        <span class="n">iterated_ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ex_op</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ex_ops</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">ex_param_ids</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">iterated_ids</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">phase</span> <span class="o">=</span> <span class="n">get_fermion_phase</span><span class="p">(</span><span class="n">ex_op</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">,</span> <span class="n">hf_str</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">ex_init_guess</span><span class="p">[</span><span class="n">ex_param_ids</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">*=</span> <span class="n">phase</span>
+            <span class="n">iterated_ids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ex_param_ids</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">ex_ops</span><span class="p">,</span> <span class="n">ex_param_ids</span><span class="p">,</span> <span class="n">ex_init_guess</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">e_ucc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -1459,7 +1484,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ex_ops</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">param_ids</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">hcb</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">init_state</span><span class="p">,</span>
             <span class="n">decompose_multicontrol</span><span class="o">=</span><span class="n">decompose_multicontrol</span><span class="p">,</span>
             <span class="n">trotter</span><span class="o">=</span><span class="n">trotter</span><span class="p">,</span>
@@ -1559,7 +1584,7 @@
         <span class="n">data_list</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ex_op</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">param_ids</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ex_ops</span><span class="p">):</span>
-            <span class="n">bitstring</span> <span class="o">=</span> <span class="n">get_ex_bitstring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">,</span> <span class="n">ex_op</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hcb</span><span class="p">)</span>
+            <span class="n">bitstring</span> <span class="o">=</span> <span class="n">get_ex_bitstring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span><span class="p">,</span> <span class="n">ex_op</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span>
             <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">ex_op</span><span class="p">,</span> <span class="n">bitstring</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_guess</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data_list</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span></div>
 
@@ -1659,7 +1684,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Hamiltonian as openfermion.FermionOperator</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hcb</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;hcb&quot;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No FermionOperator available for hard-core boson Hamiltonian&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">get_hop_from_integral</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">int1e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">int2e</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">e_core</span>
 
@@ -1669,9 +1694,10 @@
 <span class="sd">        Hamiltonian as openfermion.QubitOperator, mapped by</span>
 <span class="sd">        Jordan-Wigner transformation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">hcb</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;fermion&quot;</span><span class="p">,</span> <span class="s2">&quot;qubit&quot;</span><span class="p">]:</span>
             <span class="k">return</span> <span class="n">reverse_qop_idx</span><span class="p">(</span><span class="n">jordan_wigner</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h_fermion_op</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;hcb&quot;</span>
             <span class="k">return</span> <span class="n">get_hop_hcb_from_integral</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">int1e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">int2e</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">e_core</span>
 
     <span class="nd">@property</span>
@@ -1692,10 +1718,11 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The size of the CI vector.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">hcb</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;fermion&quot;</span><span class="p">,</span> <span class="s2">&quot;qubit&quot;</span><span class="p">]:</span>
             <span class="n">na</span><span class="p">,</span> <span class="n">nb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec_s</span>
             <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">comb</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">na</span><span class="p">))</span> <span class="o">*</span> <span class="nb">round</span><span class="p">(</span><span class="n">comb</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">nb</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;hcb&quot;</span>
             <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">comb</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_qubits</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_elec</span> <span class="o">//</span> <span class="mi">2</span><span class="p">))</span>
 
     <span class="nd">@property</span>
