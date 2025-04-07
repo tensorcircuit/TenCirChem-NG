@@ -7,7 +7,12 @@ from tensorcircuit import Circuit
 
 from tencirchem import UCCSD
 from tencirchem.molecule import h_chain, h4
-from tencirchem.applications.puccd_dnn.expectation_sampling import get_batch_norm_and_exp_z, get_batch_exp_xy, get_prob, e_and_norm
+from tencirchem.applications.puccd_dnn.expectation_sampling import (
+    get_batch_norm_and_exp_z,
+    get_batch_exp_xy,
+    get_prob,
+    e_and_norm,
+)
 from tencirchem.applications.puccd_dnn.transformations import process_mol
 from tencirchem.applications.puccd_dnn.models import get_circuit_nosym
 
@@ -18,7 +23,7 @@ def generate_random_circuit_and_nn(n_qubits, seed):
     states = []
     c_list = []
     for _ in range(2):
-        circuit_state = np.random.rand(2 ** n_qubits) - 0.5
+        circuit_state = np.random.rand(2**n_qubits) - 0.5
         circuit_state /= np.linalg.norm(circuit_state)
         states.append(circuit_state)
         c_list.append(Circuit(n_qubits, inputs=circuit_state))
@@ -32,7 +37,7 @@ def generate_mol_circuit_and_nn(n_qubits):
     states = []
     c_list = []
     for _ in range(2):
-        circuit_state = np.ones(2 ** n_qubits)
+        circuit_state = np.ones(2**n_qubits)
         circuit_state /= np.linalg.norm(circuit_state)
         states.append(circuit_state)
         c_list.append(Circuit(n_qubits, inputs=circuit_state))
@@ -72,11 +77,11 @@ def test_expectation_simple(system, seed):
         norm_keys, norm_values, z_keys, z_values = get_batch_norm_and_exp_z(c1, c2, qop_list, shots=shots)
 
         b = query_nn(norm_keys, nn)
-        norm = (b ** 2).dot(norm_values)
+        norm = (b**2).dot(norm_values)
         np.testing.assert_allclose(norm, norm_ref, atol=atol)
 
         b = query_nn(z_keys, nn)
-        exp = (b ** 2).dot(z_values)
+        exp = (b**2).dot(z_values)
         np.testing.assert_allclose(exp, exp_ref, atol=atol)
 
     else:
@@ -87,7 +92,6 @@ def test_expectation_simple(system, seed):
         f11 = query_nn(key11, nn)
         exp_xy = (f01 * f10 / 2 + f00 * f11 / 2) @ np.array(values)
         np.testing.assert_allclose(exp_xy, exp_ref, atol=atol)
-
 
 
 def test_expectation_mol():

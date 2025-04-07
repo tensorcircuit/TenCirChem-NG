@@ -14,22 +14,22 @@ from tencirchem.static.hea import binary, parity
 
 
 @pytest.mark.parametrize("m", [h4, _random(4, 4)])
-@pytest.mark.parametrize("hcb", [False, True])
+@pytest.mark.parametrize("mode", ["fermion", "qubit", "hcb"])
 @pytest.mark.parametrize("htype", ["sparse"])
-def test_hamiltonian(m, hcb, htype):
+def test_hamiltonian(m, mode, htype):
     hf = m.HF()
     hf.chkfile = None
     hf.verbose = 0
     hf.kernel()
 
-    hamiltonian = get_h_from_hf(hf, hcb=hcb, htype=htype)
+    hamiltonian = get_h_from_hf(hf, mode=mode, htype=htype)
     if htype == "mpo":
         hamiltonian = mpo_to_quoperator(hamiltonian).eval_matrix()
     else:
         hamiltonian = np.array(hamiltonian.todense())
 
     e_nuc = hf.energy_nuc()
-    if not hcb:
+    if mode in ["fermion", "qubit"]:
         fci_e, _ = fci.FCI(hf).kernel()
         # not generally true but works for this example
         np.testing.assert_allclose(np.linalg.eigh(hamiltonian)[0][0] + e_nuc, fci_e, atol=1e-6)
@@ -42,22 +42,22 @@ def test_hamiltonian(m, hcb, htype):
 
 
 @pytest.mark.parametrize("m", [h4, _random(4, 4)])
-@pytest.mark.parametrize("hcb", [False, True])
-def test_hamiltonian_fcifunc(m, hcb):
+@pytest.mark.parametrize("mode", ["fermion", "qubit", "hcb"])
+def test_hamiltonian_fcifunc(m, mode):
     hf = m.HF()
     hf.chkfile = None
     hf.verbose = 0
     hf.kernel()
 
     htype = "fcifunc"
-    hamiltonian = get_h_from_hf(hf, hcb=hcb, htype=htype)
-    hamiltonian_ref = get_h_from_hf(hf, hcb=hcb, htype="sparse").todense()
+    hamiltonian = get_h_from_hf(hf, mode=mode, htype=htype)
+    hamiltonian_ref = get_h_from_hf(hf, mode=mode, htype="sparse").todense()
 
-    if not hcb:
+    if mode in ["fermion", "qubit"]:
         n_qubits = 8
     else:
         n_qubits = 4
-    ci_strings = get_ci_strings(n_qubits, 4, hcb)
+    ci_strings = get_ci_strings(n_qubits, 4, mode)
     hamiltonian = linalg.LinearOperator(shape=(len(ci_strings), len(ci_strings)), matvec=hamiltonian, dtype=np.float64)
     e = linalg.eigsh(hamiltonian, k=1, which="SA")[0][0]
     e_ref = np.linalg.eigh(hamiltonian_ref)[0][0]

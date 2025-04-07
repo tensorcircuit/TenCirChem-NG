@@ -132,16 +132,18 @@ def get_hop_hcb_from_integral(int1e, int2e):
     return qop
 
 
-def get_h_sparse_from_integral(int1e, int2e, hcb=False, do_log=False):
-    if not hcb:
+def get_h_sparse_from_integral(int1e, int2e, mode="fermion", do_log=False):
+    if mode in ["fermion", "qubit"]:
         ops = get_hop_from_integral(int1e, int2e)
     else:
+        assert mode == "hcb"
         ops = get_hop_hcb_from_integral(int1e, int2e)
     if do_log:
         logger.info("Constructing sparse Hamiltonian")
-    if not hcb:
+    if mode in ["fermion", "qubit"]:
         h_sparse = fop_to_coo(ops, n_qubits=2 * len(int1e))
     else:
+        assert mode == "hcb"
         h_sparse = hcb_to_coo(ops, n_qubits=len(int1e))
     if do_log:
         logger.info("Sparse Hamiltonian constructed")
@@ -188,20 +190,21 @@ def get_h_fcifunc_hcb_from_integral(int1e, int2e, n_elec):
     return fci_func
 
 
-def get_h_from_integral(int1e, int2e, n_elec_s, hcb: bool, htype: str):
+def get_h_from_integral(int1e, int2e, n_elec_s, mode: str, htype: str):
     if htype == "sparse":
-        hamiltonian = get_h_sparse_from_integral(int1e, int2e, hcb=hcb, do_log=True)
+        hamiltonian = get_h_sparse_from_integral(int1e, int2e, mode=mode, do_log=True)
     else:
         assert htype.lower() == "fcifunc"
-        if not hcb:
+        if mode in ["fermion", "qubit"]:
             hamiltonian = get_h_fcifunc_from_integral(int1e, int2e, n_elec_s)
         else:
+            assert mode == "hcb"
             n_elec = sum(n_elec_s)
             hamiltonian = get_h_fcifunc_hcb_from_integral(int1e, int2e, n_elec)
     return hamiltonian
 
 
-def get_h_from_hf(hf: RHF, active_space: Tuple = None, hcb: bool = False, htype="sparse"):
+def get_h_from_hf(hf: RHF, active_space: Tuple = None, mode: str = "fermion", htype="sparse"):
     if not isinstance(hf, RHF):
         raise TypeError(f"hf object must RHF class, got {type(hf)}")
     htype = htype.lower()
@@ -215,7 +218,7 @@ def get_h_from_hf(hf: RHF, active_space: Tuple = None, hcb: bool = False, htype=
     assert n_elec % 2 == 0
     n_elec_s = [n_elec // 2, n_elec // 2]
 
-    hamiltonian = get_h_from_integral(int1e, int2e, n_elec_s, hcb, htype)
+    hamiltonian = get_h_from_integral(int1e, int2e, n_elec_s, mode, htype)
 
     if active_space is None:
         return hamiltonian

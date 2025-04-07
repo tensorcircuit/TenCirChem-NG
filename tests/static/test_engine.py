@@ -51,7 +51,7 @@ def ref_state():
     set_backend("jax")
     engine = "tensornetwork"
     state = uccsd.civector(params, engine=engine)
-    state = apply_excitation(state, n_qubits=8, n_elec_s=4, ex_op=(4, 0, 3, 7), hcb=False, engine=engine)
+    state = apply_excitation(state, n_qubits=8, n_elec_s=4, ex_op=(4, 0, 3, 7), mode="fermion", engine=engine)
     set_backend("numpy")
     return state
 
@@ -68,7 +68,7 @@ def test_excitation(ref_state, engine, reset_backend):
     else:
         set_backend("numpy")
     state = uccsd.civector(params, engine=engine)
-    state = apply_excitation(state, n_qubits=8, n_elec_s=4, ex_op=(4, 0, 3, 7), hcb=False, engine=engine)
+    state = apply_excitation(state, n_qubits=8, n_elec_s=4, ex_op=(4, 0, 3, 7), mode="fermion", engine=engine)
     np.testing.assert_allclose(state, ref_state, atol=1e-6)
 
 
@@ -90,16 +90,19 @@ def set_backend_with_skip(backend_str):
 @pytest.mark.parametrize("engine", ["tensornetwork", "statevector", "civector", "civector-large", "pyscf"])
 @pytest.mark.parametrize("backend_str", ["jax", "numpy", "cupy"])
 @pytest.mark.parametrize("init_state", [None, "civector", "circuit"])
-def test_gradient_opt(backend_str, engine, init_state, reset_backend):
+@pytest.mark.parametrize("mode", ["fermion", "qubit"])
+def test_gradient_opt(backend_str, engine, init_state, mode, reset_backend):
     if engine in ["tensornetwork", "statevector"] and backend_str in ["numpy", "cupy"]:
         pytest.xfail("Incompatible engine and backend")
+    if engine in ["pyscf"] and mode in ["qubit"]:
+        pytest.xfail("Incompatible engine and fermion symmetry")
     set_backend_with_skip(backend_str)
-    uccsd = UCCSD(h4, engine=engine)
+    uccsd = UCCSD(h4, engine=engine, mode=mode)
     # test initial condition. Has no effect
     if init_state == "civector":
         uccsd.init_state = get_init_civector(uccsd.civector_size)
     elif init_state == "circuit":
-        uccsd.init_state = get_init_circuit(uccsd.n_qubits, uccsd.n_elec, uccsd.hcb)
+        uccsd.init_state = get_init_circuit(uccsd.n_qubits, uccsd.n_elec, uccsd.mode)
     e = uccsd.kernel()
     np.testing.assert_allclose(e, uccsd.e_fci, atol=1e-4)
 

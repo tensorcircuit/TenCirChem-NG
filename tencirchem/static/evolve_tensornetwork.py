@@ -24,12 +24,12 @@ logger = logging.getLogger(__name__)
 Tensor = Any
 
 
-def evolve_excitation(circuit: tc.Circuit, f_idx: tuple, qop, theta, hcb: bool, decompose_multicontrol: bool):
+def evolve_excitation(circuit: tc.Circuit, f_idx: tuple, qop, theta, mode: str, decompose_multicontrol: bool):
     n_qubits = circuit.circuit_param["nqubits"]
     f_idx = [n_qubits - 1 - idx for idx in f_idx]
 
     z_indices = []
-    if not hcb:
+    if mode == "fermion":
         for idx, term in next(iter(qop.terms.keys())):
             if term != "Z":
                 assert idx in f_idx
@@ -79,17 +79,18 @@ def evolve_excitation(circuit: tc.Circuit, f_idx: tuple, qop, theta, hcb: bool, 
     return circuit
 
 
-def get_init_circuit(n_qubits, n_elec_s, hcb, init_state=None, givens_swap=False):
+def get_init_circuit(n_qubits, n_elec_s, mode: str, init_state=None, givens_swap=False):
     na, nb = unpack_nelec(n_elec_s)
     if init_state is None:
         # prepare HF state
         circuit = tc.Circuit(n_qubits)
-        if not hcb:
+        if mode in ["fermion", "qubit"]:
             for i in range(nb):
                 circuit.X(n_qubits - 1 - i)
             for i in range(na):
                 circuit.X(n_qubits // 2 - 1 - i)
         else:
+            assert mode == "hcb"
             if not givens_swap:
                 for i in range(na):
                     circuit.X(n_qubits - 1 - i)
@@ -99,7 +100,7 @@ def get_init_circuit(n_qubits, n_elec_s, hcb, init_state=None, givens_swap=False
     elif isinstance(init_state, tc.Circuit):
         return init_state
     else:
-        ci_strings = get_ci_strings(n_qubits, n_elec_s, hcb)
+        ci_strings = get_ci_strings(n_qubits, n_elec_s, mode == "hcb")
         statevector = civector_to_statevector(init_state, n_qubits, ci_strings)
         if givens_swap:
             statevector = statevector.reshape([2] * n_qubits)
@@ -115,7 +116,7 @@ def get_circuit(
     n_elec,
     ex_ops,
     param_ids,
-    hcb: bool = False,
+    mode: str = "fermion",
     init_state: tc.Circuit = None,
     decompose_multicontrol: bool = False,
     trotter: bool = False,
@@ -124,7 +125,7 @@ def get_circuit(
         assert len(params) == len(ex_ops)
         param_ids = list(range(len(params)))
 
-    circuit = get_init_circuit(n_qubits, n_elec, hcb, init_state)
+    circuit = get_init_circuit(n_qubits, n_elec, mode, init_state)
 
     for param_id, f_idx in zip(param_ids, ex_ops):
         theta = params[param_id]
@@ -132,12 +133,12 @@ def get_circuit(
         qop = reverse_qop_idx(jordan_wigner(fop), n_qubits)
         if trotter:
             for pauli_string, v in qop.terms.items():
-                if hcb:
+                if mode in ["qubit", "hcb"]:
                     pauli_string = [(idx, symbol) for idx, symbol in pauli_string if symbol != "Z"]
                 circuit = evolve_pauli(circuit, pauli_string, -2 * v.imag * theta)
         else:
             # https://arxiv.org/pdf/2005.14475.pdf
-            circuit = evolve_excitation(circuit, f_idx, qop, 2 * theta, hcb, decompose_multicontrol)
+            circuit = evolve_excitation(circuit, f_idx, qop, 2 * theta, mode, decompose_multicontrol)
 
     return circuit
 
@@ -180,7 +181,7 @@ def get_circuit_givens_swap(params, n_qubits, n_elec, init_state=None):
     #                  └──────┘│  GS  │└──────┘
     # q_3(MO 2) : ─────────────┤ 2, 0 ├─────────  MO 0
     #                          └──────┘
-    circuit = get_init_circuit(n_qubits, n_elec, hcb=True, init_state=init_state, givens_swap=True)
+    circuit = get_init_circuit(n_qubits, n_elec, mode="hcb", init_state=init_state, givens_swap=True)
     gs_indices = get_gs_indices(n_elec // 2, n_qubits - n_elec // 2)
     for i, (j, k) in enumerate(gs_indices):
         theta = params[i]
@@ -195,9 +196,9 @@ def get_circuit_givens_swap(params, n_qubits, n_elec, init_state=None):
 
 
 @partial(jit, static_argnums=[1, 2, 3, 4, 5])
-def get_statevector_tensornetwork(params, n_qubits, n_elec, ex_ops, param_ids, hcb=False, init_state=None):
+def get_statevector_tensornetwork(params, n_qubits, n_elec, ex_ops, param_ids, mode="fermion", init_state=None):
     if tc.backend.name == "jax":
         logger.info(f"Entering `get_statevector_tensornetwork`. n_qubit: {n_qubits}")
 
-    circuit = get_circuit(params, n_qubits, n_elec, ex_ops, param_ids, hcb, init_state)
+    circuit = get_circuit(params, n_qubits, n_elec, ex_ops, param_ids, mode, init_state)
     return circuit.state().real.reshape(-1)

@@ -40,7 +40,7 @@ GETVECTOR_MAP = {
 }
 
 
-def get_ket(params, n_qubits, n_elec_s, ex_ops, param_ids, hcb, init_state, ci_strings, engine):
+def get_ket(params, n_qubits, n_elec_s, ex_ops, param_ids, mode, init_state, ci_strings, engine):
     if param_ids is None:
         param_ids = range(len(ex_ops))
     func = GETVECTOR_MAP[engine]
@@ -51,15 +51,15 @@ def get_ket(params, n_qubits, n_elec_s, ex_ops, param_ids, hcb, init_state, ci_s
         n_elec_s,
         ex_ops=tuple(ex_ops),
         param_ids=tuple(param_ids),
-        hcb=hcb,
+        mode=mode,
         init_state=init_state,
     )
     return ket
 
 
-def get_civector(params, n_qubits, n_elec_s, ex_ops, param_ids, hcb, init_state, engine):
-    ci_strings = get_ci_strings(n_qubits, n_elec_s, hcb)
-    ket = get_ket(params, n_qubits, n_elec_s, ex_ops, param_ids, hcb, init_state, ci_strings, engine)
+def get_civector(params, n_qubits, n_elec_s, ex_ops, param_ids, mode, init_state, engine):
+    ci_strings = get_ci_strings(n_qubits, n_elec_s, mode)
+    ket = get_ket(params, n_qubits, n_elec_s, ex_ops, param_ids, mode, init_state, ci_strings, engine)
     if engine.startswith("civector") or engine == "pyscf":
         civector = ket
     else:
@@ -67,9 +67,9 @@ def get_civector(params, n_qubits, n_elec_s, ex_ops, param_ids, hcb, init_state,
     return civector
 
 
-def get_statevector(params, n_qubits, n_elec_s, ex_ops, param_ids, hcb, init_state, engine):
-    ci_strings = get_ci_strings(n_qubits, n_elec_s, hcb)
-    ket = get_ket(params, n_qubits, n_elec_s, ex_ops, param_ids, hcb, init_state, ci_strings, engine)
+def get_statevector(params, n_qubits, n_elec_s, ex_ops, param_ids, mode, init_state, engine):
+    ci_strings = get_ci_strings(n_qubits, n_elec_s, mode)
+    ket = get_ket(params, n_qubits, n_elec_s, ex_ops, param_ids, mode, init_state, ci_strings, engine)
     if engine.startswith("civector") or engine == "pyscf":
         statevector = civector_to_statevector(ket, n_qubits, ci_strings)
     else:
@@ -77,14 +77,14 @@ def get_statevector(params, n_qubits, n_elec_s, ex_ops, param_ids, hcb, init_sta
     return statevector
 
 
-def get_energy(params, hamiltonian, n_qubits, n_elec_s, ex_ops: Tuple, param_ids: Tuple, hcb: bool, init_state, engine):
+def get_energy(params, hamiltonian, n_qubits, n_elec_s, ex_ops: Tuple, param_ids: list, mode: str, init_state, engine):
     if param_ids is None:
         param_ids = range(len(ex_ops))
     logger.info(f"Entering `get_energy`")
-    ci_strings = get_ci_strings(n_qubits, n_elec_s, hcb)
+    ci_strings = get_ci_strings(n_qubits, n_elec_s, mode)
     init_state = translate_init_state(init_state, n_qubits, ci_strings)
     ket = GETVECTOR_MAP[engine](
-        params, n_qubits, n_elec_s, tuple(ex_ops), tuple(param_ids), hcb=hcb, init_state=init_state
+        params, n_qubits, n_elec_s, tuple(ex_ops), tuple(param_ids), mode=mode, init_state=init_state
     )
     hket = apply_op(hamiltonian, ket)
     return ket @ hket
@@ -117,14 +117,14 @@ ENERGY_AND_GRAD_MAP = {
 }
 
 
-def get_energy_and_grad(params, hamiltonian, n_qubits, n_elec_s, ex_ops, param_ids, hcb, init_state, engine):
+def get_energy_and_grad(params, hamiltonian, n_qubits, n_elec_s, ex_ops, param_ids, mode, init_state, engine):
     if engine not in ENERGY_AND_GRAD_MAP:
         raise ValueError(f"Engine '{engine}' not supported")
 
     func = ENERGY_AND_GRAD_MAP[engine]
-    ci_strings = get_ci_strings(n_qubits, n_elec_s, hcb)
+    ci_strings = get_ci_strings(n_qubits, n_elec_s, mode)
     init_state = translate_init_state(init_state, n_qubits, ci_strings)
-    return func(params, hamiltonian, n_qubits, n_elec_s, tuple(ex_ops), tuple(param_ids), hcb, init_state)
+    return func(params, hamiltonian, n_qubits, n_elec_s, tuple(ex_ops), tuple(param_ids), mode, init_state)
 
 
 APPLY_EXCITATION_MAP = {
@@ -137,7 +137,7 @@ APPLY_EXCITATION_MAP = {
 }
 
 
-def apply_excitation(state, n_qubits, n_elec_s, ex_op, hcb, engine):
+def apply_excitation(state, n_qubits, n_elec_s, ex_op, mode, engine):
     if engine not in APPLY_EXCITATION_MAP:
         raise ValueError(f"Engine '{engine}' not supported")
 
@@ -149,13 +149,13 @@ def apply_excitation(state, n_qubits, n_elec_s, ex_op, hcb, engine):
     n_elec_s = unpack_nelec(n_elec_s)
 
     if is_statevector_input and not is_statevector_engine:
-        ci_strings = get_ci_strings(n_qubits, n_elec_s, hcb)
+        ci_strings = get_ci_strings(n_qubits, n_elec_s, mode)
         state = statevector_to_civector(state, ci_strings)
     if not is_statevector_input and is_statevector_engine:
-        ci_strings = get_ci_strings(n_qubits, n_elec_s, hcb)
+        ci_strings = get_ci_strings(n_qubits, n_elec_s, mode)
         state = civector_to_statevector(state, n_qubits, ci_strings)
     func = APPLY_EXCITATION_MAP[engine]
-    res_state = func(state, n_qubits, n_elec_s, ex_op, hcb)
+    res_state = func(state, n_qubits, n_elec_s, ex_op, mode)
     if is_statevector_input and not is_statevector_engine:
         return civector_to_statevector(res_state, n_qubits, ci_strings)
     if not is_statevector_input and is_statevector_engine:

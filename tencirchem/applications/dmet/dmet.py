@@ -256,12 +256,12 @@ class DMET:
         twordm = np.einsum("rk,pqkl->pqrl", mf_frag.mo_coeff, twordm)
         twordm = np.einsum("sl,pqrl->pqrs", mf_frag.mo_coeff, twordm)
 
+        # fmt: off
         # Calculate the total energy based on RDMs
         total_energy_rdm = (np.einsum("ij,ij->", fock_frag_copy, one_rdm) +
                             0.5 * np.einsum("ijkl,ijkl->", twoint, twordm))
 
         # Calculate fragment expectation value
-        # fmt: off
         fragment_energy_one_rdm = (
                 0.25 * np.einsum("ij,ij->", one_rdm[:norb, :], fock[:norb, :] + oneint[:norb, :])
                 + 0.25 * np.einsum("ij,ij->", one_rdm[:, :norb], fock[:, :norb] + oneint[:, :norb]))

@@ -41,6 +41,7 @@ class UCCSD(UCC):
         pick_ex2: bool = True,
         epsilon: float = DISCARD_EPS,
         sort_ex2: bool = True,
+        mode: str = "fermion",
         engine: str = None,
         run_hf: bool = True,
         run_mp2: bool = True,
@@ -77,6 +78,9 @@ class UCCSD(UCC):
             Whether screen out two body excitations based on the inital guess amplitude.
             Defaults to True, which means excitations with amplitude less than ``epsilon`` (see below) are discarded.
             The argument will be set to ``False`` if initial guesses are set to zero.
+        mode: str, optional
+            How to deal with particle symmetry. Possible values are ``"fermion"``, ``"qubit"``.
+            Default to ``"fermion"``.
         epsilon: float, optional
             The threshold to discard two body excitations. Defaults to 1e-12.
         sort_ex2: bool, optional
@@ -107,6 +111,7 @@ class UCCSD(UCC):
             active_space,
             aslst,
             mo_coeff,
+            mode=mode,
             engine=engine,
             run_hf=run_hf,
             run_mp2=run_mp2,

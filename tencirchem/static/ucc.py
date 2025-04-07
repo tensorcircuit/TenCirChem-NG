@@ -45,6 +45,7 @@ from tencirchem.static.hamiltonian import (
     get_hop_hcb_from_integral,
 )
 from tencirchem.static.ci_utils import get_ci_strings, get_ex_bitstring, get_addr, get_init_civector
+from tencirchem.static.evolve_civector import get_fermion_phase
 from tencirchem.static.evolve_tensornetwork import get_circuit
 
 
@@ -173,7 +174,7 @@ class UCC:
         active_space=None,
         aslst=None,
         mo_coeff=None,
-        hcb=False,
+        mode="fermion",
         engine=None,
         run_hf=True,
         run_mp2=True,
@@ -206,8 +207,10 @@ class UCC:
             Molecule coefficients. If provided then RHF is skipped.
             Can be used in combination with the ``init_state`` attribute.
             Defaults to None which means RHF orbitals are used.
-        hcb: bool, optional
-            Whether force electrons to pair as hard-core boson (HCB). Default to False.
+        mode: str, optional
+            How to deal with particle symmetry, such as whether force electrons to pair as hard-core boson (HCB).
+            Possible values are ``"fermion"``, ``"qubit"`` and ``"hcb"``.
+            Default to ``"fermion"``.
         engine: str, optional
             The engine to run the calculation. See :ref:`advanced:Engines` for details.
         run_hf: bool, optional
@@ -250,12 +253,12 @@ class UCC:
         if active_space is None:
             active_space = (mol.nelectron, int(mol.nao))
 
-        self.hcb = hcb
+        self.mode = mode
         self.spin = self.mol.spin
-        if hcb:
+        if mode == "hcb":
             assert self.spin == 0
         self.n_qubits = 2 * active_space[1]
-        if hcb:
+        if mode == "hcb":
             self.n_qubits //= 2
 
         # process activate space
@@ -527,7 +530,7 @@ class UCC:
         if engine is None:
             engine = self.engine
         civector = get_civector(
-            params, self.n_qubits, self.n_elec_s, self.ex_ops, self.param_ids, self.hcb, self.init_state, engine
+            params, self.n_qubits, self.n_elec_s, self.ex_ops, self.param_ids, self.mode, self.init_state, engine
         )
         return civector
 
@@ -559,7 +562,7 @@ class UCC:
         >>> uccsd.get_ci_strings(True)[1]  # only one spin sector
         array([0, 0, 1, 0], dtype=uint64)
         """
-        return get_ci_strings(self.n_qubits, self.n_elec_s, self.hcb, strs2addr=strs2addr)
+        return get_ci_strings(self.n_qubits, self.n_elec_s, self.mode, strs2addr=strs2addr)
 
     # since there's ci_vector method
     ci_strings = get_ci_strings
@@ -594,7 +597,7 @@ class UCC:
         1
         """
         _, strs2addr = self.get_ci_strings(strs2addr=True)
-        return int(get_addr(int(bitstring, base=2), self.n_qubits, self.n_elec_s, strs2addr, self.hcb))
+        return int(get_addr(int(bitstring, base=2), self.n_qubits, self.n_elec_s, strs2addr, self.mode))
 
     def statevector(self, params: Tensor = None, engine: str = None) -> Tensor:
         """
@@ -633,7 +636,7 @@ class UCC:
         if engine is None:
             engine = self.engine
         statevector = get_statevector(
-            params, self.n_qubits, self.n_elec_s, self.ex_ops, self.param_ids, self.hcb, self.init_state, engine
+            params, self.n_qubits, self.n_elec_s, self.ex_ops, self.param_ids, self.mode, self.init_state, engine
         )
         return statevector
 
@@ -655,7 +658,7 @@ class UCC:
                     self.int1e, self.int2e, e_core = get_integral_from_hf(self.hf, self.active_space, self.aslst)
                 else:
                     e_core = self.e_core
-                hamiltonian = get_h_from_integral(self.int1e, self.int2e, self.n_elec_s, self.hcb, htype)
+                hamiltonian = get_h_from_integral(self.int1e, self.int2e, self.n_elec_s, self.mode, htype)
                 self.hamiltonian_lib[htype] = hamiltonian
             else:
                 e_core = self.e_core
@@ -704,7 +707,7 @@ class UCC:
             self.n_elec_s,
             self.ex_ops,
             self.param_ids,
-            self.hcb,
+            self.mode,
             self.init_state,
             engine,
         )
@@ -756,7 +759,7 @@ class UCC:
             self.n_elec_s,
             self.ex_ops,
             self.param_ids,
-            self.hcb,
+            self.mode,
             self.init_state,
             engine,
         )
@@ -790,7 +793,7 @@ class UCC:
         self._check_engine(engine)
         if engine is None:
             engine = self.engine
-        return apply_excitation(state, self.n_qubits, self.n_elec_s, ex_op, hcb=self.hcb, engine=engine)
+        return apply_excitation(state, self.n_qubits, self.n_elec_s, ex_op, mode=self.mode, engine=engine)
 
     def _statevector_to_civector(self, statevector=None):
         if statevector is None:
@@ -837,7 +840,7 @@ class UCC:
         --------
         make_rdm2: Evaluate the spin-traced two-body reduced density matrix (2RDM).
         """
-        assert not self.hcb
+        assert self.mode in ["fermion", "qubit"]
         civector = self._statevector_to_civector(statevector).astype(np.float64)
 
         rdm1_cas = fci.direct_spin1.make_rdm1(civector, self.n_qubits // 2, self.n_elec_s)
@@ -895,7 +898,7 @@ class UCC:
         >>> e_hf = ucc.int1e.ravel() @ rdm1.ravel() + 1/2 * ucc.int2e.ravel() @ rdm2.ravel()
         >>> np.testing.assert_allclose(e_hf + ucc.e_nuc, ucc.e_hf, atol=1e-10)
         """
-        assert not self.hcb
+        assert self.mode in ["fermion", "qubit"]
         civector = self._statevector_to_civector(statevector).astype(np.float64)
 
         rdm2_cas = fci.direct_spin1.make_rdm12(civector.astype(np.float64), self.n_qubits // 2, self.n_elec_s)[1]
@@ -988,8 +991,13 @@ class UCC:
                 ex1_ops.extend([ex_op_a, ex_op_b])
                 ex1_param_ids.extend([ex1_param_ids[-1] + 1] * 2)
                 ex1_init_guess.append(t1[i, a])
+        ex1_param_ids = ex1_param_ids[1:]
 
-        return ex1_ops, ex1_param_ids[1:], ex1_init_guess
+        # deal with qubit symmetry
+        if self.mode == "qubit":
+            ex1_ops, ex1_param_ids, ex1_init_guess = self._qubit_phase(ex1_ops, ex1_param_ids, ex1_init_guess)
+
+        return ex1_ops, ex1_param_ids, ex1_init_guess
 
     def get_ex2_ops(self, t2: np.ndarray = None) -> Tuple[List[Tuple], List[int], List[float]]:
         """
@@ -1083,8 +1091,25 @@ class UCC:
                             ex_ops.extend([ex_op_ab3, ex_op_ab4])
                             ex2_param_ids.extend([ex2_param_ids[-1] + 1] * 2)
                             ex2_init_guess.append(t2[2 * i, 2 * j + 1, 2 * b, 2 * a + 1])
+        ex2_param_ids = ex2_param_ids[1:]
 
-        return ex_ops, ex2_param_ids[1:], ex2_init_guess
+        # deal with qubit symmetry
+        if self.mode == "qubit":
+            ex_ops, ex2_param_ids, ex2_init_guess = self._qubit_phase(ex_ops, ex2_param_ids, ex2_init_guess)
+
+        return ex_ops, ex2_param_ids, ex2_init_guess
+
+    def _qubit_phase(self, ex_ops, ex_param_ids, ex_init_guess):
+
+        hf_str = np.array(self.get_ci_strings()[:1], dtype=np.uint64)
+        iterated_ids = set()
+        for i, ex_op in enumerate(ex_ops):
+            if ex_param_ids[i] in iterated_ids:
+                continue
+            phase = get_fermion_phase(ex_op, self.n_qubits, hf_str)[0]
+            ex_init_guess[ex_param_ids[i]] *= phase
+            iterated_ids.add(ex_param_ids[i])
+        return ex_ops, ex_param_ids, ex_init_guess
 
     @property
     def e_ucc(self) -> float:
@@ -1137,7 +1162,7 @@ class UCC:
             self.n_elec_s,
             self.ex_ops,
             self.param_ids,
-            self.hcb,
+            self.mode,
             self.init_state,
             decompose_multicontrol=decompose_multicontrol,
             trotter=trotter,
@@ -1225,7 +1250,7 @@ class UCC:
         data_list = []
 
         for i, ex_op in zip(param_ids, self.ex_ops):
-            bitstring = get_ex_bitstring(self.n_qubits, self.n_elec_s, ex_op, self.hcb)
+            bitstring = get_ex_bitstring(self.n_qubits, self.n_elec_s, ex_op, self.mode)
             data_list.append((ex_op, bitstring, params[i], self.init_guess[i]))
         return pd.DataFrame(data_list, columns=columns)
 
@@ -1312,7 +1337,7 @@ class UCC:
         """
         Hamiltonian as openfermion.FermionOperator
         """
-        if self.hcb:
+        if self.mode == "hcb":
             raise ValueError("No FermionOperator available for hard-core boson Hamiltonian")
         return get_hop_from_integral(self.int1e, self.int2e) + self.e_core
 
@@ -1322,9 +1347,10 @@ class UCC:
         Hamiltonian as openfermion.QubitOperator, mapped by
         Jordan-Wigner transformation.
         """
-        if not self.hcb:
+        if self.mode in ["fermion", "qubit"]:
             return reverse_qop_idx(jordan_wigner(self.h_fermion_op), self.n_qubits)
         else:
+            assert self.mode == "hcb"
             return get_hop_hcb_from_integral(self.int1e, self.int2e) + self.e_core
 
     @property
@@ -1345,10 +1371,11 @@ class UCC:
         """
         The size of the CI vector.
         """
-        if not self.hcb:
+        if self.mode in ["fermion", "qubit"]:
             na, nb = self.n_elec_s
             return round(comb(self.n_qubits // 2, na)) * round(comb(self.n_qubits // 2, nb))
         else:
+            assert self.mode == "hcb"
             return round(comb(self.n_qubits, self.n_elec // 2))
 
     @property

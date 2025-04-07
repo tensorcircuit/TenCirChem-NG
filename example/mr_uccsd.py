@@ -38,7 +38,7 @@ uccsd = UCCSD(m, init_method="zeros", mo_coeff=casscf.mo_coeff, pick_ex2=False)
 # set up the initial state. Embed CAS to the whole system
 uccsd.init_state = np.zeros(uccsd.civector_size)
 _, strs2addr = uccsd.get_ci_strings(strs2addr=True)
-cas_configurations = [f"{bin(i)[2:]:0>4}" for i in get_ci_strings(2 * as_orbital, as_elec, False)]
+cas_configurations = [f"{bin(i)[2:]:0>4}" for i in get_ci_strings(2 * as_orbital, as_elec, "fermion")]
 for i, coeff in enumerate(casscf.ci.ravel()):
     c = cas_configurations[i]
     template = "0" * (uccsd.nv - as_orbital + as_elec // 2) + "{}" + "1" * (uccsd.no - as_elec // 2)

@@ -96,8 +96,8 @@ def evolve_excitation_pyscf(civector: Tensor, ex_op, n_orb, n_elec_s, theta) -> 
     return civector + (1 - np.cos(theta)) * a2ket + np.sin(theta) * aket
 
 
-def get_civector_pyscf(params, n_qubits, n_elec_s, ex_ops, param_ids, hcb=False, init_state=None):
-    assert not hcb
+def get_civector_pyscf(params, n_qubits, n_elec_s, ex_ops, param_ids, mode="fermion", init_state=None):
+    assert mode == "fermion"
     n_orb = n_qubits // 2
     na, nb = unpack_nelec(n_elec_s)
     num_strings = cistring.num_strings(n_orb, na) * cistring.num_strings(n_orb, nb)
@@ -117,14 +117,14 @@ def get_civector_pyscf(params, n_qubits, n_elec_s, ex_ops, param_ids, hcb=False,
 
 
 def get_energy_and_grad_pyscf(
-    params, hamiltonian, n_qubits, n_elec_s, ex_ops: Tuple, param_ids: Tuple, hcb: bool = False, init_state=None
+    params, hamiltonian, n_qubits, n_elec_s, ex_ops: Tuple, param_ids: Tuple, mode: str = "fermion", init_state=None
 ):
     params = tc.backend.numpy(params)
-    ket = get_civector_pyscf(params, n_qubits, n_elec_s, ex_ops, param_ids, hcb, init_state)
+    ket = get_civector_pyscf(params, n_qubits, n_elec_s, ex_ops, param_ids, mode, init_state)
     bra = tc.backend.numpy(apply_op(hamiltonian, ket))
     energy = bra @ ket
 
-    gradients_beforesum = _get_gradients_pyscf(bra, ket, params, n_qubits, n_elec_s, ex_ops, param_ids, hcb)
+    gradients_beforesum = _get_gradients_pyscf(bra, ket, params, n_qubits, n_elec_s, ex_ops, param_ids, mode)
 
     gradients = np.zeros(params.shape)
     for grad, param_id in zip(gradients_beforesum, param_ids):
@@ -133,8 +133,8 @@ def get_energy_and_grad_pyscf(
     return energy, 2 * gradients
 
 
-def _get_gradients_pyscf(bra, ket, params, n_qubits, n_elec_s, ex_ops, param_ids, hcb):
-    assert not hcb
+def _get_gradients_pyscf(bra, ket, params, n_qubits, n_elec_s, ex_ops, param_ids, mode):
+    assert mode == "fermion"
 
     n_orb = n_qubits // 2
     na, nb = unpack_nelec(n_elec_s)
@@ -154,8 +154,8 @@ def _get_gradients_pyscf(bra, ket, params, n_qubits, n_elec_s, ex_ops, param_ids
     return gradients_beforesum
 
 
-def apply_excitation_pyscf(civector, n_qubits, n_elec_s, f_idx, hcb):
-    assert not hcb
+def apply_excitation_pyscf(civector, n_qubits, n_elec_s, f_idx, mode):
+    assert mode == "fermion"
     na, nb = unpack_nelec(n_elec_s)
     civector_pyscf = CIvectorPySCF(civector, n_qubits // 2, na, nb)
     return apply_a_pyscf(civector_pyscf, f_idx)

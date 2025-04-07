@@ -14,13 +14,13 @@ from tencirchem.utils.backend import jit, tensor_set_elem, get_xp, get_uint_type
 from tencirchem.utils.misc import unpack_nelec
 
 
-def get_ci_strings(n_qubits, n_elec_s, hcb, strs2addr=False):
+def get_ci_strings(n_qubits, n_elec_s, mode, strs2addr=False):
     xp = get_xp(tc.backend)
     uint_type = get_uint_type()
     if 2**n_qubits > np.iinfo(uint_type).max:
         raise ValueError(f"Too many qubits: {n_qubits}, try using complex128 datatype")
     na, nb = unpack_nelec(n_elec_s)
-    if not hcb:
+    if mode in ["fermion", "qubit"]:
         beta = cistring.make_strings(range(n_qubits // 2), nb)
         beta = xp.array(beta, dtype=uint_type)
         if na == nb:
@@ -39,6 +39,7 @@ def get_ci_strings(n_qubits, n_elec_s, hcb, strs2addr=False):
                 strs2addr[1][beta] = xp.arange(len(beta))
             return ci_strings, strs2addr
     else:
+        assert mode == "hcb"
         assert na == nb
         ci_strings = cistring.make_strings(range(n_qubits), na).astype(uint_type)
         if strs2addr:
@@ -49,9 +50,10 @@ def get_ci_strings(n_qubits, n_elec_s, hcb, strs2addr=False):
     return ci_strings
 
 
-def get_addr(excitation, n_qubits, n_elec_s, strs2addr, hcb, num_strings=None):
-    if hcb:
+def get_addr(excitation, n_qubits, n_elec_s, strs2addr, mode, num_strings=None):
+    if mode == "hcb":
         return strs2addr[excitation]
+    assert mode in ["fermion", "qubit"]
     alpha = excitation >> (n_qubits // 2)
     beta = excitation & (2 ** (n_qubits // 2) - 1)
     na, nb = n_elec_s
@@ -66,13 +68,14 @@ def get_addr(excitation, n_qubits, n_elec_s, strs2addr, hcb, num_strings=None):
     return alpha_addr * num_strings + beta_addr
 
 
-def get_ex_bitstring(n_qubits, n_elec_s, ex_op, hcb):
+def get_ex_bitstring(n_qubits, n_elec_s, ex_op, mode):
     na, nb = n_elec_s
-    if not hcb:
+    if mode in ["fermion", "qubit"]:
         bitstring_basea = ["0"] * (n_qubits // 2 - na) + ["1"] * na
         bitstring_baseb = ["0"] * (n_qubits // 2 - nb) + ["1"] * nb
         bitstring_base = bitstring_basea + bitstring_baseb
     else:
+        assert mode == "hcb"
         assert na == nb
         bitstring_base = ["0"] * (n_qubits - na) + ["1"] * na
 

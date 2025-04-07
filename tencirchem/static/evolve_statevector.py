@@ -21,27 +21,27 @@ logger = logging.getLogger(__name__)
 
 
 @partial(jit, static_argnums=[1, 2, 3, 4, 5])
-def get_statevector(params, n_qubits, n_elec, ex_ops, param_ids, hcb=False, init_state=None):
+def get_statevector(params, n_qubits, n_elec, ex_ops, param_ids, mode="fermion", init_state=None):
     if tc.backend.name == "jax":
         logger.info(f"Entering `get_statevector`. n_qubit: {n_qubits}")
     if param_ids is None:
         assert len(params) == len(ex_ops)
         param_ids = list(range(len(params)))
 
-    circuit = get_init_circuit(n_qubits, n_elec, hcb, init_state)
+    circuit = get_init_circuit(n_qubits, n_elec, mode, init_state)
 
     # note only the real part is taken
     statevector = tc.backend.convert_to_tensor(circuit.state())
 
     for param_id, f_idx in zip(param_ids, ex_ops):
         theta = params[param_id]
-        statevector = evolve_excitation(statevector, f_idx, theta, hcb)
+        statevector = evolve_excitation(statevector, f_idx, theta, mode)
 
     return statevector.real.reshape(-1)
 
 
 @partial(jit, static_argnums=[1, 3])
-def evolve_excitation(statevector, f_idx, theta, hcb):
+def evolve_excitation(statevector, f_idx, theta, mode):
     n_qubits = round(np.log2(statevector.shape[0]))
     qubit_idx = [n_qubits - 1 - idx for idx in f_idx]
     # fermion operator operated on ket, twice
@@ -54,13 +54,13 @@ def evolve_excitation(statevector, f_idx, theta, hcb):
         f2ket.any(*qubit_idx, unitary=adad_aa_hc2)
 
     # fermion operator operated on ket
-    fket = apply_excitation(statevector, f_idx, hcb)
+    fket = apply_excitation(statevector, f_idx, mode)
     statevector += (1 - tc.backend.cos(theta)) * f2ket.state() + tc.backend.sin(theta) * fket
     return statevector
 
 
 @partial(jit, static_argnums=[1, 2])
-def apply_excitation(statevector, f_idx, hcb):
+def apply_excitation(statevector, f_idx, mode):
     n_qubits = round(np.log2(statevector.shape[0]))
     qubit_idx = [n_qubits - 1 - idx for idx in f_idx]
     circuit = tc.Circuit(n_qubits, inputs=statevector)
@@ -71,9 +71,10 @@ def apply_excitation(statevector, f_idx, hcb):
         assert len(qubit_idx) == 4
         circuit.any(*qubit_idx, unitary=adad_aa_hc)
 
-    if hcb:
+    if mode != "fermion":
         return circuit.state()
 
+    # apply all Z operators
     # pauli string index, already sorted
     fop = ex_op_to_fop(f_idx)
     qop = jordan_wigner(fop)
@@ -97,5 +98,5 @@ def apply_excitation(statevector, f_idx, hcb):
 
 
 # external interface
-def apply_excitation_statevector(statevector, n_qubits, n_elec, f_idx, hcb):
-    return apply_excitation(statevector, f_idx, hcb).real
+def apply_excitation_statevector(statevector, n_qubits, n_elec, f_idx, mode):
+    return apply_excitation(statevector, f_idx, mode).real
