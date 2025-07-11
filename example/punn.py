@@ -1,29 +1,74 @@
-from typing import Sequence
 from itertools import product
 import time
 import pickle
 
 import numpy as np
 import jax
-import flax.linen as nn
 from flax.training import train_state
 import optax
 from matplotlib import pyplot as plt
-from tencirchem.molecule import h_chain, nh3
+from tencirchem.molecule import nh3, n2, ch4, nh4, co, h_chain, bh3, h_cube, c4h4
 from tencirchem.applications.puccd_dnn.transformations import process_mol
 from tencirchem.applications.puccd_dnn.models import MLP
 
 
+# molecules for the manuscript
+
+# molecules for Fig.2&3
+m_list = [
+    ("bh3", bh3(), (6, 7)),
+    ("nh3", nh3(), (8, 7)),
+    ("n2", n2(), (10, 8)),
+    ("ch4", ch4(), (8, 8)),
+     ("nh4", nh4(), (8, 8)),
+    ("co", co(), (10, 8)),
+]
+
+
+# molecules for Fig. 4. H chains
+m_list = []
+for system_size in range(4, 9):
+    system_name = f"H{system_size}"
+    print(system_name)
+    for d in [10, 25]:
+        print(d)
+        if system_size % 2 == 0:
+            charge = 0
+        else:
+            charge = 1
+        m = h_chain(system_size, bond_distance=d/10, charge=charge)
+        active_space = (system_size-charge, system_size)
+    m_list.append((system_name, m, active_space))
+
+
+# molecules for Fig.5, H8 cube
+m_list = []
+for d in np.linspace(0.5, 2.5, 11):
+    print(d)
+    m = h_cube(d=d)
+    active_space = (8, 8)
+    m_list.append((f"H8 cube {d}", m, active_space))
+
+
+# molecules for Fig. 6.
+basis="ccpvdz"
+m1 = c4h4(1.35, 1.58, basis=basis)
+m2 = c4h4(1.46, 1.46, basis=basis)
+
+
+# simpler molecules for the example (for raster run)
 m_list = [
     ("h5p", h_chain(5, 1.0, charge=1), (4, 5)),
     ("nh3", nh3(), (8, 7)),
 ]
+
 
 tx = optax.adamax(optax.linear_schedule(1e-2, 1e-3, 32000, 8000), b1=0.8, b2=0.99)
 e_min_lists = []
 for name, m, active_space in m_list:
     fermion_circuit_state, hamiltonian, e_nuc, ci_mask, uccsd, puccd = process_mol(m, active_space)
     nn_size = uccsd.n_qubits
+    # adjust this for different widths of the NN
     size_factor = 2
     model = MLP([nn_size * size_factor] * (uccsd.n_qubits // 2 - 3) + [1])
     batch = list(product(*[[-1, 1] for _ in range(uccsd.n_qubits)]))
